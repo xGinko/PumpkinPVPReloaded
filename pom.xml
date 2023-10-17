@@ -42,6 +42,14 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

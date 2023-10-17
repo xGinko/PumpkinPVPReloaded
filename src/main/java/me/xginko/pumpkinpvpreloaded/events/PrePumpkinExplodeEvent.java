@@ -19,8 +19,7 @@ public class PrePumpkinExplodeEvent extends Event implements Cancellable {
     private final @NotNull Player exploder;
     private @NotNull Location explodeLocation;
     private float explodePower;
-    private boolean setFire;
-    private boolean breakBlocks;
+    private boolean setFire, breakBlocks;
 
     public PrePumpkinExplodeEvent(@NotNull final Block pumpkin, final @NotNull Player exploder, @NotNull Location explodeLocation) {
         this.pumpkin = pumpkin;

@@ -2,11 +2,9 @@ package me.xginko.pumpkinpvpreloaded;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import io.github.thatsmusic99.configurationmaster.api.ConfigSection;
-import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -14,23 +12,13 @@ public class PumpkinPVPConfig {
 
     private final ConfigFile config;
     public final float explosion_power;
-    public final boolean explosion_set_fire, explosion_break_blocks, mechanics_base_required;
-    public final HashSet<Material> base_materials = new HashSet<>();
+    public final boolean explosion_set_fire, explosion_break_blocks;
 
     protected PumpkinPVPConfig() throws Exception {
         this.config = loadConfig(new File(PumpkinPVPReloaded.getInstance().getDataFolder(), "config.yml"));
         this.explosion_power = getFloat("explosion.power", 8.0F, "TNT has a power of 4.0");
         this.explosion_set_fire = getBoolean("explosion.set-fire", true);
         this.explosion_break_blocks = getBoolean("explosion.break-blocks", true);
-        this.mechanics_base_required = getBoolean("mechanics.base.require-for-explosion", false);
-        getList("mechanics.base.materials", List.of("CRYING_OBSIDIAN", "OBSIDIAN", "BEDROCK")).forEach(baseMaterial -> {
-            try {
-                Material material = Material.valueOf(baseMaterial);
-                this.base_materials.add(material);
-            } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("Base material '"+baseMaterial+"' is not a valid Material.");
-            }
-        });
     }
 
     private ConfigFile loadConfig(File ymlFile) throws Exception {

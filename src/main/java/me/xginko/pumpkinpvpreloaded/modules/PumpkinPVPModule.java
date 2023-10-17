@@ -16,6 +16,7 @@ public interface PumpkinPVPModule {
 
         modules.add(new ExplodePumpkinOnPlace());
         modules.add(new ExplodePumpkinOnClick());
+        modules.add(new RequireBaseBlocks());
 
         modules.forEach(module -> {
             if (module.shouldEnable()) module.enable();
