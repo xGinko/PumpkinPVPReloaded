@@ -1,9 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
 import com.destroystokyo.paper.MaterialTags;
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.collect.ImmutableMap;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
@@ -11,18 +8,11 @@ import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
 
 public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
 
