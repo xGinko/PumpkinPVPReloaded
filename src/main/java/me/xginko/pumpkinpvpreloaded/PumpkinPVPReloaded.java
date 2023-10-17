@@ -35,15 +35,12 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public static PumpkinPVPReloaded getInstance() {
         return instance;
     }
-
     public static NamespacedKey getKey(String key) {
         return new NamespacedKey(instance, key);
     }
-
     public static PumpkinPVPConfig getConfiguration() {
         return config;
     }
-
     public static Logger getLog() {
         return logger;
     }

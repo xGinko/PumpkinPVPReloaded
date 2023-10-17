@@ -15,13 +15,17 @@ import java.util.List;
 
 public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
-    private final PumpkinPVPReloaded plugin;
     private final HashSet<Material> base_materials = new HashSet<>(3);
 
     protected RequireBaseBlocks() {
-        this.plugin = PumpkinPVPReloaded.getInstance();
+        shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.getList("mechanics.base.materials", List.of("CRYING_OBSIDIAN", "OBSIDIAN", "BEDROCK")).forEach(baseMaterial -> {
+        config.addComment("mechanics.base.require-for-explosion",
+                "If enabled, pumpkins will only explode when placed on one of the configured materials.");
+        config.getList("mechanics.base.materials", List.of(
+                "CRYING_OBSIDIAN", "OBSIDIAN", "BEDROCK"
+        ), "Values need to be valid material enums from bukkit."
+        ).forEach(baseMaterial -> {
             try {
                 Material material = Material.valueOf(baseMaterial);
                 this.base_materials.add(material);
@@ -38,6 +42,7 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
     @Override
     public void enable() {
+        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 

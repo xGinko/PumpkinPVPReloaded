@@ -10,15 +10,18 @@ import java.util.Map;
 
 public class PumpkinPVPConfig {
 
-    private final ConfigFile config;
+    private final @NotNull ConfigFile config;
     public final float explosion_power;
     public final boolean explosion_set_fire, explosion_break_blocks;
 
     protected PumpkinPVPConfig() throws Exception {
         this.config = loadConfig(new File(PumpkinPVPReloaded.getInstance().getDataFolder(), "config.yml"));
-        this.explosion_power = getFloat("explosion.power", 8.0F, "TNT has a power of 4.0");
-        this.explosion_set_fire = getBoolean("explosion.set-fire", true);
-        this.explosion_break_blocks = getBoolean("explosion.break-blocks", true);
+        this.explosion_power = getFloat("pumpkin-explosion.power", 8.0F,
+                "TNT has a power of 4.0");
+        this.explosion_set_fire = getBoolean("pumpkin-explosion.set-fire", true,
+                "Enable explosion fire like with respawn anchors.");
+        this.explosion_break_blocks = getBoolean("pumpkin-explosion.break-blocks", true,
+                "Destroy nearby blocks destroyed.");
     }
 
     private ConfigFile loadConfig(File ymlFile) throws Exception {
