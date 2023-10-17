@@ -1,0 +1,24 @@
+package me.xginko.pumpkinpvpreloaded.modules;
+
+import java.util.HashSet;
+
+public interface PumpkinPVPModule {
+
+    boolean shouldEnable();
+    void enable();
+    void disable();
+
+    HashSet<PumpkinPVPModule> modules = new HashSet<>();
+
+    static void reloadModules() {
+        modules.forEach(PumpkinPVPModule::disable);
+        modules.clear();
+
+        modules.add(new ExplodePumpkinOnPlace());
+        modules.add(new ExplodePumpkinOnClick());
+
+        modules.forEach(module -> {
+            if (module.shouldEnable()) module.enable();
+        });
+    }
+}

@@ -1,0 +1,26 @@
+name: PumpkinPVPReloaded
+version: '${project.version}'
+main: me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded
+api-version: '1.19'
+prefix: PumpkinPVP
+load: STARTUP
+authors: [xGinko]
+description: ${project.description}
+website: ${project.url}
+folia-supported: true
+
+commands:
+  pumpkinpvp:
+    usage: /pumpkinpvp [ reload, version, disable ]
+    description: admin commands
+    aliases:
+      - ppvp
+      - pump
+
+permissions:
+  pumpkinpvp.cmd.disable:
+    description: Disable the plugin
+  pumpkinpvp.cmd.reload:
+    description: Reload the plugin configuration
+  pumpkinpvp.cmd.version:
+    description: Show the plugin version
