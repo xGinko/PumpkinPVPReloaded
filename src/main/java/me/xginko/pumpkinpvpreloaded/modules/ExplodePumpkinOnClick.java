@@ -82,31 +82,18 @@ public class ExplodePumpkinOnClick implements PumpkinPVPModule, Listener {
             regionScheduler.run(plugin, explodeLoc, kaboom -> {
                 prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
 
-                final Player exploder = prePumpkinExplodeEvent.getExploder();
                 final float power = prePumpkinExplodeEvent.getExplodePower();
                 final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
                 final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
 
-                explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks);
-
-                final Collection<Player> likelyDamagedPlayers = explodeLoc.getNearbyPlayers(power, power, power);
-
-                // Try to fill in spaces for correct death info
-                for (Player likelyDamagedPlayer : likelyDamagedPlayers) {
-                    final EntityDamageByEntityEvent damageEvent = new EntityDamageByEntityEvent(
-                            exploder,
-                            likelyDamagedPlayer,
-                            EntityDamageEvent.DamageCause.MAGIC,
-                            damageModifier,
-                            modifierFunctions,
-                            true
-                    );
-                    damageEvent.callEvent();
-                    likelyDamagedPlayer.setLastDamageCause(damageEvent);
-                    likelyDamagedPlayer.setKiller(exploder);
-                }
-
-                new PostPumpkinExplodeEvent(exploder, explodeLoc, likelyDamagedPlayers, power, fire, breakBlocks).callEvent();
+                new PostPumpkinExplodeEvent(
+                        prePumpkinExplodeEvent.getExploder(),
+                        explodeLoc,
+                        power,
+                        fire,
+                        breakBlocks,
+                        explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks)
+                ).callEvent();
             });
         }
     }

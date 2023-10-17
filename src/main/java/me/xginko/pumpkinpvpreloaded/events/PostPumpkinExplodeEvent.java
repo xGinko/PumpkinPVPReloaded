@@ -6,32 +6,29 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 public class PostPumpkinExplodeEvent extends Event {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
     private final @NotNull Player exploder;
-    private final @NotNull Collection<Player> likelyDamagedPlayers;
     private final @NotNull Location explosionLocation;
     private final float explosionPower;
-    private final boolean setFire, destroyedBlocks;
+    private final boolean setFire, destroyedBlocks, hasExploded;
 
     public PostPumpkinExplodeEvent(
             final @NotNull Player exploder,
             final @NotNull Location explosionLocation,
-            final @NotNull Collection<Player> likelyDamagedPlayers,
             final float explosionPower,
             final boolean setFire,
-            final boolean destroyedBlocks
+            final boolean destroyedBlocks,
+            final boolean hasExploded
     ) {
         this.exploder = exploder;
         this.explosionLocation = explosionLocation;
-        this.likelyDamagedPlayers = likelyDamagedPlayers;
         this.explosionPower = explosionPower;
         this.setFire = setFire;
         this.destroyedBlocks = destroyedBlocks;
+        this.hasExploded = hasExploded;
     }
 
     public @NotNull Player getExploder() {
@@ -40,8 +37,8 @@ public class PostPumpkinExplodeEvent extends Event {
     public @NotNull Location getExplosionLocation() {
         return explosionLocation;
     }
-    public @NotNull Collection<Player> getLikelyDamagedPlayers() {
-        return likelyDamagedPlayers;
+    public boolean explosionHasHappened() {
+        return hasExploded;
     }
     public float getExplosionPower() {
         return explosionPower;

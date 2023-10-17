@@ -28,14 +28,10 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
 
     private final PumpkinPVPReloaded plugin;
     private final RegionScheduler regionScheduler;
-    private final Map<EntityDamageEvent.DamageModifier, Double> damageModifier;
-    private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> modifierFunctions;
 
     protected ExplodePumpkinOnPlace() {
         this.plugin = PumpkinPVPReloaded.getInstance();
         this.regionScheduler = plugin.getServer().getRegionScheduler();
-        this.damageModifier = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Double.MAX_VALUE));
-        this.modifierFunctions = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
     }
 
     @Override
@@ -71,31 +67,18 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
         regionScheduler.run(plugin, explodeLoc, kaboom -> {
             prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
 
-            final Player exploder = prePumpkinExplodeEvent.getExploder();
             final float power = prePumpkinExplodeEvent.getExplodePower();
             final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
             final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
 
-            explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks);
-
-            final Collection<Player> likelyDamagedPlayers = explodeLoc.getNearbyPlayers(power, power, power);
-
-            // Try to fill in spaces for correct death info
-            for (Player likelyDamagedPlayer : likelyDamagedPlayers) {
-                final EntityDamageByEntityEvent damageEvent = new EntityDamageByEntityEvent(
-                        exploder,
-                        likelyDamagedPlayer,
-                        EntityDamageEvent.DamageCause.MAGIC,
-                        damageModifier,
-                        modifierFunctions,
-                        true
-                );
-                damageEvent.callEvent();
-                likelyDamagedPlayer.setLastDamageCause(damageEvent);
-                likelyDamagedPlayer.setKiller(exploder);
-            }
-
-            new PostPumpkinExplodeEvent(exploder, explodeLoc, likelyDamagedPlayers, power, fire, breakBlocks).callEvent();
+            new PostPumpkinExplodeEvent(
+                    prePumpkinExplodeEvent.getExploder(),
+                    explodeLoc,
+                    power,
+                    fire,
+                    breakBlocks,
+                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks)
+            ).callEvent();
         });
     }
 }
