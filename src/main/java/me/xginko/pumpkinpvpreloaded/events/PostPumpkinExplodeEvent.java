@@ -37,16 +37,16 @@ public class PostPumpkinExplodeEvent extends Event {
     public @NotNull Location getExplosionLocation() {
         return explosionLocation;
     }
-    public boolean explosionHasHappened() {
+    public boolean hasExploded() {
         return hasExploded;
     }
     public float getExplosionPower() {
         return explosionPower;
     }
-    public boolean isSetFire() {
+    public boolean hasSetFire() {
         return setFire;
     }
-    public boolean isDestroyedBlocks() {
+    public boolean hasDestroyedBlocks() {
         return destroyedBlocks;
     }
 

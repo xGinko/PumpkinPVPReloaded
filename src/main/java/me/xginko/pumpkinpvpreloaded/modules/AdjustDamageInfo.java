@@ -81,7 +81,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
     }
 
     private @Nullable Player getClosestPumpkinExploder(Location playerLoc) {
-        double distance = 20.0;
+        double distance = 50.0;
         Player closestExploder = null;
 
         for (Map.Entry<Location, Player> explosion : this.pumpkinExploders.asMap().entrySet()) {
