@@ -4,6 +4,7 @@ import com.destroystokyo.paper.MaterialTags;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
+import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import org.bukkit.Location;
@@ -13,7 +14,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class ExplodePumpkinOnClick implements PumpkinPVPModule, Listener {
@@ -47,40 +47,67 @@ public class ExplodePumpkinOnClick implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onBlockLeftClick(PlayerInteractEvent event) {
-        final Action action = event.getAction();
-        if (
-                (triggerOnRightClick && action.isRightClick())
-                || (triggerOnLeftClick && action.isLeftClick())
-        ) {
-            final Block clicked = event.getClickedBlock();
-            if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
+        switch (event.getAction()) {
+            case LEFT_CLICK_BLOCK -> {
+                if (!triggerOnLeftClick) return;
+                final Block clicked = event.getClickedBlock();
+                if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
 
-            PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                    clicked,
-                    event.getPlayer(),
-                    clicked.getLocation().toCenterLocation()
-            );
+                PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
+                        clicked,
+                        event.getPlayer(),
+                        clicked.getLocation().toCenterLocation(),
+                        TriggerAction.LEFT_CLICK
+                );
 
-            if (!prePumpkinExplodeEvent.callEvent()) return;
+                if (prePumpkinExplodeEvent.callEvent()) {
+                    scheduleExplosion(prePumpkinExplodeEvent);
+                } else {
+                    if (prePumpkinExplodeEvent.cancelPreceding())
+                        event.setCancelled(true);
+                }
+            }
+            case RIGHT_CLICK_BLOCK -> {
+                if (!triggerOnRightClick) return;
+                final Block clicked = event.getClickedBlock();
+                if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
 
-            final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
+                PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
+                        clicked,
+                        event.getPlayer(),
+                        clicked.getLocation().toCenterLocation(),
+                        TriggerAction.RIGHT_CLICK
+                );
 
-            regionScheduler.run(plugin, explodeLoc, kaboom -> {
-                prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
-
-                final float power = prePumpkinExplodeEvent.getExplodePower();
-                final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
-                final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
-
-                new PostPumpkinExplodeEvent(
-                        prePumpkinExplodeEvent.getExploder(),
-                        explodeLoc,
-                        power,
-                        fire,
-                        breakBlocks,
-                        explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks)
-                ).callEvent();
-            });
+                if (prePumpkinExplodeEvent.callEvent()) {
+                    scheduleExplosion(prePumpkinExplodeEvent);
+                } else {
+                    if (prePumpkinExplodeEvent.cancelPreceding())
+                        event.setCancelled(true);
+                }
+            }
         }
+    }
+
+    private void scheduleExplosion(PrePumpkinExplodeEvent prePumpkinExplodeEvent) {
+        final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
+
+        regionScheduler.run(plugin, explodeLoc, kaboom -> {
+            prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+
+            final float power = prePumpkinExplodeEvent.getExplodePower();
+            final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
+            final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
+
+            new PostPumpkinExplodeEvent(
+                    prePumpkinExplodeEvent.getExploder(),
+                    explodeLoc,
+                    power,
+                    fire,
+                    breakBlocks,
+                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
+                    prePumpkinExplodeEvent.getTriggerAction()
+            ).callEvent();
+        });
     }
 }

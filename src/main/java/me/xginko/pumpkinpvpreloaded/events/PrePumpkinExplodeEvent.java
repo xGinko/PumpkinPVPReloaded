@@ -2,6 +2,7 @@ package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
+import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -19,12 +20,19 @@ public class PrePumpkinExplodeEvent extends Event implements Cancellable {
     private final @NotNull Player exploder;
     private @NotNull Location explodeLocation;
     private float explodePower;
-    private boolean setFire, breakBlocks;
+    private boolean setFire, breakBlocks, cancelPrecedingEvent;
+    private final @NotNull TriggerAction triggerAction;
 
-    public PrePumpkinExplodeEvent(@NotNull final Block pumpkin, final @NotNull Player exploder, @NotNull Location explodeLocation) {
+    public PrePumpkinExplodeEvent(
+            @NotNull Block pumpkin,
+            final @NotNull Player exploder,
+            @NotNull Location explodeLocation,
+            final @NotNull TriggerAction triggerAction
+    ) {
         this.pumpkin = pumpkin;
         this.exploder = exploder;
         this.explodeLocation = explodeLocation;
+        this.triggerAction = triggerAction;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.explodePower = config.explosion_power;
         this.setFire = config.explosion_set_fire;
@@ -65,7 +73,15 @@ public class PrePumpkinExplodeEvent extends Event implements Cancellable {
     public void setBreakBlocks(boolean breakBlocks) {
         this.breakBlocks = breakBlocks;
     }
-
+    public @NotNull TriggerAction getTriggerAction() {
+        return triggerAction;
+    }
+    public boolean cancelPreceding() {
+        return cancelPrecedingEvent;
+    }
+    public void setPrecedingCancelled(boolean cancel) {
+        this.cancelPrecedingEvent = cancel;
+    }
 
     @Override
     public void setCancelled(boolean cancel) {

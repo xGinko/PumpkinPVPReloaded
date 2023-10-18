@@ -3,6 +3,7 @@ package me.xginko.pumpkinpvpreloaded.modules;
 import com.destroystokyo.paper.MaterialTags;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
+import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import org.bukkit.Location;
@@ -47,10 +48,15 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
         PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
                 placed,
                 event.getPlayer(),
-                placed.getLocation().toCenterLocation()
+                placed.getLocation().toCenterLocation(),
+                TriggerAction.BLOCK_PLACE
         );
 
-        if (!prePumpkinExplodeEvent.callEvent()) return;
+        if (!prePumpkinExplodeEvent.callEvent()) {
+            if (prePumpkinExplodeEvent.cancelPreceding())
+                event.setCancelled(true);
+            return;
+        }
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
@@ -67,7 +73,8 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
                     power,
                     fire,
                     breakBlocks,
-                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks)
+                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
+                    TriggerAction.BLOCK_PLACE
             ).callEvent();
         });
     }
