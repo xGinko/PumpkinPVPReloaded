@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>PumpkinPVPReloaded</name>
-    <description>Exploding pumpkins for spooky pvp</description>
+    <description>Exploding pumpkins for spooky Halloween pvp</description>
     <url>github.com/xGinko/PumpkinPVPReloaded</url>
 
     <properties>

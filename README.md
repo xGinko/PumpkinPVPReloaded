@@ -1,5 +1,5 @@
 # PumpkinPVPReloaded
 
-Make pumpkins explode for spooky halloween pvp
+Exploding pumpkins for spooky Halloween pvp
 
 Inspired by: https://github.com/TwoBogans/PumpkinPvP
