@@ -75,6 +75,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
         if (!damageByExploder.callEvent()) {
             event.setCancelled(true);
+            return;
         }
 
         player.setLastDamageCause(damageByExploder);
