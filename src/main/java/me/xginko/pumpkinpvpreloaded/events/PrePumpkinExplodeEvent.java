@@ -38,6 +38,7 @@ public class PrePumpkinExplodeEvent extends Event implements Cancellable {
         this.setFire = config.explosion_set_fire;
         this.breakBlocks = config.explosion_break_blocks;
         this.isCancelled = false;
+        this.cancelPrecedingEvent = false;
     }
 
     public @NotNull Block getPumpkin() {
