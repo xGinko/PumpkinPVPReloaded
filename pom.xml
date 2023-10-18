@@ -10,8 +10,8 @@
     <packaging>jar</packaging>
 
     <name>PumpkinPVPReloaded</name>
-    <description>Doot doot</description>
-    <url>oldmate.org</url>
+    <description>Exploding pumpkins for spooky pvp</description>
+    <url>github.com/xGinko/PumpkinPVPReloaded</url>
 
     <properties>
         <java.version>17</java.version>

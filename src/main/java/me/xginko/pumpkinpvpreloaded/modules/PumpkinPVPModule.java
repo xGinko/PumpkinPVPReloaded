@@ -17,6 +17,7 @@ public interface PumpkinPVPModule {
         modules.add(new AdjustDamageInfo());
         modules.add(new ExplodePumpkinOnPlace());
         modules.add(new ExplodePumpkinOnClick());
+        modules.add(new RateLimitPumpkinExplosions());
         modules.add(new RequireBaseBlocks());
 
         modules.forEach(module -> {
