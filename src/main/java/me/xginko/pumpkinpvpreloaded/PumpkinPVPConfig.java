@@ -21,7 +21,7 @@ public class PumpkinPVPConfig {
         this.explosion_set_fire = getBoolean("pumpkin-explosion.set-fire", true,
                 "Enable explosion fire like with respawn anchors.");
         this.explosion_break_blocks = getBoolean("pumpkin-explosion.break-blocks", true,
-                "Destroy nearby blocks destroyed.");
+                "Enable destruction of nearby blocks.");
     }
 
     private ConfigFile loadConfig(File ymlFile) throws Exception {
