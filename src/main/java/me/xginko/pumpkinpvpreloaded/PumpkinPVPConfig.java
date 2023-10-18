@@ -29,7 +29,7 @@ public class PumpkinPVPConfig {
         if (!parent.exists() && !parent.mkdir())
             PumpkinPVPReloaded.getLog().severe("Unable to create plugin config directory.");
         if (!ymlFile.exists())
-            ymlFile.createNewFile(); // Result can be ignored because this method only returns false if the file already exists
+            ymlFile.createNewFile();
         return ConfigFile.loadConfig(ymlFile);
     }
 

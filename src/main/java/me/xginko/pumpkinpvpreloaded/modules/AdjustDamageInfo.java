@@ -35,7 +35,8 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("attempt-to-correct-death-details", true);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("attempt-to-correct-death-details", true,
+                "Lets the server know who killed who.");
     }
 
     @Override
