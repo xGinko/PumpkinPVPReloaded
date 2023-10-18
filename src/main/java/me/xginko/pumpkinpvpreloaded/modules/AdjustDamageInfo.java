@@ -87,7 +87,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
         for (Map.Entry<Location, Player> explosion : this.pumpkinExploders.asMap().entrySet()) {
             final Location explosionLoc = explosion.getKey();
-            if (explosionLoc.getWorld().equals(playerLoc.getWorld())) {
+            if (explosionLoc.getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
                 final double currentDistance = playerLoc.distance(explosionLoc);
                 if (currentDistance < distance) {
                     distance = currentDistance;
