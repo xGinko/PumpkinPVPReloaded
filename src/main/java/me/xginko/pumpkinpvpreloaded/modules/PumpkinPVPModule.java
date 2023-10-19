@@ -22,6 +22,7 @@ public interface PumpkinPVPModule {
         modules.add(new RequireBaseBlocks());
         modules.add(new FireworkEffects());
         modules.add(new LightningEffects());
+        modules.add(new WhitelistedWorlds());
 
         modules.forEach(module -> {
             if (module.shouldEnable()) module.enable();
