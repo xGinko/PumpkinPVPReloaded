@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
@@ -20,10 +21,14 @@ import java.util.Random;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
+    private final PumpkinPVPReloaded plugin;
+    private final RegionScheduler regionScheduler;
     private final List<FireworkEffect> fireWorkEffects = new ArrayList<>();
 
     protected FireworkEffects() {
         shouldEnable();
+        this.plugin = PumpkinPVPReloaded.getInstance();
+        this.regionScheduler = plugin.getServer().getRegionScheduler();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         final List<Color> halloweenColors = List.of(
                 Color.fromRGB(255, 174, 3),     // Pumpkin Light Orange
@@ -62,7 +67,6 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -75,11 +79,13 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     private void onPrePumpkinExplode(PostPumpkinExplodeEvent event) {
         if (!event.hasExploded()) return;
         final Location explosionLoc = event.getExplosionLocation();
-        Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
-        FireworkMeta meta = firework.getFireworkMeta();
-        meta.clearEffects();
-        meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
-        firework.setFireworkMeta(meta);
-        firework.detonate();
+        regionScheduler.run(plugin, explosionLoc, fireworkEffect -> {
+            Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
+            FireworkMeta meta = firework.getFireworkMeta();
+            meta.clearEffects();
+            meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
+            firework.setFireworkMeta(meta);
+            firework.detonate();
+        });
     }
 }
