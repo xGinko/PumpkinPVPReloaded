@@ -20,6 +20,7 @@ public interface PumpkinPVPModule {
         modules.add(new ExplodePumpkinOnPlace());
         modules.add(new RateLimitPumpkinExplosions());
         modules.add(new RequireBaseBlocks());
+        modules.add(new FireworkEffects());
 
         modules.forEach(module -> {
             if (module.shouldEnable()) module.enable();
