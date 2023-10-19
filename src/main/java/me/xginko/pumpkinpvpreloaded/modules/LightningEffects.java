@@ -51,7 +51,7 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.LOW)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (!event.hasExploded()) return;
-        if (probability < 1.0 && new Random().nextDouble() > probability) return;
+        if (probability >= 1.0 || new Random().nextDouble() > probability) return;
 
         final UUID exploder = event.getExploder().getUniqueId();
         final Location explosionLoc = event.getExplosionLocation();
