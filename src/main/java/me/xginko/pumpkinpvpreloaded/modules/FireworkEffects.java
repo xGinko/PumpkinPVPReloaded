@@ -20,7 +20,7 @@ import java.util.Random;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
-    private final List<FireworkEffect> effectList = new ArrayList<>(5);
+    private final List<FireworkEffect> effectList = new ArrayList<>();
 
     protected FireworkEffects() {
         shouldEnable();
