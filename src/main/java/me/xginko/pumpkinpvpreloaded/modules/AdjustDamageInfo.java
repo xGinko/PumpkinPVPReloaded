@@ -67,7 +67,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
         final EntityDamageByEntityEvent damageByExploder = new EntityDamageByEntityEvent(
                 exploder,
                 player,
-                EntityDamageEvent.DamageCause.MAGIC,
+                EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
                 new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
                 placeholderModifier,
                 true
