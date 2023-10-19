@@ -25,14 +25,14 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
     private final PumpkinPVPReloaded plugin;
     private final RegionScheduler regionScheduler;
     private final boolean shears_take_durability;
-    private final int durability_reducer;
+    private final int dura_reduction;
 
     protected ExplodePumpkinOnShear() {
         this.plugin = PumpkinPVPReloaded.getInstance();
         this.regionScheduler = plugin.getServer().getRegionScheduler();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.shears_take_durability = config.getBoolean("mechanics.explosion-triggers.shear-pumpkin.shears-take-durability", true);
-        this.durability_reducer = config.getInt("mechanics.explosion-triggers.shear-pumpkin.dura-per-explosion", 1);
+        this.dura_reduction = config.getInt("mechanics.explosion-triggers.shear-pumpkin.dura-per-explosion", 1);
     }
 
     @Override
@@ -99,13 +99,9 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
                     && postPumpkinExplodeEvent.hasExploded()
                     && originalExploder.getUniqueId().equals(postPumpkinExplodeEvent.getExploder().getUniqueId())
             ) {
-                Damageable damageable = (Damageable) interactItem.getItemMeta();
-                if (damageable.hasDamage()) {
-                    damageable.setDamage(damageable.getDamage()+durability_reducer);
-                } else {
-                    damageable.setDamage(durability_reducer);
-                }
-                interactItem.setItemMeta(damageable);
+                interactItem.editMeta(Damageable.class, meta -> {
+                    meta.setDamage(meta.hasDamage() ? meta.getDamage() + dura_reduction : dura_reduction);
+                });
             }
         });
     }
