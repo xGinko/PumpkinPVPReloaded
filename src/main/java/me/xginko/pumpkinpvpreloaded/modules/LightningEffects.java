@@ -22,6 +22,7 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
     private final double probability;
 
     protected LightningEffects() {
+        shouldEnable();
         this.plugin = PumpkinPVPReloaded.getInstance();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         config.addComment("pumpkin-explosion.lightning-effects", "Will strike the closest player with lightning.");
