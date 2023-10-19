@@ -21,7 +21,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         getCommand("pumpkinpvp").setExecutor(new PumpkinPVPCommand());
     }
 
-    private void reloadConfiguration() {
+    public void reloadConfiguration() {
         try {
             config = new PumpkinPVPConfig();
             PumpkinPVPModule.reloadModules();

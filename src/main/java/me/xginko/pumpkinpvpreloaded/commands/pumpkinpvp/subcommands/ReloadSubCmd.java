@@ -31,7 +31,7 @@ public class ReloadSubCmd extends SubCommand {
         sender.sendMessage(Component.text("Reloading PumpkinPVP...").color(NamedTextColor.WHITE));
         PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getAsyncScheduler().runNow(plugin, reload -> {
-            plugin.reloadConfig();
+            plugin.reloadConfiguration();
             sender.sendMessage(Component.text("Reload complete.").color(NamedTextColor.GREEN));
         });
     }
