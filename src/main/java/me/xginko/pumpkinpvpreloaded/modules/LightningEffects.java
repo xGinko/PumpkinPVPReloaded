@@ -39,7 +39,6 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
