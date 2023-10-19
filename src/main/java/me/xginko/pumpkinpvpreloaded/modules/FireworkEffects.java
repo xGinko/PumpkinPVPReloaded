@@ -41,7 +41,13 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         ).forEach(effect -> {
             try {
                 FireworkEffect.Type effectType = FireworkEffect.Type.valueOf(effect);
-                halloweenColors.forEach(color -> this.fireWorkEffects.add(FireworkEffect.builder().withColor(color).with(effectType).build()));
+                halloweenColors.forEach(primary_color -> {
+                    Color secondary_color = primary_color;
+                    while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
+                        secondary_color = halloweenColors.get(new Random().nextInt(halloweenColors.size()));
+                    }
+                    this.fireWorkEffects.add(FireworkEffect.builder().withColor(primary_color, secondary_color).with(effectType).build());
+                });
             } catch (IllegalArgumentException e) {
                 PumpkinPVPReloaded.getLog().warning("FireworkEffect Type '"+effect+"' not recognized. " +
                         "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
