@@ -20,13 +20,18 @@ import java.util.Random;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
-    private final List<FireworkEffect> effectList = new ArrayList<>();
+    private final List<FireworkEffect> fireWorkEffects = new ArrayList<>();
 
     protected FireworkEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        final boolean trail_enabled = config.getBoolean("pumpkin-explosion.firework-effects.trails", false);
-        final boolean flicker_enabled = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
+        final List<Color> halloweenColors = List.of(
+                Color.fromRGB(255, 174, 3),     // Pumpkin Light Orange
+                Color.fromRGB(254, 78, 0),      // Pumpkin Dark Orange
+                Color.fromRGB(26, 9, 13),       // Witch Hat Dark Purple
+                Color.fromRGB(164, 44, 214),    // Witch Dress Pale Purple
+                Color.fromRGB(163, 235, 30)     // Slime Green
+        );
         config.getList("pumpkin-explosion.firework-effects.types",
                 Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).toList(),
                 """
@@ -36,21 +41,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         ).forEach(effect -> {
             try {
                 FireworkEffect.Type effectType = FireworkEffect.Type.valueOf(effect);
-                // Pumpkin Light Orange
-                effectList.add(FireworkEffect.builder().with(effectType).trail(trail_enabled).flicker(flicker_enabled)
-                        .withColor(Color.fromRGB(255, 174, 3)).build());
-                // Pumpkin Dark Orange
-                effectList.add(FireworkEffect.builder().with(effectType).trail(trail_enabled).flicker(flicker_enabled)
-                        .withColor(Color.fromRGB(254, 78, 0)).build());
-                // Witch Hat Dark Purple
-                effectList.add(FireworkEffect.builder().with(effectType).trail(trail_enabled).flicker(flicker_enabled)
-                        .withColor(Color.fromRGB(26, 9, 13)).build());
-                // Witch Dress Pale Purple
-                effectList.add(FireworkEffect.builder().with(effectType).trail(trail_enabled).flicker(flicker_enabled)
-                        .withColor(Color.fromRGB(164, 44, 214)).build());
-                // Slime Green
-                effectList.add(FireworkEffect.builder().with(effectType).trail(trail_enabled).flicker(flicker_enabled)
-                        .withColor(Color.fromRGB(163, 235, 30)).build());
+                halloweenColors.forEach(color -> this.fireWorkEffects.add(FireworkEffect.builder().withColor(color).with(effectType).build()));
             } catch (IllegalArgumentException e) {
                 PumpkinPVPReloaded.getLog().warning("FireworkEffect Type '"+effect+"' not recognized. " +
                         "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
@@ -81,7 +72,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
         FireworkMeta meta = firework.getFireworkMeta();
         meta.clearEffects();
-        meta.addEffect(effectList.get(new Random().nextInt(effectList.size())));
+        meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
         firework.setFireworkMeta(meta);
         firework.detonate();
     }
