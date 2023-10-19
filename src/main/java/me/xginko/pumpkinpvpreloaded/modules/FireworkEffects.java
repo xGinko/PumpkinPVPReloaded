@@ -30,6 +30,8 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         this.plugin = PumpkinPVPReloaded.getInstance();
         this.regionScheduler = plugin.getServer().getRegionScheduler();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
+        final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);
         final List<Color> halloweenColors = List.of(
                 Color.fromRGB(255, 174, 3),     // Pumpkin Light Orange
                 Color.fromRGB(254, 78, 0),      // Pumpkin Dark Orange
@@ -51,7 +53,12 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                     while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
                         secondary_color = halloweenColors.get(new Random().nextInt(halloweenColors.size()));
                     }
-                    this.fireWorkEffects.add(FireworkEffect.builder().withColor(primary_color, secondary_color).with(effectType).build());
+                    this.fireWorkEffects.add(FireworkEffect.builder()
+                            .withColor(primary_color, secondary_color)
+                            .with(effectType)
+                            .flicker(flicker)
+                            .trail(trail)
+                            .build());
                 });
             } catch (IllegalArgumentException e) {
                 PumpkinPVPReloaded.getLog().warning("FireworkEffect Type '"+effect+"' not recognized. " +
