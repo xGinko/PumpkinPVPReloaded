@@ -20,12 +20,12 @@ import java.util.Random;
 
 public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
-    private final Cache<Location, Float> pumpkinExploders;
+    private final Cache<Location, Float> pumpkinExplosions;
     private final List<Sound> deathSounds = new ArrayList<>();
 
     protected DeathSoundEffects() {
         shouldEnable();
-        this.pumpkinExploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
+        this.pumpkinExplosions = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
         PumpkinPVPReloaded.getConfiguration().getList("pumpkin-deaths.death-sound.sounds", List.of(
                 Sound.ENTITY_GOAT_SCREAMING_DEATH.name(),
                 Sound.ENTITY_HOGLIN_DEATH.name(),
@@ -68,7 +68,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     private void onPrePumpkinExplode(PostPumpkinExplodeEvent event) {
-        this.pumpkinExploders.put(event.getExplodeLocation(), event.getExplosionPower());
+        this.pumpkinExplosions.put(event.getExplodeLocation(), event.getExplosionPower());
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -79,7 +79,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     }
 
     private boolean isNearPumpkinExplosion(Location playerLoc) {
-        for (Map.Entry<Location, Float> explosion : this.pumpkinExploders.asMap().entrySet()) {
+        for (Map.Entry<Location, Float> explosion : this.pumpkinExplosions.asMap().entrySet()) {
             final Location explosionLoc = explosion.getKey();
             if (explosionLoc.getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
                 if (playerLoc.distance(explosionLoc) <= explosion.getValue()) {
