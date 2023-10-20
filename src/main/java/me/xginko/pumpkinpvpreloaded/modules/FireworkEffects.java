@@ -13,27 +13,39 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
     private final List<FireworkEffect> fireWorkEffects = new ArrayList<>();
+    private boolean has_enough_colors = true;
 
     protected FireworkEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        List<Color> parsedColors = new ArrayList<>();
+        List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", List.of(
+                "FFAE03",   // Pumpkin Light Orange
+                "FE4E00",   // Pumpkin Dark Orange
+                "1A090D",   // Witch Hat Dark Purple
+                "A42CD6",   // Witch Dress Pale Purple
+                "A3EB1E"    // Slime Green
+        ), "You need to configure at least 2 colors.");
+        if (configuredColors.size() < 2) {
+            PumpkinPVPReloaded.getLog().severe("You need to configure at least 2 colors. Disabling firework effects.");
+            has_enough_colors = false;
+        }
+        configuredColors.forEach(hexString -> {
+            try {
+                int rgb = HexFormat.fromHexDigits(hexString);
+                parsedColors.add(Color.fromRGB(rgb));
+            } catch (IllegalArgumentException e) {
+                PumpkinPVPReloaded.getLog().warning("Hex color string '"+hexString+"' is not formatted correctly. " +
+                        "Try using the format without a prefix: eg. FFAE03 instead of #FFAE03 or 0xFFAE03");
+            }
+        });
         final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
         final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);
-        final List<Color> halloweenColors = List.of(
-                Color.fromRGB(255, 174, 3),     // Pumpkin Light Orange
-                Color.fromRGB(254, 78, 0),      // Pumpkin Dark Orange
-                Color.fromRGB(26, 9, 13),       // Witch Hat Dark Purple
-                Color.fromRGB(164, 44, 214),    // Witch Dress Pale Purple
-                Color.fromRGB(163, 235, 30)     // Slime Green
-        );
         config.getList("pumpkin-explosion.firework-effects.types",
                 Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).toList(),
                 """
@@ -43,10 +55,10 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         ).forEach(effect -> {
             try {
                 FireworkEffect.Type effectType = FireworkEffect.Type.valueOf(effect);
-                halloweenColors.forEach(primary_color -> {
+                parsedColors.forEach(primary_color -> {
                     Color secondary_color = primary_color;
                     while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
-                        secondary_color = halloweenColors.get(new Random().nextInt(0, halloweenColors.size()));
+                        secondary_color = parsedColors.get(new Random().nextInt(0, parsedColors.size()));
                     }
                     this.fireWorkEffects.add(FireworkEffect.builder()
                             .withColor(primary_color, secondary_color)
@@ -64,7 +76,8 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.firework-effects.enable", true);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.firework-effects.enable", true)
+                && has_enough_colors;
     }
 
     @Override
