@@ -47,46 +47,36 @@ public class ExplodePumpkinOnClick implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onBlockLeftClick(PlayerInteractEvent event) {
+        TriggerAction triggerAction;
         switch (event.getAction()) {
             case LEFT_CLICK_BLOCK -> {
                 if (!triggerOnLeftClick) return;
-                final Block clicked = event.getClickedBlock();
-                if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
-
-                PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                        clicked,
-                        event.getPlayer(),
-                        clicked.getLocation().toCenterLocation(),
-                        TriggerAction.LEFT_CLICK
-                );
-
-                if (prePumpkinExplodeEvent.callEvent()) {
-                    scheduleExplosion(prePumpkinExplodeEvent);
-                } else {
-                    if (prePumpkinExplodeEvent.cancelPreceding())
-                        event.setCancelled(true);
-                }
+                triggerAction = TriggerAction.LEFT_CLICK;
             }
             case RIGHT_CLICK_BLOCK -> {
                 if (!triggerOnRightClick) return;
-                final Block clicked = event.getClickedBlock();
-                if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
-
-                PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                        clicked,
-                        event.getPlayer(),
-                        clicked.getLocation().toCenterLocation(),
-                        TriggerAction.RIGHT_CLICK
-                );
-
-                if (prePumpkinExplodeEvent.callEvent()) {
-                    scheduleExplosion(prePumpkinExplodeEvent);
-                } else {
-                    if (prePumpkinExplodeEvent.cancelPreceding())
-                        event.setCancelled(true);
-                }
+                triggerAction = TriggerAction.RIGHT_CLICK;
             }
+            default -> { return; }
         }
+
+        final Block clicked = event.getClickedBlock();
+        if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
+
+        PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
+                clicked,
+                event.getPlayer(),
+                clicked.getLocation().toCenterLocation(),
+                triggerAction
+        );
+
+        if (prePumpkinExplodeEvent.callEvent()) {
+            scheduleExplosion(prePumpkinExplodeEvent);
+            return;
+        }
+
+        if (prePumpkinExplodeEvent.cancelPreceding())
+            event.setCancelled(true);
     }
 
     private void scheduleExplosion(PrePumpkinExplodeEvent prePumpkinExplodeEvent) {

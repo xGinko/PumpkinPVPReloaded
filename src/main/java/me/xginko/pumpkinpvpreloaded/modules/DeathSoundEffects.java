@@ -67,7 +67,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    private void onPrePumpkinExplode(PostPumpkinExplodeEvent event) {
+    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         this.pumpkinExplosions.put(event.getExplodeLocation(), event.getExplosionPower());
     }
 
