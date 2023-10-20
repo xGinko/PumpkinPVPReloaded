@@ -35,8 +35,8 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("attempt-to-correct-death-details", true,
-                "Lets the server know who killed who.");
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.attempt-to-correct-death-details", true,
+                "Tries to fill in the blanks so the server knows who killed who.");
     }
 
     @Override
@@ -50,12 +50,12 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
         this.pumpkinExploders.put(event.getExplodeLocation(), event.getExploder());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     private void onDamageByBlock(EntityDamageByBlockEvent event) {
         if (!event.getEntityType().equals(EntityType.PLAYER)) return;
         if (!event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) return;

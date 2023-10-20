@@ -38,7 +38,7 @@ public class PostPumpkinExplodeEvent extends Event {
     public @NotNull Player getExploder() {
         return exploder;
     }
-    public @NotNull Location getExplosionLocation() {
+    public @NotNull Location getExplodeLocation() {
         return explosionLocation;
     }
     public boolean hasExploded() {

@@ -1,6 +1,5 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
-import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
@@ -21,14 +20,10 @@ import java.util.Random;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
-    private final PumpkinPVPReloaded plugin;
-    private final RegionScheduler regionScheduler;
     private final List<FireworkEffect> fireWorkEffects = new ArrayList<>();
 
     protected FireworkEffects() {
         shouldEnable();
-        this.plugin = PumpkinPVPReloaded.getInstance();
-        this.regionScheduler = plugin.getServer().getRegionScheduler();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
         final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);
@@ -74,6 +69,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public void enable() {
+        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -85,7 +81,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPrePumpkinExplode(PostPumpkinExplodeEvent event) {
         if (!event.hasExploded()) return;
-        final Location explosionLoc = event.getExplosionLocation();
+        final Location explosionLoc = event.getExplodeLocation();
         Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
         FireworkMeta meta = firework.getFireworkMeta();
         meta.clearEffects();

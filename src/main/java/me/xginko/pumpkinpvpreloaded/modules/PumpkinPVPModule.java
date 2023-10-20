@@ -15,6 +15,7 @@ public interface PumpkinPVPModule {
         modules.clear();
 
         modules.add(new AdjustDamageInfo());
+        modules.add(new DeathSoundEffects());
         modules.add(new ExplodePumpkinOnShear());
         modules.add(new ExplodePumpkinOnClick());
         modules.add(new ExplodePumpkinOnPlace());
