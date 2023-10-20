@@ -60,7 +60,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
         if (!event.getEntityType().equals(EntityType.PLAYER)) return;
         if (!event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) return;
 
-        Player player = (Player) event.getEntity();
+        final Player player = (Player) event.getEntity();
         final Player exploder = getClosestPumpkinExploder(player.getLocation());
         if (exploder == null) return;
 

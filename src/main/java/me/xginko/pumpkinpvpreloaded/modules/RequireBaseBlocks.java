@@ -23,7 +23,9 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
         config.addComment("mechanics.base.require-for-explosion",
                 "If enabled, pumpkins will only explode when placed on one of the configured materials.");
         config.getList("mechanics.base.materials", List.of(
-                "CRYING_OBSIDIAN", "OBSIDIAN", "BEDROCK"
+                Material.BEDROCK.name(),
+                Material.OBSIDIAN.name(),
+                Material.CRYING_OBSIDIAN.name()
         ), "Values need to be valid material enums from bukkit."
         ).forEach(baseMaterial -> {
             try {

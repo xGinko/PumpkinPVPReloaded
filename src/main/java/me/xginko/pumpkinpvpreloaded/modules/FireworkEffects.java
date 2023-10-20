@@ -80,13 +80,14 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPrePumpkinExplode(PostPumpkinExplodeEvent event) {
-        if (!event.hasExploded()) return;
-        final Location explosionLoc = event.getExplodeLocation();
-        Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
-        FireworkMeta meta = firework.getFireworkMeta();
-        meta.clearEffects();
-        meta.addEffect(fireWorkEffects.get(new Random().nextInt(0, fireWorkEffects.size())));
-        firework.setFireworkMeta(meta);
-        firework.detonate();
+        if (event.hasExploded()) {
+            final Location explosionLoc = event.getExplodeLocation();
+            Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
+            FireworkMeta meta = firework.getFireworkMeta();
+            meta.clearEffects();
+            meta.addEffect(fireWorkEffects.get(new Random().nextInt(0, fireWorkEffects.size())));
+            firework.setFireworkMeta(meta);
+            firework.detonate();
+        }
     }
 }
