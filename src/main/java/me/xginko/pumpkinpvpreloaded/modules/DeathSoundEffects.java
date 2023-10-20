@@ -24,6 +24,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     private final List<Sound> deathSounds = new ArrayList<>();
 
     protected DeathSoundEffects() {
+        shouldEnable();
         this.pumpkinExploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
         PumpkinPVPReloaded.getConfiguration().getList("pumpkin-deaths.death-sound.sounds", List.of(
                 Sound.ENTITY_GOAT_SCREAMING_DEATH.name(),
