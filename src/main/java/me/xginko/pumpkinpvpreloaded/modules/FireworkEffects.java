@@ -57,8 +57,11 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 FireworkEffect.Type effectType = FireworkEffect.Type.valueOf(effect);
                 parsedColors.forEach(primary_color -> {
                     Color secondary_color = primary_color;
+                    int tries = 0; // Avoid infinite loop on bad config
                     while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
+                        if (tries > 20) break;
                         secondary_color = parsedColors.get(new Random().nextInt(0, parsedColors.size()));
+                        tries--;
                     }
                     this.fireWorkEffects.add(FireworkEffect.builder()
                             .withColor(primary_color, secondary_color)
