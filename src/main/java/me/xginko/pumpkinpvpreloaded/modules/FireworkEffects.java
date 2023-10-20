@@ -51,7 +51,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 halloweenColors.forEach(primary_color -> {
                     Color secondary_color = primary_color;
                     while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
-                        secondary_color = halloweenColors.get(new Random().nextInt(halloweenColors.size()));
+                        secondary_color = halloweenColors.get(new Random().nextInt(0, halloweenColors.size()));
                     }
                     this.fireWorkEffects.add(FireworkEffect.builder()
                             .withColor(primary_color, secondary_color)
@@ -86,13 +86,11 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     private void onPrePumpkinExplode(PostPumpkinExplodeEvent event) {
         if (!event.hasExploded()) return;
         final Location explosionLoc = event.getExplosionLocation();
-        regionScheduler.run(plugin, explosionLoc, fireworkEffect -> {
-            Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
-            FireworkMeta meta = firework.getFireworkMeta();
-            meta.clearEffects();
-            meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
-            firework.setFireworkMeta(meta);
-            firework.detonate();
-        });
+        Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
+        FireworkMeta meta = firework.getFireworkMeta();
+        meta.clearEffects();
+        meta.addEffect(fireWorkEffects.get(new Random().nextInt(0, fireWorkEffects.size())));
+        firework.setFireworkMeta(meta);
+        firework.detonate();
     }
 }
