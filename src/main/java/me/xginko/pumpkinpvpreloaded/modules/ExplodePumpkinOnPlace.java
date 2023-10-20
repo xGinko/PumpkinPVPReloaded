@@ -53,8 +53,7 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
         );
 
         if (!prePumpkinExplodeEvent.callEvent()) {
-            if (prePumpkinExplodeEvent.cancelPreceding())
-                event.setCancelled(true);
+            if (prePumpkinExplodeEvent.cancelPreceding()) event.setCancelled(true);
             return;
         }
 

@@ -70,16 +70,11 @@ public class ExplodePumpkinOnClick implements PumpkinPVPModule, Listener {
                 triggerAction
         );
 
-        if (prePumpkinExplodeEvent.callEvent()) {
-            scheduleExplosion(prePumpkinExplodeEvent);
+        if (!prePumpkinExplodeEvent.callEvent()) {
+            if (prePumpkinExplodeEvent.cancelPreceding()) event.setCancelled(true);
             return;
         }
 
-        if (prePumpkinExplodeEvent.cancelPreceding())
-            event.setCancelled(true);
-    }
-
-    private void scheduleExplosion(PrePumpkinExplodeEvent prePumpkinExplodeEvent) {
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
         regionScheduler.run(plugin, explodeLoc, kaboom -> {
