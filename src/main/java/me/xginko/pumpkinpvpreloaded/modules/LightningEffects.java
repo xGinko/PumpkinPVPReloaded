@@ -50,30 +50,30 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.LOW)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (!event.hasExploded()) return;
-        if (probability >= 1.0 || new Random().nextDouble() > probability) return;
+        if (probability >= 1 || new Random().nextDouble() <= probability) {
+            final UUID exploder = event.getExploder().getUniqueId();
+            final Location explosionLoc = event.getExplodeLocation();
 
-        final UUID exploder = event.getExploder().getUniqueId();
-        final Location explosionLoc = event.getExplodeLocation();
-
-        Player closestPlayer = null;
-        double distance = 100;
-        for (Player player : explosionLoc.getNearbyPlayers(6,6,6)) {
-            if (player.getUniqueId().equals(exploder)) continue;
-            double currentDistance = explosionLoc.distance(player.getLocation());
-            if (currentDistance < distance) {
-                closestPlayer = player;
-                distance = currentDistance;
+            Player closestPlayer = null;
+            double distance = 100;
+            for (Player player : explosionLoc.getNearbyPlayers(6, 6, 6)) {
+                if (player.getUniqueId().equals(exploder)) continue;
+                double currentDistance = explosionLoc.distance(player.getLocation());
+                if (currentDistance < distance) {
+                    closestPlayer = player;
+                    distance = currentDistance;
+                }
             }
+
+            if (closestPlayer == null) return;
+            final Location playerLoc = closestPlayer.getLocation();
+            final World world = playerLoc.getWorld();
+
+            closestPlayer.getScheduler().run(plugin, strike -> {
+                for (int i = 0; i < spawn_amount; i++) {
+                    (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
+                }
+            }, null);
         }
-
-        if (closestPlayer == null) return;
-        final Location playerLoc = closestPlayer.getLocation();
-        final World world = playerLoc.getWorld();
-
-        closestPlayer.getScheduler().run(plugin, strike -> {
-            for (int i = 0; i < spawn_amount; i++) {
-                (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
-            }
-        }, null);
     }
 }
