@@ -2,20 +2,34 @@ package me.xginko.pumpkinpvpreloaded;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import io.github.thatsmusic99.configurationmaster.api.ConfigSection;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 public class PumpkinPVPConfig {
 
     private final @NotNull ConfigFile config;
+    public final HashSet<Material> explosivePumpkins = new HashSet<>(2);
     public final float explosion_power;
     public final boolean explosion_set_fire, explosion_break_blocks;
 
     protected PumpkinPVPConfig() throws Exception {
         this.config = loadConfig(new File(PumpkinPVPReloaded.getInstance().getDataFolder(), "config.yml"));
+        getList("pumpkin-explosion.pumpkin-types", List.of(
+                Material.PUMPKIN.name(), Material.CARVED_PUMPKIN.name()
+        )).forEach(configuredMaterial -> {
+            try {
+                Material material = Material.valueOf(configuredMaterial);
+                this.explosivePumpkins.add(material);
+            } catch (IllegalArgumentException e) {
+                PumpkinPVPReloaded.getLog().warning("Material '"+configuredMaterial+"' cant be used as " +
+                        "an explosive pumpkin because its not a valid material.");
+            }
+        });
         this.explosion_power = getFloat("pumpkin-explosion.power", 8.0F,
                 "TNT has a power of 4.0");
         this.explosion_set_fire = getBoolean("pumpkin-explosion.set-fire", true,

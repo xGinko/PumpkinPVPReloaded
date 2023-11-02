@@ -1,6 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
-import com.destroystokyo.paper.MaterialTags;
+import io.papermc.paper.event.block.PlayerShearBlockEvent;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
@@ -20,10 +20,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 
+import java.util.HashSet;
+
 public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
 
     private final PumpkinPVPReloaded plugin;
     private final RegionScheduler regionScheduler;
+    private final HashSet<Material> pumpkins;
     private final boolean shears_take_durability;
     private final int dura_reduction;
 
@@ -31,6 +34,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
         this.plugin = PumpkinPVPReloaded.getInstance();
         this.regionScheduler = plugin.getServer().getRegionScheduler();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        this.pumpkins = config.explosivePumpkins;
         this.shears_take_durability = config.getBoolean("mechanics.explosion-triggers.shear-pumpkin.shears-take-durability", true);
         this.dura_reduction = config.getInt("mechanics.explosion-triggers.shear-pumpkin.dura-per-explosion", 1);
     }
@@ -55,7 +59,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
         final Block clicked = event.getClickedBlock();
-        if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
+        if (clicked == null || !pumpkins.contains(clicked.getType())) return;
         ItemStack interactItem = event.getItem();
         if (interactItem == null || !interactItem.getType().equals(Material.SHEARS)) return;
 
@@ -102,6 +106,58 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
                 interactItem.editMeta(Damageable.class, meta -> {
                     meta.setDamage(meta.hasDamage() ? meta.getDamage() + dura_reduction : dura_reduction);
                 });
+            }
+        });
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onShearBlock(PlayerShearBlockEvent event) {
+        final Block sheared = event.getBlock();
+        if (!pumpkins.contains(sheared.getType())) return;
+        ItemStack interactItem = event.getItem();
+        if (!interactItem.getType().equals(Material.SHEARS)) return;
+
+        final Player originalExploder = event.getPlayer();
+
+        PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
+                sheared,
+                originalExploder,
+                sheared.getLocation().toCenterLocation(),
+                TriggerAction.SHEAR
+        );
+
+        if (!prePumpkinExplodeEvent.callEvent()) {
+            event.setCancelled(prePumpkinExplodeEvent.cancelPreceding());
+            return;
+        }
+
+        final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
+
+        regionScheduler.run(plugin, explodeLoc, kaboom -> {
+            prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+
+            final float power = prePumpkinExplodeEvent.getExplodePower();
+            final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
+            final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
+
+            PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
+                    prePumpkinExplodeEvent.getExploder(),
+                    explodeLoc,
+                    power,
+                    fire,
+                    breakBlocks,
+                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
+                    TriggerAction.SHEAR
+            );
+
+            postPumpkinExplodeEvent.callEvent();
+
+            if (
+                    !shears_take_durability
+                    && postPumpkinExplodeEvent.hasExploded()
+                    && originalExploder.getUniqueId().equals(postPumpkinExplodeEvent.getExploder().getUniqueId())
+            ) {
+                event.setCancelled(true);
             }
         });
     }

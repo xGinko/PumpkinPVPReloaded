@@ -1,8 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
-import com.destroystokyo.paper.MaterialTags;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
@@ -14,25 +12,27 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ExplodePumpkinOnClick implements PumpkinPVPModule, Listener {
+import java.util.HashSet;
+
+public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
 
     private final PumpkinPVPReloaded plugin;
     private final RegionScheduler regionScheduler;
-    private final boolean triggerOnLeftClick, triggerOnRightClick;
+    private final HashSet<Material> pumpkins;
 
-    protected ExplodePumpkinOnClick() {
+    protected ExplodePumpkinOnLeftClick() {
         this.plugin = PumpkinPVPReloaded.getInstance();
         this.regionScheduler = plugin.getServer().getRegionScheduler();
-        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        this.triggerOnLeftClick = config.getBoolean("mechanics.explosion-triggers.left-click-pumpkin", true);
-        this.triggerOnRightClick = config.getBoolean("mechanics.explosion-triggers.right-click-pumpkin", false);
+        this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosivePumpkins;
     }
 
     @Override
     public boolean shouldEnable() {
-        return triggerOnLeftClick || triggerOnRightClick;
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.left-click-pumpkin", true);
     }
 
     @Override
@@ -47,27 +47,54 @@ public class ExplodePumpkinOnClick implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onBlockLeftClick(PlayerInteractEvent event) {
-        TriggerAction triggerAction;
-        switch (event.getAction()) {
-            case LEFT_CLICK_BLOCK -> {
-                if (!triggerOnLeftClick) return;
-                triggerAction = TriggerAction.LEFT_CLICK;
-            }
-            case RIGHT_CLICK_BLOCK -> {
-                if (!triggerOnRightClick) return;
-                triggerAction = TriggerAction.RIGHT_CLICK;
-            }
-            default -> { return; }
-        }
+        if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
 
         final Block clicked = event.getClickedBlock();
-        if (clicked == null || !MaterialTags.PUMPKINS.isTagged(clicked.getType())) return;
+        if (clicked == null || !pumpkins.contains(clicked.getType())) return;
 
         PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
                 clicked,
                 event.getPlayer(),
                 clicked.getLocation().toCenterLocation(),
-                triggerAction
+                TriggerAction.LEFT_CLICK
+        );
+
+        if (!prePumpkinExplodeEvent.callEvent()) {
+            if (prePumpkinExplodeEvent.cancelPreceding()) event.setCancelled(true);
+            return;
+        }
+
+        final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
+
+        regionScheduler.run(plugin, explodeLoc, kaboom -> {
+            prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+
+            final float power = prePumpkinExplodeEvent.getExplodePower();
+            final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
+            final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
+
+            new PostPumpkinExplodeEvent(
+                    prePumpkinExplodeEvent.getExploder(),
+                    explodeLoc,
+                    power,
+                    fire,
+                    breakBlocks,
+                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
+                    prePumpkinExplodeEvent.getTriggerAction()
+            ).callEvent();
+        });
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onBlockBreak(BlockBreakEvent event) {
+        final Block broken = event.getBlock();
+        if (!pumpkins.contains(broken.getType())) return;
+
+        PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
+                broken,
+                event.getPlayer(),
+                broken.getLocation().toCenterLocation(),
+                TriggerAction.LEFT_CLICK
         );
 
         if (!prePumpkinExplodeEvent.callEvent()) {
