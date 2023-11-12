@@ -26,11 +26,11 @@ import java.util.Map;
 public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
     private final Cache<Location, Player> pumpkinExploders;
-    private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> placeholderModifier;
+    private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> emptyDamageModifierMap;
 
     protected AdjustDamageInfo() {
         this.pumpkinExploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
-        this.placeholderModifier = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
+        this.emptyDamageModifierMap = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
                 player,
                 EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
                 new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
-                placeholderModifier,
+                emptyDamageModifierMap,
                 true
         );
 
