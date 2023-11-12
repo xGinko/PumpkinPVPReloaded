@@ -3,7 +3,6 @@ version: '${project.version}'
 main: me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded
 api-version: '1.19'
 prefix: PumpkinPVP
-load: STARTUP
 authors: [xGinko]
 description: ${project.description}
 website: ${project.url}

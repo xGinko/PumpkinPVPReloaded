@@ -13,7 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashSet;
@@ -56,44 +55,6 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
                 clicked,
                 event.getPlayer(),
                 clicked.getLocation().toCenterLocation(),
-                TriggerAction.LEFT_CLICK
-        );
-
-        if (!prePumpkinExplodeEvent.callEvent()) {
-            if (prePumpkinExplodeEvent.cancelPreceding()) event.setCancelled(true);
-            return;
-        }
-
-        final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
-
-        regionScheduler.run(plugin, explodeLoc, kaboom -> {
-            prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
-
-            final float power = prePumpkinExplodeEvent.getExplodePower();
-            final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
-            final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
-
-            new PostPumpkinExplodeEvent(
-                    prePumpkinExplodeEvent.getExploder(),
-                    explodeLoc,
-                    power,
-                    fire,
-                    breakBlocks,
-                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
-                    prePumpkinExplodeEvent.getTriggerAction()
-            ).callEvent();
-        });
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onBlockBreak(BlockBreakEvent event) {
-        final Block broken = event.getBlock();
-        if (!pumpkins.contains(broken.getType())) return;
-
-        PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                broken,
-                event.getPlayer(),
-                broken.getLocation().toCenterLocation(),
                 TriggerAction.LEFT_CLICK
         );
 

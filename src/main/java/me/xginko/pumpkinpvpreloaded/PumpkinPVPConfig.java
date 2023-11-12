@@ -20,7 +20,7 @@ public class PumpkinPVPConfig {
     protected PumpkinPVPConfig() throws Exception {
         this.config = loadConfig(new File(PumpkinPVPReloaded.getInstance().getDataFolder(), "config.yml"));
         getList("pumpkin-explosion.pumpkin-types", List.of(
-                Material.PUMPKIN.name(), Material.CARVED_PUMPKIN.name()
+                Material.PUMPKIN.name(), Material.CARVED_PUMPKIN.name(), Material.JACK_O_LANTERN.name()
         )).forEach(configuredMaterial -> {
             try {
                 Material material = Material.valueOf(configuredMaterial);

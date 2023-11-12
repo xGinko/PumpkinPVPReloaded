@@ -33,8 +33,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
                 Sound.ENTITY_RAVAGER_DEATH.name(),
                 Sound.ENTITY_SKELETON_HORSE_DEATH.name(),
                 Sound.ENTITY_WARDEN_DEATH.name(),
-                Sound.ENTITY_WITCH_CELEBRATE.name(),
-                Sound.ENTITY_WITHER_DEATH.name()
+                Sound.ENTITY_WITCH_CELEBRATE.name()
         ), """
                 Use multiple entries to randomly cycle through a list of sounds or just one.
                 Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html
