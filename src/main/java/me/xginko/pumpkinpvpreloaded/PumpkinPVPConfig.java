@@ -13,7 +13,7 @@ import java.util.Map;
 public class PumpkinPVPConfig {
 
     private final @NotNull ConfigFile config;
-    public final HashSet<Material> explosivePumpkins = new HashSet<>(2);
+    public final HashSet<Material> explosivePumpkins = new HashSet<>(3);
     public final float explosion_power;
     public final boolean explosion_set_fire, explosion_break_blocks;
 
