@@ -70,7 +70,7 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
         PrePumpkinHeadEntityExplodeEvent preHotHeadEvent = new PrePumpkinHeadEntityExplodeEvent(
                 dying,
                 dying.getKiller(),
-                dying.getLocation().clone().add(0,1,0).toCenterLocation()
+                dying.getEyeLocation()
         );
 
         if (!preHotHeadEvent.callEvent()) return;
