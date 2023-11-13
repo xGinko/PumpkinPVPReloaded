@@ -1,8 +1,10 @@
-package me.xginko.pumpkinpvpreloaded.modules;
+package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -20,7 +22,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     private final List<FireworkEffect> fireWorkEffects = new ArrayList<>();
     private boolean has_enough_colors = true;
 
-    protected FireworkEffects() {
+    public FireworkEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         List<Color> parsedColors = new ArrayList<>();
@@ -95,7 +97,20 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    private void onPrePumpkinExplode(PostPumpkinExplodeEvent event) {
+    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
+        if (event.hasExploded()) {
+            final Location explosionLoc = event.getExplodeLocation();
+            Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
+            FireworkMeta meta = firework.getFireworkMeta();
+            meta.clearEffects();
+            meta.addEffect(fireWorkEffects.get(new Random().nextInt(0, fireWorkEffects.size())));
+            firework.setFireworkMeta(meta);
+            firework.detonate();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
         if (event.hasExploded()) {
             final Location explosionLoc = event.getExplodeLocation();
             Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);

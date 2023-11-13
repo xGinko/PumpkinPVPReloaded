@@ -1,8 +1,10 @@
-package me.xginko.pumpkinpvpreloaded.modules;
+package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -10,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 import java.util.UUID;
@@ -21,7 +24,7 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
     private final int spawn_amount, flashcount;
     private final double probability;
 
-    protected LightningEffects() {
+    public LightningEffects() {
         shouldEnable();
         this.plugin = PumpkinPVPReloaded.getInstance();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
@@ -49,31 +52,38 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
-        if (!event.hasExploded()) return;
-        if (probability >= 1 || new Random().nextDouble() <= probability) {
-            final UUID exploder = event.getExploder().getUniqueId();
-            final Location explosionLoc = event.getExplodeLocation();
-
-            Player closestPlayer = null;
-            double distance = 100;
-            for (Player player : explosionLoc.getNearbyPlayers(6, 6, 6)) {
-                if (player.getUniqueId().equals(exploder)) continue;
-                double currentDistance = explosionLoc.distance(player.getLocation());
-                if (currentDistance < distance) {
-                    closestPlayer = player;
-                    distance = currentDistance;
-                }
-            }
-
-            if (closestPlayer == null) return;
-            final Location playerLoc = closestPlayer.getLocation();
-            final World world = playerLoc.getWorld();
-
-            closestPlayer.getScheduler().run(plugin, strike -> {
-                for (int i = 0; i < spawn_amount; i++) {
-                    (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
-                }
-            }, null);
+        if (event.hasExploded() && (probability >= 1 || new Random().nextDouble() <= probability)) {
+            strikeLightning(event.getExploder().getUniqueId(), event.getExplodeLocation());
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
+        if (event.hasExploded() && (probability >= 1 || new Random().nextDouble() <= probability)) {
+            strikeLightning(event.getKiller() != null ? event.getKiller().getUniqueId() : null, event.getExplodeLocation());
+        }
+    }
+
+    private void strikeLightning(@Nullable final UUID exploder, final Location explosionLoc) {
+        Player closestPlayer = null;
+        double distance = 100;
+        for (Player player : explosionLoc.getNearbyPlayers(6, 6, 6)) {
+            if (exploder != null && player.getUniqueId().equals(exploder)) continue;
+            double currentDistance = explosionLoc.distance(player.getLocation());
+            if (currentDistance < distance) {
+                closestPlayer = player;
+                distance = currentDistance;
+            }
+        }
+
+        if (closestPlayer == null) return;
+
+        final Location playerLoc = closestPlayer.getLocation();
+        final World world = playerLoc.getWorld();
+        closestPlayer.getScheduler().run(plugin, strike -> {
+            for (int i = 0; i < spawn_amount; i++) {
+                (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
+            }
+        }, null);
     }
 }

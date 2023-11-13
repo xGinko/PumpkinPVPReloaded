@@ -1,37 +1,47 @@
-package me.xginko.pumpkinpvpreloaded.modules;
+package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 
 import java.util.HashSet;
 
-public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
+public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
 
     private final PumpkinPVPReloaded plugin;
     private final RegionScheduler regionScheduler;
     private final HashSet<Material> pumpkins;
+    private final boolean shears_take_durability;
+    private final int dura_reduction;
 
-    protected ExplodePumpkinOnRightClick() {
+    public ExplodePumpkinOnShear() {
         this.plugin = PumpkinPVPReloaded.getInstance();
         this.regionScheduler = plugin.getServer().getRegionScheduler();
-        this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosivePumpkins;
+        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        this.pumpkins = config.explosivePumpkins;
+        this.shears_take_durability = config.getBoolean("mechanics.explosion-triggers.shear-pumpkin.shears-take-durability", true);
+        this.dura_reduction = config.getInt("mechanics.explosion-triggers.shear-pumpkin.dura-per-explosion", 1);
     }
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.right-click-pumpkin", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.shear-pumpkin.enable", false);
     }
 
     @Override
@@ -50,16 +60,21 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
 
         final Block clicked = event.getClickedBlock();
         if (clicked == null || !pumpkins.contains(clicked.getType())) return;
+        ItemStack interactItem = event.getItem();
+        if (interactItem == null || !interactItem.getType().equals(Material.SHEARS)) return;
+
+        if (!shears_take_durability) event.setCancelled(true); // Don't cause natural shear behavior
+        final Player originalExploder = event.getPlayer();
 
         PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
                 clicked,
-                event.getPlayer(),
+                originalExploder,
                 clicked.getLocation().toCenterLocation(),
-                TriggerAction.RIGHT_CLICK
+                TriggerAction.SHEAR
         );
 
         if (!prePumpkinExplodeEvent.callEvent()) {
-            if (prePumpkinExplodeEvent.cancelPreceding()) event.setCancelled(true);
+            event.setCancelled(prePumpkinExplodeEvent.cancelPreceding());
             return;
         }
 
@@ -72,15 +87,27 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
             final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
             final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
 
-            new PostPumpkinExplodeEvent(
+            PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,
                     power,
                     fire,
                     breakBlocks,
                     explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
-                    prePumpkinExplodeEvent.getTriggerAction()
-            ).callEvent();
+                    TriggerAction.SHEAR
+            );
+
+            postPumpkinExplodeEvent.callEvent();
+
+            if (
+                    shears_take_durability
+                    && postPumpkinExplodeEvent.hasExploded()
+                    && originalExploder.getUniqueId().equals(postPumpkinExplodeEvent.getExploder().getUniqueId())
+            ) {
+                interactItem.editMeta(Damageable.class, meta -> {
+                    meta.setDamage(meta.hasDamage() ? meta.getDamage() + dura_reduction : dura_reduction);
+                });
+            }
         });
     }
 }

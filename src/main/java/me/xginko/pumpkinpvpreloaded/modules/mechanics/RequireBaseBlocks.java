@@ -1,8 +1,9 @@
-package me.xginko.pumpkinpvpreloaded.modules;
+package me.xginko.pumpkinpvpreloaded.modules.mechanics;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -17,11 +18,11 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
     private final HashSet<Material> base_materials = new HashSet<>(3);
 
-    protected RequireBaseBlocks() {
+    public RequireBaseBlocks() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.addComment("mechanics.base.require-for-explosion",
-                "If enabled, pumpkins will only explode when placed on one of the configured materials.");
+        config.addComment("mechanics.require-specific-base-block.enable",
+                "If enabled, pumpkins will only explode when placed on one of the configured materials (like end crystals).");
         config.getList("mechanics.base.materials", List.of(
                 Material.BEDROCK.name(),
                 Material.OBSIDIAN.name(),
@@ -39,7 +40,7 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.base.require-for-explosion", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.require-specific-base-block.enable", false);
     }
 
     @Override

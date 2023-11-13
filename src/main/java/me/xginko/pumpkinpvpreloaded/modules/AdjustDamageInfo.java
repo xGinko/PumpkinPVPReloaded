@@ -7,8 +7,10 @@ import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PrePumpkinHeadEntityExplodeEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,7 +27,7 @@ import java.util.Map;
 
 public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
-    private final Cache<Location, Player> pumpkinExploders;
+    private final Cache<Location, LivingEntity> pumpkinExploders;
     private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> emptyDamageModifierMap;
 
     protected AdjustDamageInfo() {
@@ -56,17 +58,22 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    private void onPrePumpkinHeadExplode(PrePumpkinHeadEntityExplodeEvent event) {
+        this.pumpkinExploders.put(event.getExplodeLocation(), event.getPumpkinHeadEntity());
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     private void onDamageByBlock(EntityDamageByBlockEvent event) {
         if (!event.getEntityType().equals(EntityType.PLAYER)) return;
         if (!event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) return;
 
-        final Player player = (Player) event.getEntity();
-        final Player exploder = getClosestPumpkinExploder(player.getLocation());
+        final Player damagedPlayer = (Player) event.getEntity();
+        final LivingEntity exploder = getClosestPumpkinExploder(damagedPlayer.getLocation());
         if (exploder == null) return;
 
         final EntityDamageByEntityEvent damageByExploder = new EntityDamageByEntityEvent(
                 exploder,
-                player,
+                damagedPlayer,
                 EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
                 new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
                 emptyDamageModifierMap,
@@ -78,15 +85,16 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
             return;
         }
 
-        player.setLastDamageCause(damageByExploder);
-        player.setKiller(exploder);
+        damagedPlayer.setLastDamageCause(damageByExploder);
+        if (exploder.getType().equals(EntityType.PLAYER))
+            damagedPlayer.setKiller((Player) exploder);
     }
 
-    private @Nullable Player getClosestPumpkinExploder(Location playerLoc) {
+    private @Nullable LivingEntity getClosestPumpkinExploder(Location playerLoc) {
         double distance = 50.0;
-        Player closestExploder = null;
+        LivingEntity closestExploder = null;
 
-        for (Map.Entry<Location, Player> explosion : this.pumpkinExploders.asMap().entrySet()) {
+        for (Map.Entry<Location, LivingEntity> explosion : this.pumpkinExploders.asMap().entrySet()) {
             final Location explosionLoc = explosion.getKey();
             if (explosionLoc.getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
                 final double currentDistance = playerLoc.distance(explosionLoc);

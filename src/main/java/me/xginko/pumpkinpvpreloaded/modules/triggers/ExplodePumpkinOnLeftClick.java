@@ -1,10 +1,11 @@
-package me.xginko.pumpkinpvpreloaded.modules;
+package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -23,7 +24,7 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
     private final RegionScheduler regionScheduler;
     private final HashSet<Material> pumpkins;
 
-    protected ExplodePumpkinOnLeftClick() {
+    public ExplodePumpkinOnLeftClick() {
         this.plugin = PumpkinPVPReloaded.getInstance();
         this.regionScheduler = plugin.getServer().getRegionScheduler();
         this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosivePumpkins;
