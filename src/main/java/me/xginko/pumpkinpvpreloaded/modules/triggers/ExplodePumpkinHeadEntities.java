@@ -77,18 +77,13 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
         final Location explodeLoc = preHotHeadEvent.getExplodeLocation();
 
         regionScheduler.run(plugin, explodeLoc, kaboom -> {
-            final float power = preHotHeadEvent.getExplodePower();
-            final boolean fire = preHotHeadEvent.shouldSetFire();
-            final boolean breakBlocks = preHotHeadEvent.shouldBreakBlocks();
-
             new PostPumpkinHeadEntityExplodeEvent(
                     preHotHeadEvent.getPumpkinHeadEntity(),
                     preHotHeadEvent.getKiller(),
                     explodeLoc,
-                    power,
-                    fire,
-                    breakBlocks,
-                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks)
+                    preHotHeadEvent.getExplodePower(),
+                    preHotHeadEvent.shouldSetFire(),
+                    preHotHeadEvent.shouldBreakBlocks()
             ).callEvent();
         });
     }

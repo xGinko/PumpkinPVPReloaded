@@ -48,7 +48,6 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onBlockLeftClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
-
         final Block clicked = event.getClickedBlock();
         if (clicked == null || !pumpkins.contains(clicked.getType())) return;
 
@@ -69,18 +68,13 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
         regionScheduler.run(plugin, explodeLoc, kaboom -> {
             prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
 
-            final float power = prePumpkinExplodeEvent.getExplodePower();
-            final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
-            final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
-
             new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,
-                    power,
-                    fire,
-                    breakBlocks,
-                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
-                    prePumpkinExplodeEvent.getTriggerAction()
+                    prePumpkinExplodeEvent.getExplodePower(),
+                    prePumpkinExplodeEvent.shouldSetFire(),
+                    prePumpkinExplodeEvent.shouldBreakBlocks(),
+                    TriggerAction.LEFT_CLICK
             ).callEvent();
         });
     }

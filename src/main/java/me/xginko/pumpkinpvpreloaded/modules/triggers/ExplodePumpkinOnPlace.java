@@ -66,17 +66,12 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
         regionScheduler.run(plugin, explodeLoc, kaboom -> {
             prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
 
-            final float power = prePumpkinExplodeEvent.getExplodePower();
-            final boolean fire = prePumpkinExplodeEvent.shouldSetFire();
-            final boolean breakBlocks = prePumpkinExplodeEvent.shouldBreakBlocks();
-
             new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,
-                    power,
-                    fire,
-                    breakBlocks,
-                    explodeLoc.getWorld().createExplosion(explodeLoc, power, fire, breakBlocks),
+                    prePumpkinExplodeEvent.getExplodePower(),
+                    prePumpkinExplodeEvent.shouldSetFire(),
+                    prePumpkinExplodeEvent.shouldBreakBlocks(),
                     TriggerAction.BLOCK_PLACE
             ).callEvent();
         });
