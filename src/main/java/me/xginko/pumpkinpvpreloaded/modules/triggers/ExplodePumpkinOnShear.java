@@ -55,7 +55,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onBlockLeftClick(PlayerInteractEvent event) {
+    private void onBlockRightClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
         final Block clicked = event.getClickedBlock();
