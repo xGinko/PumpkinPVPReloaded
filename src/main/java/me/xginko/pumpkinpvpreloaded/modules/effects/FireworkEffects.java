@@ -107,7 +107,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.clearEffects();
-            meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
+            meta.addEffect(this.getRandomEffect());
             firework.setFireworkMeta(meta);
             firework.detonate();
         }
@@ -120,9 +120,14 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.clearEffects();
-            meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
+            meta.addEffect(this.getRandomEffect());
             firework.setFireworkMeta(meta);
             firework.detonate();
         }
+    }
+
+    private FireworkEffect getRandomEffect() {
+        // Try to get a 0 naturally without having an origin value in Random (I hate using old jdk's)
+        return this.fireWorkEffects.get(new Random().nextInt(this.fireWorkEffects.size() + 1) - 1);
     }
 }
