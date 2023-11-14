@@ -1,5 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.ServerImplementation;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
@@ -19,14 +21,16 @@ import java.util.UUID;
 
 public class LightningEffects implements PumpkinPVPModule, Listener {
 
-    private final PumpkinPVPReloaded plugin;
-    private final boolean deal_damage;
+    private final ServerImplementation scheduler;
+    private final boolean isFolia, deal_damage;
     private final int spawn_amount, flashcount;
     private final double probability;
 
     public LightningEffects() {
         shouldEnable();
-        this.plugin = PumpkinPVPReloaded.getInstance();
+        FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
+        this.isFolia = foliaLib.isFolia();
+        this.scheduler = isFolia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         config.addComment("pumpkin-explosion.lightning-effects", "Will strike the closest player with lightning.");
         this.deal_damage = config.getBoolean("pumpkin-explosion.lightning-effects.deal-damage", true);
@@ -42,6 +46,7 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public void enable() {
+        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -77,13 +82,19 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
         }
 
         if (closestPlayer == null) return;
-
         final Location playerLoc = closestPlayer.getLocation();
         final World world = playerLoc.getWorld();
-        closestPlayer.getScheduler().run(plugin, strike -> {
+
+        if (isFolia) {
+            scheduler.runAtEntity(closestPlayer, strike -> {
+                for (int i = 0; i < spawn_amount; i++) {
+                    (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
+                }
+            });
+        } else {
             for (int i = 0; i < spawn_amount; i++) {
                 (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
             }
-        }, null);
+        }
     }
 }

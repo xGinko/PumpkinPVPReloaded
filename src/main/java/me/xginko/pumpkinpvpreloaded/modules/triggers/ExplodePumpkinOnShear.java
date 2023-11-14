@@ -1,6 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
-import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.ServerImplementation;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
@@ -19,20 +20,21 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashSet;
 
 public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
 
-    private final PumpkinPVPReloaded plugin;
-    private final RegionScheduler regionScheduler;
+    private final ServerImplementation scheduler;
     private final HashSet<Material> pumpkins;
-    private final boolean shears_take_durability;
+    private final boolean isFolia, shears_take_durability;
     private final int dura_reduction;
 
     public ExplodePumpkinOnShear() {
-        this.plugin = PumpkinPVPReloaded.getInstance();
-        this.regionScheduler = plugin.getServer().getRegionScheduler();
+        FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
+        this.isFolia = foliaLib.isFolia();
+        this.scheduler = isFolia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.pumpkins = config.explosivePumpkins;
         this.shears_take_durability = config.getBoolean("mechanics.explosion-triggers.shear-pumpkin.shears-take-durability", true);
@@ -46,6 +48,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
 
     @Override
     public void enable() {
+        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -80,9 +83,33 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
-        regionScheduler.run(plugin, explodeLoc, kaboom -> {
-            prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+        if (isFolia) {
+            scheduler.runAtLocation(explodeLoc, kaboom -> {
+                prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+                PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
+                        prePumpkinExplodeEvent.getExploder(),
+                        explodeLoc,
+                        prePumpkinExplodeEvent.getExplodePower(),
+                        prePumpkinExplodeEvent.shouldSetFire(),
+                        prePumpkinExplodeEvent.shouldBreakBlocks(),
+                        TriggerAction.SHEAR
+                );
 
+                postPumpkinExplodeEvent.callEvent();
+
+                if (
+                        shears_take_durability
+                        && postPumpkinExplodeEvent.hasExploded()
+                        && originalExploder.getUniqueId().equals(postPumpkinExplodeEvent.getExploder().getUniqueId())
+                ) {
+                    ItemMeta meta = interactItem.getItemMeta();
+                    Damageable damageable = (Damageable) meta;
+                    damageable.setDamage(damageable.hasDamage() ? damageable.getDamage() + dura_reduction : dura_reduction);
+                    interactItem.setItemMeta(meta);
+                }
+            });
+        } else {
+            prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
             PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,
@@ -99,10 +126,11 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
                     && postPumpkinExplodeEvent.hasExploded()
                     && originalExploder.getUniqueId().equals(postPumpkinExplodeEvent.getExploder().getUniqueId())
             ) {
-                interactItem.editMeta(Damageable.class, meta -> {
-                    meta.setDamage(meta.hasDamage() ? meta.getDamage() + dura_reduction : dura_reduction);
-                });
+                ItemMeta meta = interactItem.getItemMeta();
+                Damageable damageable = (Damageable) meta;
+                damageable.setDamage(damageable.hasDamage() ? damageable.getDamage() + dura_reduction : dura_reduction);
+                interactItem.setItemMeta(meta);
             }
-        });
+        }
     }
 }

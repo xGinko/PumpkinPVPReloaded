@@ -34,14 +34,14 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
                 "Players dying to a pumpkin explosion will make a spooky configurable sound.");
         this.volume = config.getFloat("pumpkin-deaths.death-sound.volume", -1.0F, "-1 means default settings.");
         this.pumpkinExplosions = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
-        PumpkinPVPReloaded.getConfiguration().getList("pumpkin-deaths.death-sound.sounds", List.of(
-                Sound.ENTITY_GOAT_SCREAMING_DEATH.name(),
-                Sound.ENTITY_HOGLIN_DEATH.name(),
-                Sound.ENTITY_PHANTOM_DEATH.name(),
-                Sound.ENTITY_RAVAGER_DEATH.name(),
-                Sound.ENTITY_SKELETON_HORSE_DEATH.name(),
-                Sound.ENTITY_WARDEN_DEATH.name(),
-                Sound.ENTITY_WITCH_CELEBRATE.name()
+        config.getList("pumpkin-deaths.death-sound.sounds", List.of(
+                "ENTITY_HOGLIN_DEATH",
+                "ENTITY_PHANTOM_DEATH",
+                "ENTITY_RAVAGER_DEATH",
+                "ENTITY_SKELETON_HORSE_DEATH",
+                "ENTITY_WITCH_CELEBRATE",
+                "ENTITY_GOAT_SCREAMING_DEATH",
+                "ENTITY_WARDEN_DEATH"
         ), """
                 Use multiple entries to randomly cycle through a list of sounds or just one.
                 Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html
@@ -89,7 +89,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlayerDeath(PlayerDeathEvent event) {
-        if (isNearPumpkinExplosion(event.getPlayer().getLocation())) {
+        if (isNearPumpkinExplosion(event.getEntity().getLocation())) {
             event.setDeathSound(this.deathSounds.get(new Random().nextInt(0, this.deathSounds.size())));
             if (volume != -1.0F) event.setDeathSoundVolume(volume);
         }

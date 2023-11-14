@@ -1,6 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
-import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.ServerImplementation;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
@@ -20,13 +21,14 @@ import java.util.HashSet;
 
 public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
 
-    private final PumpkinPVPReloaded plugin;
-    private final RegionScheduler regionScheduler;
+    private final ServerImplementation scheduler;
     private final HashSet<Material> pumpkins;
+    private final boolean isFolia;
 
     public ExplodePumpkinOnRightClick() {
-        this.plugin = PumpkinPVPReloaded.getInstance();
-        this.regionScheduler = plugin.getServer().getRegionScheduler();
+        FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
+        this.isFolia = foliaLib.isFolia();
+        this.scheduler = isFolia ? foliaLib.getImpl() : null;
         this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosivePumpkins;
     }
 
@@ -37,6 +39,7 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
 
     @Override
     public void enable() {
+        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -65,9 +68,20 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
-        regionScheduler.run(plugin, explodeLoc, kaboom -> {
+        if (isFolia) {
+            scheduler.runAtLocation(explodeLoc, kaboom -> {
+                prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+                new PostPumpkinExplodeEvent(
+                        prePumpkinExplodeEvent.getExploder(),
+                        explodeLoc,
+                        prePumpkinExplodeEvent.getExplodePower(),
+                        prePumpkinExplodeEvent.shouldSetFire(),
+                        prePumpkinExplodeEvent.shouldBreakBlocks(),
+                        TriggerAction.RIGHT_CLICK
+                ).callEvent();
+            });
+        } else {
             prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
-
             new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,
@@ -76,6 +90,6 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
                     prePumpkinExplodeEvent.shouldBreakBlocks(),
                     TriggerAction.RIGHT_CLICK
             ).callEvent();
-        });
+        }
     }
 }

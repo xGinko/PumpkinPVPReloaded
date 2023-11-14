@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded;
 
+import com.tcoded.folialib.FoliaLib;
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.PumpkinPVPCommand;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import net.kyori.adventure.text.Component;
@@ -9,7 +10,6 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,7 +31,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         final Style bold_green = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(163,235,30)).build();
         final Style bold_orange = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(254,78,0)).build();
         final Style bold_yellow = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(242,195,89)).build();
-        final TextComponent prefix = Component.text("["+instance.getPluginMeta().getLoggerPrefix()+"] ").color(NamedTextColor.WHITE);
+        final TextComponent prefix = Component.text("["+instance.getDescription().getPrefix()+"] ").color(NamedTextColor.WHITE);
         final ConsoleCommandSender console = instance.getServer().getConsoleSender();
         List.of(
                 Component.empty(),
@@ -71,11 +71,11 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public static PumpkinPVPReloaded getInstance() {
         return instance;
     }
-    public static NamespacedKey getKey(String key) {
-        return new NamespacedKey(instance, key);
-    }
     public static PumpkinPVPConfig getConfiguration() {
         return config;
+    }
+    public static FoliaLib getFoliaLib() {
+        return new FoliaLib(instance);
     }
     public static Logger getLog() {
         return logger;

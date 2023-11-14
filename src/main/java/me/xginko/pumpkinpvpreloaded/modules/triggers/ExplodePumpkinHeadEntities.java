@@ -1,6 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
-import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.ServerImplementation;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
@@ -22,15 +23,15 @@ import java.util.HashSet;
 
 public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
 
-    private final PumpkinPVPReloaded plugin;
-    private final RegionScheduler regionScheduler;
+    private final ServerImplementation scheduler;
     private final HashSet<Material> pumpkins;
-    private final boolean explode_players, only_killed_by_player;
+    private final boolean isFolia, explode_players, only_killed_by_player;
 
     public ExplodePumpkinHeadEntities() {
         shouldEnable();
-        this.plugin = PumpkinPVPReloaded.getInstance();
-        this.regionScheduler = plugin.getServer().getRegionScheduler();
+        FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
+        this.isFolia = foliaLib.isFolia();
+        this.scheduler = isFolia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.pumpkins = config.explosivePumpkins;
         config.addComment("mechanics.explosion-triggers.pumpkin-head-entity-kill.enable",
@@ -76,7 +77,18 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
         if (!preHotHeadEvent.callEvent()) return;
         final Location explodeLoc = preHotHeadEvent.getExplodeLocation();
 
-        regionScheduler.run(plugin, explodeLoc, kaboom -> {
+        if (isFolia) {
+            scheduler.runAtLocation(explodeLoc, kaboom -> {
+                new PostPumpkinHeadEntityExplodeEvent(
+                        preHotHeadEvent.getPumpkinHeadEntity(),
+                        preHotHeadEvent.getKiller(),
+                        explodeLoc,
+                        preHotHeadEvent.getExplodePower(),
+                        preHotHeadEvent.shouldSetFire(),
+                        preHotHeadEvent.shouldBreakBlocks()
+                ).callEvent();
+            });
+        } else {
             new PostPumpkinHeadEntityExplodeEvent(
                     preHotHeadEvent.getPumpkinHeadEntity(),
                     preHotHeadEvent.getKiller(),
@@ -85,6 +97,6 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
                     preHotHeadEvent.shouldSetFire(),
                     preHotHeadEvent.shouldBreakBlocks()
             ).callEvent();
-        });
+        }
     }
 }

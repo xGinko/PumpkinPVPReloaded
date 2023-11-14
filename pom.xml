@@ -14,7 +14,7 @@
     <url>github.com/xGinko/PumpkinPVPReloaded</url>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -42,6 +42,10 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
+                                <relocation>
+                                    <pattern>com.tcoded.folialib</pattern>
+                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.folialib</shadedPattern>
+                                </relocation>
                                 <relocation>
                                     <pattern>com.github.benmanes.caffeine</pattern>
                                     <shadedPattern>me.xginko.pumpkinpvpreloaded.caffeine</shadedPattern>
@@ -85,15 +89,24 @@
             <id>configmaster-repo</id>
             <url>https://ci.pluginwiki.us/plugin/repository/everything/</url>
         </repository>
-
+        <repository>
+            <id>folialib-repo</id>
+            <url>https://nexuslite.gcnt.net/repos/other/</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
+            <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tcoded</groupId>
+            <artifactId>FoliaLib</artifactId>
+            <version>0.3.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.thatsmusic99</groupId>
