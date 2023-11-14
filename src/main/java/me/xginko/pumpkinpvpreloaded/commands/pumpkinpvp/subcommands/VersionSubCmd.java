@@ -1,6 +1,5 @@
 package me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands;
 
-import io.papermc.paper.plugin.configuration.PluginMeta;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.commands.SubCommand;
 import net.kyori.adventure.text.Component;
@@ -8,6 +7,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.PluginDescriptionFile;
 
 public class VersionSubCmd extends SubCommand {
 
@@ -30,7 +30,7 @@ public class VersionSubCmd extends SubCommand {
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission("pumpkinpvp.cmd.version")) return;
 
-        final PluginMeta pluginMeta = PumpkinPVPReloaded.getInstance().getPluginMeta();
+        final PluginDescriptionFile pluginMeta = PumpkinPVPReloaded.getInstance().getDescription();
 
         sender.sendMessage(
                 Component.newline()
