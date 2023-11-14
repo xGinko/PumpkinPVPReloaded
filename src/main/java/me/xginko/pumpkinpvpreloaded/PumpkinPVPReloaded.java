@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -53,6 +54,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
 
         reloadConfiguration();
         getCommand("pumpkinpvp").setExecutor(new PumpkinPVPCommand());
+        new Metrics(this, 20296);
     }
 
     public void reloadConfiguration() {

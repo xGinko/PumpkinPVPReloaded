@@ -6,7 +6,7 @@
 
     <groupId>me.xginko</groupId>
     <artifactId>PumpkinPVPReloaded</artifactId>
-    <version>1.4.2</version>
+    <version>1.5.0</version>
     <packaging>jar</packaging>
 
     <name>PumpkinPVPReloaded</name>
@@ -46,6 +46,10 @@
                                     <pattern>com.github.benmanes.caffeine</pattern>
                                     <shadedPattern>me.xginko.pumpkinpvpreloaded.caffeine</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.bstats</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -81,6 +85,7 @@
             <id>configmaster-repo</id>
             <url>https://ci.pluginwiki.us/plugin/repository/everything/</url>
         </repository>
+
     </repositories>
 
     <dependencies>
@@ -100,6 +105,12 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>3.1.8</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
