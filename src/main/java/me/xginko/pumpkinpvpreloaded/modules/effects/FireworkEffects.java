@@ -25,7 +25,6 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     public FireworkEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        List<Color> parsedColors = new ArrayList<>();
         List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", List.of(
                 "FFAE03",   // Pumpkin Light Orange
                 "FE4E00",   // Pumpkin Dark Orange
@@ -37,6 +36,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             PumpkinPVPReloaded.getLog().severe("You need to configure at least 2 colors. Disabling firework effects.");
             has_enough_colors = false;
         }
+        List<Color> parsedColors = new ArrayList<>();
         configuredColors.forEach(hexString -> {
             try {
                 int rgb = HexFormat.fromHexDigits(hexString);

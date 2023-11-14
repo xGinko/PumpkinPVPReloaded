@@ -2,9 +2,17 @@ package me.xginko.pumpkinpvpreloaded;
 
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.PumpkinPVPCommand;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public final class PumpkinPVPReloaded extends JavaPlugin {
@@ -17,6 +25,32 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public void onEnable() {
         instance = this;
         logger = getLogger();
+
+        // Fancy enable
+        final Style bold_green = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(163,235,30)).build();
+        final Style bold_orange = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(254,78,0)).build();
+        final Style bold_yellow = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(242,195,89)).build();
+        final TextComponent prefix = Component.text("["+instance.getPluginMeta().getLoggerPrefix()+"] ").color(NamedTextColor.WHITE);
+        final ConsoleCommandSender console = instance.getServer().getConsoleSender();
+        List.of(
+                Component.empty(),
+                Component.empty(),
+                Component.text("             ╲╲").style(bold_green),
+                Component.text("        .╺'```^```'╺.").style(bold_orange),
+                Component.text("       ╱   ").style(bold_orange).append(Component.text("(\\ __ /)").style(bold_yellow))
+                        .append(Component.text("  ╲").style(bold_orange)),
+                Component.text("      │     ").style(bold_orange).append(Component.text("` ╲╱ `").style(bold_yellow))
+                        .append(Component.text("    │").style(bold_orange)),
+                Component.text("       ╲    ").style(bold_orange).append(Component.text("\\____/").style(bold_yellow))
+                        .append(Component.text("   ╱").style(bold_orange)),
+                Component.text("        `'╺.......╺'`").style(bold_orange),
+                Component.text(" "),
+                Component.text("      PumpkinPVPReloaded").style(bold_green),
+                Component.text("          by xGinko     ").color(TextColor.color(242,195,89)),
+                Component.empty(),
+                Component.empty()
+        ).forEach(line -> console.sendMessage(prefix.append(line)));
+
         reloadConfiguration();
         getCommand("pumpkinpvp").setExecutor(new PumpkinPVPCommand());
     }
