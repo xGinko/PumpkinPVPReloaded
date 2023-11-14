@@ -66,7 +66,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                     int tries = 0;
                     while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
                         if (tries > 100) break; // Avoid infinite loop on bad config
-                        secondary_color = parsedColors.get(new Random().nextInt(0, parsedColors.size()));
+                        secondary_color = parsedColors.get(new Random().nextInt(parsedColors.size()));
                         tries++;
                     }
                     this.fireWorkEffects.add(FireworkEffect.builder()
@@ -107,7 +107,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.clearEffects();
-            meta.addEffect(fireWorkEffects.get(new Random().nextInt(0, fireWorkEffects.size())));
+            meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
             firework.setFireworkMeta(meta);
             firework.detonate();
         }
@@ -120,7 +120,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.clearEffects();
-            meta.addEffect(fireWorkEffects.get(new Random().nextInt(0, fireWorkEffects.size())));
+            meta.addEffect(fireWorkEffects.get(new Random().nextInt(fireWorkEffects.size())));
             firework.setFireworkMeta(meta);
             firework.detonate();
         }
