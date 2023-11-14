@@ -5,6 +5,8 @@ import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -15,7 +17,10 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
@@ -26,11 +31,11 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", List.of(
-                "FFAE03",   // Pumpkin Light Orange
-                "FE4E00",   // Pumpkin Dark Orange
-                "1A090D",   // Witch Hat Dark Purple
-                "A42CD6",   // Witch Dress Pale Purple
-                "A3EB1E"    // Slime Green
+                "<color:#FFAE03>",   // Pumpkin Light Orange
+                "<color:#FE4E00>",   // Pumpkin Dark Orange
+                "<color:#1A090D>",   // Witch Hat Dark Purple
+                "<color:#A42CD6>",   // Witch Dress Pale Purple
+                "<color:#A3EB1E>"    // Slime Green
         ), "You need to configure at least 2 colors.");
         if (configuredColors.size() < 2) {
             PumpkinPVPReloaded.getLog().severe("You need to configure at least 2 colors. Disabling firework effects.");
@@ -38,13 +43,12 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         }
         List<Color> parsedColors = new ArrayList<>();
         configuredColors.forEach(hexString -> {
-            try {
-                int rgb = HexFormat.fromHexDigits(hexString);
-                parsedColors.add(Color.fromRGB(rgb));
-            } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("Hex color string '"+hexString+"' is not formatted correctly. " +
-                        "Try using the format without a prefix: eg. FFAE03 instead of #FFAE03 or 0xFFAE03");
+            TextColor textColor = MiniMessage.miniMessage().deserialize(hexString).color();
+            if (textColor == null) {
+                PumpkinPVPReloaded.getLog().warning("Hex color string '"+hexString+"' is not formatted correctly. Use it like this: <color:#E54264>");
+                return;
             }
+            parsedColors.add(Color.fromRGB(textColor.red(), textColor.green(), textColor.blue()));
         });
         final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
         final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);

@@ -6,7 +6,7 @@
 
     <groupId>me.xginko</groupId>
     <artifactId>PumpkinPVPReloaded</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.0</version>
     <packaging>jar</packaging>
 
     <name>PumpkinPVPReloaded</name>
@@ -14,7 +14,7 @@
     <url>github.com/xGinko/PumpkinPVPReloaded</url>
 
     <properties>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -118,6 +118,12 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>3.1.8</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.14.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
