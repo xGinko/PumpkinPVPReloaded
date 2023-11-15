@@ -66,7 +66,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                     int tries = 0;
                     while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
                         if (tries > 100) break; // Avoid infinite loop on bad config
-                        secondary_color = parsedColors.get(new Random().nextInt(parsedColors.size() + 1) - 1);
+                        secondary_color = parsedColors.get(new Random().nextInt(parsedColors.size()));
                         tries++;
                     }
                     this.fireWorkEffects.add(FireworkEffect.builder()
@@ -101,8 +101,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     }
 
     private FireworkEffect getRandomEffect() {
-        // Try to get a 0 naturally without having an origin value in Random (I hate using old jdk's)
-        return this.fireWorkEffects.get(new Random().nextInt(this.fireWorkEffects.size() + 1) - 1);
+        return this.fireWorkEffects.get(new Random().nextInt(this.fireWorkEffects.size()));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

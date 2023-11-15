@@ -90,14 +90,9 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlayerDeath(PlayerDeathEvent event) {
         if (isNearPumpkinExplosion(event.getEntity().getLocation())) {
-            event.setDeathSound(this.getRandomDeathsound());
+            event.setDeathSound(this.deathSounds.get(new Random().nextInt(this.deathSounds.size())));
             if (volume != -1.0F) event.setDeathSoundVolume(volume);
         }
-    }
-
-    private Sound getRandomDeathsound() {
-        // Try to get a 0 naturally without having an origin value in Random (I hate using old jdk's)
-        return this.deathSounds.get(new Random().nextInt(this.deathSounds.size() + 1) - 1);
     }
 
     private boolean isNearPumpkinExplosion(Location playerLoc) {
