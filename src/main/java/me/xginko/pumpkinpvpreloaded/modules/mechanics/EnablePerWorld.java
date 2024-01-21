@@ -14,15 +14,15 @@ import java.util.List;
 
 public class EnablePerWorld implements PumpkinPVPModule, Listener {
 
-    private final HashSet<String> activeWorlds = new HashSet<>();
+    private final HashSet<String> activeWorlds;
     private final boolean blacklistMode;
 
     public EnablePerWorld() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.addComment("mechanics.enabled-worlds.enable",
+        config.master().addComment("mechanics.enabled-worlds.enable",
                 "Add the names of the worlds you want this plugins features to be enabled in.");
-        this.activeWorlds.addAll(config.getList("mechanics.enabled-worlds.worlds",
+        this.activeWorlds = new HashSet<>(config.getList("mechanics.enabled-worlds.worlds",
                 List.of("world", "world_nether", "world_the_end")));
         this.blacklistMode = config.getBoolean("mechanics.enabled-worlds.use-as-blacklist", false,
                 "Make it so that the plugin's features are disabled in the listed worlds.");
@@ -30,7 +30,8 @@ public class EnablePerWorld implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.enabled-worlds.enable", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.enabled-worlds.enable", false)
+                && !activeWorlds.isEmpty();
     }
 
     @Override

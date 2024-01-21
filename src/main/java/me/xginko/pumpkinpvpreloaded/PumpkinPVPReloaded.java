@@ -14,6 +14,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 public final class PumpkinPVPReloaded extends JavaPlugin {
@@ -21,6 +22,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     private static PumpkinPVPReloaded instance;
     private static PumpkinPVPConfig config;
     private static Logger logger;
+    private static Random random;
 
     @Override
     public void onEnable() {
@@ -60,6 +62,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public void reloadConfiguration() {
         try {
             config = new PumpkinPVPConfig();
+            random = new Random();
             PumpkinPVPModule.reloadModules();
             config.saveConfig();
         } catch (Exception e) {
@@ -79,5 +82,8 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     }
     public static Logger getLog() {
         return logger;
+    }
+    public static Random getRandom() {
+        return random;
     }
 }

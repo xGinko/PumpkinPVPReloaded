@@ -29,7 +29,7 @@ public class ReloadSubCmd extends SubCommand {
         if (!sender.hasPermission("pumpkinpvp.cmd.reload")) return;
 
         sender.sendMessage(Component.text("Reloading PumpkinPVP...").color(NamedTextColor.WHITE));
-        PumpkinPVPReloaded.getFoliaLib().getImpl().runAsync(reload -> {
+        PumpkinPVPReloaded.getFoliaLib().getImpl().runNextTick(reload -> {
             PumpkinPVPReloaded.getInstance().reloadConfiguration();
             sender.sendMessage(Component.text("Reload complete.").color(NamedTextColor.GREEN));
         });

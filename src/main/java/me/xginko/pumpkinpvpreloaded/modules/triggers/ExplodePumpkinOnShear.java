@@ -36,7 +36,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        this.pumpkins = config.explosivePumpkins;
+        this.pumpkins = config.explosive_pumpkins;
         this.shears_take_durability = config.getBoolean("mechanics.explosion-triggers.shear-pumpkin.shears-take-durability", true);
         this.dura_reduction = config.getInt("mechanics.explosion-triggers.shear-pumpkin.dura-per-explosion", 1);
     }

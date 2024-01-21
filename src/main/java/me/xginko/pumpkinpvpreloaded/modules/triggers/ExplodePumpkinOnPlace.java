@@ -28,7 +28,7 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
         FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
-        this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosivePumpkins;
+        this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosive_pumpkins;
     }
 
     @Override

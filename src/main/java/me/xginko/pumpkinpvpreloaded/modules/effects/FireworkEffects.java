@@ -9,7 +9,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
 import org.bukkit.entity.Firework;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,60 +16,65 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
-    private final List<FireworkEffect> fireWorkEffects = new ArrayList<>();
-    private boolean has_enough_colors = true;
+    private final List<FireworkEffect> fireWorkEffects;
 
     public FireworkEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", List.of(
+        List<String> defaults = List.of(
                 "<color:#FFAE03>",   // Pumpkin Light Orange
                 "<color:#FE4E00>",   // Pumpkin Dark Orange
                 "<color:#1A090D>",   // Witch Hat Dark Purple
                 "<color:#A42CD6>",   // Witch Dress Pale Purple
                 "<color:#A3EB1E>"    // Slime Green
-        ), "You need to configure at least 2 colors.");
-        if (configuredColors.size() < 2) {
-            PumpkinPVPReloaded.getLog().severe("You need to configure at least 2 colors. Disabling firework effects.");
-            has_enough_colors = false;
+        );
+        List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", defaults,
+                "You need to configure at least 1 color.");
+        if (configuredColors.isEmpty()) {
+            PumpkinPVPReloaded.getLog().warning("You did not configure any colors. Falling back to defaults.");
+            configuredColors = defaults;
         }
-        List<Color> parsedColors = new ArrayList<>();
-        configuredColors.forEach(hexString -> {
-            TextColor textColor = MiniMessage.miniMessage().deserialize(hexString).color();
+        List<Color> colors = configuredColors.stream().map(serialized -> {
+            TextColor textColor = MiniMessage.miniMessage().deserialize(serialized).color();
             if (textColor == null) {
-                PumpkinPVPReloaded.getLog().warning("Hex color string '"+hexString+"' is not formatted correctly. Use it like this: <color:#E54264>");
-                return;
+                PumpkinPVPReloaded.getLog().warning("Hex color string '"+serialized+"' is not formatted correctly. " +
+                        "The format is as follows: <color:#E54264>");
+                return null;
             }
-            parsedColors.add(Color.fromRGB(textColor.red(), textColor.green(), textColor.blue()));
-        });
+            return Color.fromRGB(textColor.red(), textColor.green(), textColor.blue());
+        }).filter(Objects::nonNull).distinct().toList();
+
         final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
         final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);
+
+        List<FireworkEffect> parsedFireworkEffects = new ArrayList<>();
         config.getList("pumpkin-explosion.firework-effects.types",
-                Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).toList(),
-                """
-                        FireworkEffect Types you wish to use. Has to be a valid enum from:
-                        https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html
-                        """
+                Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).toList(), """
+                        FireworkEffect Types you wish to use. Has to be a valid enum from:\s
+                        https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html"""
         ).forEach(effect -> {
             try {
                 FireworkEffect.Type effectType = FireworkEffect.Type.valueOf(effect);
-                parsedColors.forEach(primary_color -> {
-                    Color secondary_color = primary_color;
-                    int tries = 0;
-                    while (secondary_color.equals(primary_color)) { // Avoid rolling the same color
-                        if (tries > 100) break; // Avoid infinite loop on bad config
-                        secondary_color = parsedColors.get(new Random().nextInt(parsedColors.size()));
-                        tries++;
+                colors.forEach(primaryColor -> {
+                    if (colors.size() == 1) {
+                        parsedFireworkEffects.add(FireworkEffect.builder()
+                                .withColor(primaryColor)
+                                .with(effectType)
+                                .flicker(flicker)
+                                .trail(trail)
+                                .build());
+                        return;
                     }
-                    this.fireWorkEffects.add(FireworkEffect.builder()
-                            .withColor(primary_color, secondary_color)
+                    Color secondaryColor;
+                    do {
+                        secondaryColor = colors.get(PumpkinPVPReloaded.getRandom().nextInt(colors.size()));
+                    } while (secondaryColor.equals(primaryColor)); // Avoid rolling the same color
+                    parsedFireworkEffects.add(FireworkEffect.builder()
+                            .withColor(primaryColor, secondaryColor)
                             .with(effectType)
                             .flicker(flicker)
                             .trail(trail)
@@ -81,12 +85,12 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                         "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
             }
         });
+        this.fireWorkEffects = parsedFireworkEffects.stream().distinct().toList();
     }
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.firework-effects.enable", true)
-                && has_enough_colors;
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.firework-effects.enable", true);
     }
 
     @Override
@@ -101,14 +105,13 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     }
 
     private FireworkEffect getRandomEffect() {
-        return this.fireWorkEffects.get(new Random().nextInt(this.fireWorkEffects.size()));
+        return this.fireWorkEffects.get(PumpkinPVPReloaded.getRandom().nextInt(this.fireWorkEffects.size()));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (event.hasExploded()) {
-            final Location explosionLoc = event.getExplodeLocation();
-            Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
+            Firework firework = event.getExplodeLocation().getWorld().spawn(event.getExplodeLocation(), Firework.class);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.clearEffects();
             meta.addEffect(this.getRandomEffect());
@@ -120,8 +123,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
         if (event.hasExploded()) {
-            final Location explosionLoc = event.getExplodeLocation();
-            Firework firework = explosionLoc.getWorld().spawn(explosionLoc, Firework.class);
+            Firework firework = event.getExplodeLocation().getWorld().spawn(event.getExplodeLocation(), Firework.class);
             FireworkMeta meta = firework.getFireworkMeta();
             meta.clearEffects();
             meta.addEffect(this.getRandomEffect());

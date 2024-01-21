@@ -13,34 +13,35 @@ import org.bukkit.event.Listener;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
-    private final HashSet<Material> base_materials = new HashSet<>(3);
+    private final HashSet<Material> base_materials;
 
     public RequireBaseBlocks() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.addComment("mechanics.require-specific-base-block.enable",
+        config.master().addComment("mechanics.require-specific-base-block.enable",
                 "If enabled, pumpkins will only explode when placed on one of the configured materials (like end crystals).");
-        config.getList("mechanics.base.materials", List.of(
-                Material.BEDROCK.name(),
-                Material.OBSIDIAN.name(),
-                Material.CRYING_OBSIDIAN.name()
-        ), "Values need to be valid material enums from bukkit."
-        ).forEach(baseMaterial -> {
+        this.base_materials = config.getList("mechanics.base.materials", List.of(
+                Material.BEDROCK.name(), Material.OBSIDIAN.name(), Material.CRYING_OBSIDIAN.name()),
+                "Values need to be valid material enums from bukkit."
+        ).stream().map(configuredBase -> {
             try {
-                Material material = Material.valueOf(baseMaterial);
-                this.base_materials.add(material);
+                return Material.valueOf(configuredBase);
             } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("Base material '"+baseMaterial+"' is not a valid Material.");
+                PumpkinPVPReloaded.getLog().warning("Base material '"+configuredBase+"' is not a valid Material enum.");
+                return null;
             }
-        });
+        }).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.require-specific-base-block.enable", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.require-specific-base-block.enable", false)
+                && !base_materials.isEmpty();
     }
 
     @Override
