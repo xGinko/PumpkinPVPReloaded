@@ -17,7 +17,7 @@ import java.util.UUID;
 public class RateLimitPumpkinExplosions implements PumpkinPVPModule, Listener {
 
     private final Cache<UUID, Boolean> players_on_cooldown;
-    private final long delayMillis;
+    private final long delay_millis;
 
     public RateLimitPumpkinExplosions() {
         shouldEnable();
@@ -25,14 +25,14 @@ public class RateLimitPumpkinExplosions implements PumpkinPVPModule, Listener {
         config.master().addComment("mechanics.explode-delay.enable", """
                 This is meant for servers that allow hacks/cheats to automate pumpkin pvp similar to crystal pvp.\s
                 Usually not needed because you can simply turn down explosion power but here just in case.""");
-        this.delayMillis = config.getInt("mechanics.explode-delay.delay-in-ticks", 4) * 50L;
-        this.players_on_cooldown = delayMillis > 0 ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(delayMillis)).build() : null;
+        this.delay_millis = config.getInt("mechanics.explode-delay.delay-in-ticks", 4) * 50L;
+        this.players_on_cooldown = delay_millis > 0 ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(delay_millis)).build() : null;
     }
 
     @Override
     public boolean shouldEnable() {
         return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explode-delay.enable", false)
-                && delayMillis > 0;
+                && delay_millis > 0;
     }
 
     @Override

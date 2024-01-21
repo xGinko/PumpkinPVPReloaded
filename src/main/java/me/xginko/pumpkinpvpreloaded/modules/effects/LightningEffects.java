@@ -35,17 +35,18 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
                 "Will strike the closest player with lightning.");
         this.max_distance_squared = config.getDouble("pumpkin-explosion.lightning-effects.max-block-distance-squared", 100.0);
         this.deal_damage = config.getBoolean("pumpkin-explosion.lightning-effects.deal-damage", true);
-        this.spawn_amount = config.getInt("pumpkin-explosion.lightning-effects.lightning-strikes", 2,
-                "Amount of times to strike.");
-        this.flashcount = config.getInt("pumpkin-explosion.lightning-effects.lightning-flash-count", 2,
-                "Amount of times to flash after strike.");
+        this.spawn_amount = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-strikes", 2,
+                "Amount of times to strike."), 1);
+        this.flashcount = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-flash-count", 2,
+                "Amount of times to flash after strike."), 0);
         this.probability = config.getDouble("pumpkin-explosion.lightning-effects.lightning-chance", 0.1,
                 "Percentage as double: 100% = 1.0");
     }
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.lightning-effects.enable", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.lightning-effects.enable", false)
+                && probability > 0;
     }
 
     @Override
@@ -75,13 +76,13 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
 
     private void strikeLightning(@Nullable final UUID exploder, final Location explosionLoc) {
         Player closestPlayer = null;
-        double distance = max_distance_squared;
+        double smallestDistance = max_distance_squared;
         for (Player player : explosionLoc.getNearbyPlayers(6, 6, 6)) {
             if (exploder != null && player.getUniqueId().equals(exploder)) continue;
             double currentDistance = explosionLoc.distanceSquared(player.getLocation());
-            if (currentDistance < distance) {
+            if (currentDistance < smallestDistance) {
                 closestPlayer = player;
-                distance = currentDistance;
+                smallestDistance = currentDistance;
             }
         }
 

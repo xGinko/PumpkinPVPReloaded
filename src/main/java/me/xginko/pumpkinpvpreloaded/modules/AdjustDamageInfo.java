@@ -36,7 +36,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
     @Override
     public boolean shouldEnable() {
         return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.attempt-to-correct-death-details", true,
-                "Tries to fill in the blanks so the server knows who killed who.");
+                "Tries to fill in the blanks so the game can roughly tell who killed who.");
     }
 
     @Override
@@ -82,15 +82,14 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
     }
 
     private @Nullable Player getClosestPumpkinExploder(Location playerLoc) {
-        double distance = 50.0;
+        double smallestDistance = 100.0; // 10 Blocks squared
         Player closestExploder = null;
 
         for (Map.Entry<Location, Player> explosion : this.pumpkinExploders.asMap().entrySet()) {
-            final Location explosionLoc = explosion.getKey();
-            if (explosionLoc.getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
-                final double currentDistance = playerLoc.distance(explosionLoc);
-                if (currentDistance < distance) {
-                    distance = currentDistance;
+            if (explosion.getKey().getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
+                final double currentDistance = playerLoc.distanceSquared(explosion.getKey());
+                if (currentDistance < smallestDistance) {
+                    smallestDistance = currentDistance;
                     closestExploder = explosion.getValue();
                 }
             }
