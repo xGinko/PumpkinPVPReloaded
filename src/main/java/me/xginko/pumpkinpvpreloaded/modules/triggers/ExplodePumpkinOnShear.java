@@ -61,8 +61,8 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
     private void onBlockRightClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        final Block clicked = event.getClickedBlock();
-        if (clicked == null || !pumpkins.contains(clicked.getType())) return;
+        final Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock == null || !pumpkins.contains(clickedBlock.getType())) return;
         ItemStack interactItem = event.getItem();
         if (interactItem == null || !interactItem.getType().equals(Material.SHEARS)) return;
 
@@ -70,9 +70,9 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
         final Player originalExploder = event.getPlayer();
 
         PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                clicked,
+                clickedBlock,
                 originalExploder,
-                clicked.getLocation().toCenterLocation(),
+                clickedBlock.getLocation().toCenterLocation(),
                 TriggerAction.SHEAR
         );
 

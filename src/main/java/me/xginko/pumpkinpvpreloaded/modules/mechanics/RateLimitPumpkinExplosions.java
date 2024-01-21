@@ -48,9 +48,8 @@ public class RateLimitPumpkinExplosions implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
-        final UUID exploderUniqueId = event.getExploder().getUniqueId();
-        if (this.players_on_cooldown.getIfPresent(exploderUniqueId) == null) {
-            this.players_on_cooldown.put(exploderUniqueId, true);
+        if (this.players_on_cooldown.getIfPresent(event.getExploder().getUniqueId()) == null) {
+            this.players_on_cooldown.put(event.getExploder().getUniqueId(), true);
         } else {
             event.setPrecedingCancelled(true);
             event.setCancelled(true);

@@ -49,13 +49,13 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onBlockPlace(BlockPlaceEvent event) {
-        Block placed = event.getBlockPlaced();
-        if (!pumpkins.contains(placed.getType())) return;
+        Block placedBlock = event.getBlockPlaced();
+        if (!pumpkins.contains(placedBlock.getType())) return;
 
         PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                placed,
+                placedBlock,
                 event.getPlayer(),
-                placed.getLocation().toCenterLocation(),
+                placedBlock.getLocation().toCenterLocation(),
                 TriggerAction.BLOCK_PLACE
         );
 

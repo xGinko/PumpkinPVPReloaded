@@ -14,6 +14,7 @@ public class PumpkinPVPConfig {
 
     private final @NotNull ConfigFile configFile;
     public final HashSet<Material> explosive_pumpkins;
+    public final double explosion_effect_radius_squared;
     public final float explosion_power;
     public final boolean explosion_set_fire, explosion_break_blocks;
 
@@ -37,6 +38,7 @@ public class PumpkinPVPConfig {
         }).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
         this.explosion_power = getFloat("pumpkin-explosion.power", 8.0F,
                 "TNT has a power of 4.0");
+        this.explosion_effect_radius_squared = Math.pow(Math.max(explosion_power, 3), 2);
         this.explosion_set_fire = getBoolean("pumpkin-explosion.set-fire", true,
                 "Enable explosion fire like with respawn anchors.");
         this.explosion_break_blocks = getBoolean("pumpkin-explosion.break-blocks", true,

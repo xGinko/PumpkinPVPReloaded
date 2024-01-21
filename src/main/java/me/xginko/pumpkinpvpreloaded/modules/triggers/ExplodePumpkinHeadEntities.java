@@ -59,19 +59,19 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     private void onEntityDeath(EntityDeathEvent event) {
-        final LivingEntity dying = event.getEntity();
-        if (dying.getType().equals(EntityType.PLAYER) && !explode_players) return;
-        if (only_killed_by_player && dying.getKiller() == null) return;
+        final LivingEntity dyingEntity = event.getEntity();
+        if (dyingEntity.getType().equals(EntityType.PLAYER) && !explode_players) return;
+        if (only_killed_by_player && dyingEntity.getKiller() == null) return;
 
-        final EntityEquipment equipment = dying.getEquipment();
+        final EntityEquipment equipment = dyingEntity.getEquipment();
         if (equipment == null) return;
         final ItemStack helmet = equipment.getHelmet();
         if (helmet == null || !pumpkins.contains(helmet.getType())) return;
 
         PrePumpkinHeadEntityExplodeEvent preHotHeadEvent = new PrePumpkinHeadEntityExplodeEvent(
-                dying,
-                dying.getKiller(),
-                dying.getEyeLocation()
+                dyingEntity,
+                dyingEntity.getKiller(),
+                dyingEntity.getEyeLocation()
         );
 
         if (!preHotHeadEvent.callEvent()) return;

@@ -22,13 +22,15 @@ import java.util.Objects;
 
 public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
-    private final Cache<Location, Float> pumpkinExplosions;
+    private final Cache<Location, Boolean> pumpkinExplosions;
     private final List<Sound> deathSounds;
+    private final double expl_effect_radius;
     private final float volume;
 
     public DeathSoundEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        this.expl_effect_radius = config.explosion_effect_radius_squared;
         config.master().addComment("pumpkin-deaths.death-sound.enable",
                 "Players dying to a pumpkin explosion will make a spooky configurable sound.");
         this.volume = config.getFloat("pumpkin-deaths.death-sound.volume", -1.0F, "-1 means default settings.");
@@ -76,14 +78,14 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (event.hasExploded()) {
-            this.pumpkinExplosions.put(event.getExplodeLocation(), event.getExplodePower() * event.getExplodePower());
+            this.pumpkinExplosions.put(event.getExplodeLocation(), true);
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
         if (event.hasExploded()) {
-            this.pumpkinExplosions.put(event.getExplodeLocation(), event.getExplodePower() * event.getExplodePower());
+            this.pumpkinExplosions.put(event.getExplodeLocation(), true);
         }
     }
 
@@ -96,9 +98,9 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     }
 
     private boolean isNearPumpkinExplosion(Location playerLoc) {
-        for (Map.Entry<Location, Float> explosion : this.pumpkinExplosions.asMap().entrySet()) {
+        for (Map.Entry<Location, Boolean> explosion : this.pumpkinExplosions.asMap().entrySet()) {
             if (explosion.getKey().getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
-                if (playerLoc.distanceSquared(explosion.getKey()) <= explosion.getValue()) {
+                if (playerLoc.distanceSquared(explosion.getKey()) <= expl_effect_radius) {
                     return true;
                 }
             }

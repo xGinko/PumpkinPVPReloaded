@@ -23,7 +23,7 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
     private final ServerImplementation scheduler;
     private final boolean isFolia, deal_damage;
     private final int spawn_amount, flashcount;
-    private final double probability, max_distance_squared;
+    private final double probability, expl_effect_radius;
 
     public LightningEffects() {
         shouldEnable();
@@ -31,9 +31,9 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        this.expl_effect_radius = config.explosion_effect_radius_squared;
         config.master().addComment("pumpkin-explosion.lightning-effects",
                 "Will strike the closest player with lightning.");
-        this.max_distance_squared = config.getDouble("pumpkin-explosion.lightning-effects.max-block-distance-squared", 100.0);
         this.deal_damage = config.getBoolean("pumpkin-explosion.lightning-effects.deal-damage", true);
         this.spawn_amount = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-strikes", 2,
                 "Amount of times to strike."), 1);
@@ -76,7 +76,7 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
 
     private void strikeLightning(@Nullable final UUID exploder, final Location explosionLoc) {
         Player closestPlayer = null;
-        double smallestDistance = max_distance_squared;
+        double smallestDistance = expl_effect_radius;
         for (Player player : explosionLoc.getNearbyPlayers(6, 6, 6)) {
             if (exploder != null && player.getUniqueId().equals(exploder)) continue;
             double currentDistance = explosionLoc.distanceSquared(player.getLocation());

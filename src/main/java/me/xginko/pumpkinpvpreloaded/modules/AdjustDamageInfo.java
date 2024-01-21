@@ -26,13 +26,13 @@ import java.util.Map;
 public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
     private final Cache<Location, Player> pumpkinExploders;
-    private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> emptyDamageModifierMap;
-    private final double maxDistanceSquared;
+    private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> dummyDamageModifierMap;
+    private final double expl_effect_radius;
 
     protected AdjustDamageInfo() {
         this.pumpkinExploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
-        this.emptyDamageModifierMap = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
-        this.maxDistanceSquared = Math.pow(Math.max(PumpkinPVPReloaded.getConfiguration().explosion_power, 3), 2);
+        this.dummyDamageModifierMap = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
+        this.expl_effect_radius = PumpkinPVPReloaded.getConfiguration().explosion_effect_radius_squared;
     }
 
     @Override
@@ -63,28 +63,28 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
         if (!event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) return;
 
         final Player damagedPlayer = (Player) event.getEntity();
-        final Player exploder = getClosestPumpkinExploder(damagedPlayer.getLocation());
-        if (exploder == null) return;
+        final Player pumpkinExploder = getClosestPumpkinExploder(damagedPlayer.getLocation());
+        if (pumpkinExploder == null) return;
 
-        final EntityDamageByEntityEvent damageByExploder = new EntityDamageByEntityEvent(
-                exploder,
+        final EntityDamageByEntityEvent damageByPumpkinExploder = new EntityDamageByEntityEvent(
+                pumpkinExploder,
                 damagedPlayer,
                 EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
                 new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
-                emptyDamageModifierMap
+                dummyDamageModifierMap
         );
 
-        if (!damageByExploder.callEvent()) {
+        if (!damageByPumpkinExploder.callEvent()) {
             event.setCancelled(true);
             return;
         }
 
-        damagedPlayer.setLastDamageCause(damageByExploder);
-        damagedPlayer.setKiller(exploder);
+        damagedPlayer.setLastDamageCause(damageByPumpkinExploder);
+        damagedPlayer.setKiller(pumpkinExploder);
     }
 
     private @Nullable Player getClosestPumpkinExploder(Location playerLoc) {
-        double smallestDistance = maxDistanceSquared;
+        double smallestDistance = expl_effect_radius;
         Player closestExploder = null;
 
         for (Map.Entry<Location, Player> explosion : this.pumpkinExploders.asMap().entrySet()) {

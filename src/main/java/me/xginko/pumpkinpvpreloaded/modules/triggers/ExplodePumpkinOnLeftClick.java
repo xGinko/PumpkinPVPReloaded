@@ -51,13 +51,13 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onBlockLeftClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
-        final Block clicked = event.getClickedBlock();
-        if (clicked == null || !pumpkins.contains(clicked.getType())) return;
+        final Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock == null || !pumpkins.contains(clickedBlock.getType())) return;
 
         PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                clicked,
+                clickedBlock,
                 event.getPlayer(),
-                clicked.getLocation().toCenterLocation(),
+                clickedBlock.getLocation().toCenterLocation(),
                 TriggerAction.LEFT_CLICK
         );
 
