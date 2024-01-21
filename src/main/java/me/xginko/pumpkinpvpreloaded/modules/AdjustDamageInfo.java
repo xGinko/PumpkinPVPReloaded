@@ -27,10 +27,12 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
     private final Cache<Location, Player> pumpkinExploders;
     private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> emptyDamageModifierMap;
+    private final double maxDistanceSquared;
 
     protected AdjustDamageInfo() {
         this.pumpkinExploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
         this.emptyDamageModifierMap = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
+        this.maxDistanceSquared = Math.pow(Math.max(PumpkinPVPReloaded.getConfiguration().explosion_power, 3), 2);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
     }
 
     private @Nullable Player getClosestPumpkinExploder(Location playerLoc) {
-        double smallestDistance = 100.0; // 10 Blocks squared
+        double smallestDistance = maxDistanceSquared;
         Player closestExploder = null;
 
         for (Map.Entry<Location, Player> explosion : this.pumpkinExploders.asMap().entrySet()) {
