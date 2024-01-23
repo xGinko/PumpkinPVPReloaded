@@ -33,7 +33,8 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
         this.expl_effect_radius = config.explosion_effect_radius_squared;
         config.master().addComment("pumpkin-deaths.death-sound.enable",
                 "Players dying to a pumpkin explosion will make a spooky configurable sound.");
-        this.volume = config.getFloat("pumpkin-deaths.death-sound.volume", -1.0F, "-1 means default settings.");
+        this.volume = config.getFloat("pumpkin-deaths.death-sound.volume", -1.0F,
+                "-1 means natural default volume.");
         this.pumpkinExplosions = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
         this.deathSounds = config.getList("pumpkin-deaths.death-sound.sounds", List.of(
                         "ENTITY_HOGLIN_DEATH",

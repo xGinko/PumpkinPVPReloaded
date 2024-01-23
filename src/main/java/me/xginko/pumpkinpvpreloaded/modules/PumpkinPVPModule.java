@@ -1,6 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
 import me.xginko.pumpkinpvpreloaded.modules.effects.DeathSoundEffects;
+import me.xginko.pumpkinpvpreloaded.modules.effects.ExplodeSoundEffects;
 import me.xginko.pumpkinpvpreloaded.modules.effects.FireworkEffects;
 import me.xginko.pumpkinpvpreloaded.modules.effects.LightningEffects;
 import me.xginko.pumpkinpvpreloaded.modules.triggers.*;
@@ -28,6 +29,7 @@ public interface PumpkinPVPModule {
         modules.add(new ExplodePumpkinOnPlace());
         modules.add(new ExplodePumpkinHeadEntities());
 
+        modules.add(new ExplodeSoundEffects());
         modules.add(new FireworkEffects());
         modules.add(new LightningEffects());
         modules.add(new DeathSoundEffects());
