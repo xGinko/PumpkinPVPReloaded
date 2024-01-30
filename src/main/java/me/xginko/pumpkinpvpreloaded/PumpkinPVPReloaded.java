@@ -21,6 +21,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
 
     private static PumpkinPVPReloaded instance;
     private static PumpkinPVPConfig config;
+    private static FoliaLib foliaLib;
     private static Logger logger;
     private static Random random;
 
@@ -28,6 +29,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public void onEnable() {
         instance = this;
         logger = getLogger();
+        foliaLib = new FoliaLib(this);
 
         // Fancy enable
         final Style bold_green = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(163,235,30)).build();
@@ -78,7 +80,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         return config;
     }
     public static FoliaLib getFoliaLib() {
-        return new FoliaLib(instance);
+        return foliaLib;
     }
     public static Logger getLog() {
         return logger;
