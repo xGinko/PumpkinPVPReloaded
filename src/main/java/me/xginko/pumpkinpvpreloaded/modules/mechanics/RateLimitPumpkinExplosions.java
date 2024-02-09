@@ -10,13 +10,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.UUID;
 
 public class RateLimitPumpkinExplosions implements PumpkinPVPModule, Listener {
 
-    private final Cache<UUID, Boolean> players_on_cooldown;
+    private final @Nullable Cache<UUID, Boolean> players_on_cooldown;
     private final long delay_millis;
 
     public RateLimitPumpkinExplosions() {

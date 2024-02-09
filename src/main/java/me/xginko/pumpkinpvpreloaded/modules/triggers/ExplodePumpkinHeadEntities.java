@@ -25,13 +25,13 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
 
     private final ServerImplementation scheduler;
     private final HashSet<Material> pumpkins;
-    private final boolean isFolia, explode_players, only_killed_by_player;
+    private final boolean is_folia, explode_players, only_killed_by_player;
 
     public ExplodePumpkinHeadEntities() {
         shouldEnable();
         FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
-        this.isFolia = foliaLib.isFolia();
-        this.scheduler = isFolia ? foliaLib.getImpl() : null;
+        this.is_folia = foliaLib.isFolia();
+        this.scheduler = is_folia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.pumpkins = config.explosive_pumpkins;
         config.master().addComment("mechanics.explosion-triggers.pumpkin-head-entity-kill.enable",
@@ -77,7 +77,7 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
         if (!preHotHeadEvent.callEvent()) return;
         final Location explodeLoc = preHotHeadEvent.getExplodeLocation();
 
-        if (isFolia) {
+        if (is_folia) {
             scheduler.runAtLocation(explodeLoc, kaboom -> {
                 new PostPumpkinHeadEntityExplodeEvent(
                         preHotHeadEvent.getPumpkinHeadEntity(),

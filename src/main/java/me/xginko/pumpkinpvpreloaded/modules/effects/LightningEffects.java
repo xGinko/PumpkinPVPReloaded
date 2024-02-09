@@ -20,16 +20,16 @@ import java.util.UUID;
 
 public class LightningEffects implements PumpkinPVPModule, Listener {
 
-    private final ServerImplementation scheduler;
-    private final boolean isFolia, deal_damage;
-    private final int spawn_amount, flashcount;
+    private final @Nullable ServerImplementation scheduler;
+    private final boolean is_folia, deal_damage;
+    private final int spawn_amount, flash_count;
     private final double probability, expl_effect_radius;
 
     public LightningEffects() {
         shouldEnable();
         FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
-        this.isFolia = foliaLib.isFolia();
-        this.scheduler = isFolia ? foliaLib.getImpl() : null;
+        this.is_folia = foliaLib.isFolia();
+        this.scheduler = is_folia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.expl_effect_radius = config.explosion_effect_radius_squared;
         config.master().addComment("pumpkin-explosion.lightning-effects",
@@ -37,7 +37,7 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
         this.deal_damage = config.getBoolean("pumpkin-explosion.lightning-effects.deal-damage", true);
         this.spawn_amount = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-strikes", 2,
                 "Amount of times to strike."), 1);
-        this.flashcount = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-flash-count", 2,
+        this.flash_count = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-flash-count", 2,
                 "Amount of times to flash after strike."), 0);
         this.probability = config.getDouble("pumpkin-explosion.lightning-effects.lightning-chance", 0.1,
                 "Percentage as double: 100% = 1.0");
@@ -90,15 +90,15 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
         final Location playerLoc = closestPlayer.getLocation();
         final World world = playerLoc.getWorld();
 
-        if (isFolia) {
+        if (is_folia) {
             scheduler.runAtLocation(playerLoc, strike -> {
                 for (int i = 0; i < spawn_amount; i++) {
-                    (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
+                    (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flash_count);
                 }
             });
         } else {
             for (int i = 0; i < spawn_amount; i++) {
-                (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flashcount);
+                (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flash_count);
             }
         }
     }

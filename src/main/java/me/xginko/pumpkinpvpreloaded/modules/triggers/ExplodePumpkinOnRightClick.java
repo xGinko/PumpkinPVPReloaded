@@ -16,19 +16,21 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 
 public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
 
-    private final ServerImplementation scheduler;
-    private final HashSet<Material> pumpkins;
-    private final boolean isFolia;
+    private final @Nullable ServerImplementation scheduler;
+    private final @NotNull HashSet<Material> pumpkins;
+    private final boolean is_folia;
 
     public ExplodePumpkinOnRightClick() {
         FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
-        this.isFolia = foliaLib.isFolia();
-        this.scheduler = isFolia ? foliaLib.getImpl() : null;
+        this.is_folia = foliaLib.isFolia();
+        this.scheduler = is_folia ? foliaLib.getImpl() : null;
         this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosive_pumpkins;
     }
 
@@ -68,7 +70,7 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
-        if (isFolia) {
+        if (is_folia) {
             scheduler.runAtLocation(explodeLoc, kaboom -> {
                 prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
                 new PostPumpkinExplodeEvent(

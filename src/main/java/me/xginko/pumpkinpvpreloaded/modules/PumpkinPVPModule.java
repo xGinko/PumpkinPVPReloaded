@@ -4,12 +4,13 @@ import me.xginko.pumpkinpvpreloaded.modules.effects.DeathSoundEffects;
 import me.xginko.pumpkinpvpreloaded.modules.effects.ExplodeSoundEffects;
 import me.xginko.pumpkinpvpreloaded.modules.effects.FireworkEffects;
 import me.xginko.pumpkinpvpreloaded.modules.effects.LightningEffects;
-import me.xginko.pumpkinpvpreloaded.modules.triggers.*;
+import me.xginko.pumpkinpvpreloaded.modules.mechanics.EnablePerWorld;
 import me.xginko.pumpkinpvpreloaded.modules.mechanics.RateLimitPumpkinExplosions;
 import me.xginko.pumpkinpvpreloaded.modules.mechanics.RequireBaseBlocks;
-import me.xginko.pumpkinpvpreloaded.modules.mechanics.EnablePerWorld;
+import me.xginko.pumpkinpvpreloaded.modules.triggers.*;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public interface PumpkinPVPModule {
 
@@ -17,7 +18,7 @@ public interface PumpkinPVPModule {
     void enable();
     void disable();
 
-    HashSet<PumpkinPVPModule> modules = new HashSet<>();
+    Set<PumpkinPVPModule> modules = new HashSet<>();
 
     static void reloadModules() {
         modules.forEach(PumpkinPVPModule::disable);
@@ -40,8 +41,8 @@ public interface PumpkinPVPModule {
 
         modules.add(new AdjustDamageInfo());
 
-        modules.forEach(module -> {
+        for (PumpkinPVPModule module : modules) {
             if (module.shouldEnable()) module.enable();
-        });
+        }
     }
 }

@@ -9,13 +9,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
 public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
 
-    private final List<Sound> explodeSounds;
+    private final @NotNull List<Sound> explode_sounds;
     private final float volume, pitch;
 
     public ExplodeSoundEffects() {
@@ -25,7 +26,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
                 "Exploding pumpkins will make a spooky configurable sound.");
         this.volume = config.getFloat("pumpkin-explosion.sound-effect.volume", 1.0F);
         this.pitch = config.getFloat("pumpkin-explosion.sound-effect.volume", 1.0F);
-        this.explodeSounds = config.getList("pumpkin-explosion.sound-effect.sounds", List.of(
+        this.explode_sounds = config.getList("pumpkin-explosion.sound-effect.sounds", List.of(
                         "PARTICLE_SOUL_ESCAPE",
                         "ENTITY_WITCH_CELEBRATE",
                         "ENTITY_GOAT_SCREAMING_DEATH"
@@ -37,7 +38,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
             try {
                 return Sound.valueOf(configuredSound);
             } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("Sound '"+configuredSound+"' is not a valid Sound. " +
+                PumpkinPVPReloaded.getLog().warn("Sound '"+configuredSound+"' is not a valid Sound. " +
                         "Please use correct enums from: https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html");
                 return null;
             }
@@ -47,7 +48,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
     @Override
     public boolean shouldEnable() {
         return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.sound-effect.enable", false)
-                && !explodeSounds.isEmpty()
+                && !explode_sounds.isEmpty()
                 && volume > 0;
     }
 
@@ -67,7 +68,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
         if (event.hasExploded()) {
             event.getExplodeLocation().getWorld().playSound(
                     event.getExplodeLocation(),
-                    this.explodeSounds.get(PumpkinPVPReloaded.getRandom().nextInt(this.explodeSounds.size())),
+                    this.explode_sounds.get(PumpkinPVPReloaded.getRandom().nextInt(this.explode_sounds.size())),
                     this.volume,
                     this.pitch
             );

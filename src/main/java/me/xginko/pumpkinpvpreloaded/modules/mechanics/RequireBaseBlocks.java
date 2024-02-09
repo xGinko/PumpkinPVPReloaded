@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
-    private final HashSet<Material> base_materials;
+    private final @NotNull HashSet<Material> base_materials;
 
     public RequireBaseBlocks() {
         shouldEnable();
@@ -32,7 +33,7 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
             try {
                 return Material.valueOf(configuredBase);
             } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("Base material '"+configuredBase+"' is not a valid Material enum.");
+                PumpkinPVPReloaded.getLog().warn("Base material '"+configuredBase+"' is not a valid Material enum.");
                 return null;
             }
         }).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));

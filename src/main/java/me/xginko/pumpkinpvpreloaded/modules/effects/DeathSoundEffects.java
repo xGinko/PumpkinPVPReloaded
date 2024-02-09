@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.List;
@@ -22,8 +23,8 @@ import java.util.Objects;
 
 public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
-    private final Cache<Location, Boolean> pumpkinExplosions;
-    private final List<Sound> deathSounds;
+    private final @NotNull Cache<Location, Boolean> pumpkin_explosion;
+    private final @NotNull List<Sound> death_sounds;
     private final double expl_effect_radius;
     private final float volume;
 
@@ -35,8 +36,8 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
                 "Players dying to a pumpkin explosion will make a spooky configurable sound.");
         this.volume = config.getFloat("pumpkin-deaths.death-sound.volume", -1.0F,
                 "-1 means natural default volume.");
-        this.pumpkinExplosions = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
-        this.deathSounds = config.getList("pumpkin-deaths.death-sound.sounds", List.of(
+        this.pumpkin_explosion = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
+        this.death_sounds = config.getList("pumpkin-deaths.death-sound.sounds", List.of(
                         "ENTITY_HOGLIN_DEATH",
                         "ENTITY_PHANTOM_DEATH",
                         "ENTITY_RAVAGER_DEATH",
@@ -52,7 +53,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
             try {
                 return Sound.valueOf(configuredSound);
             } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("Sound '"+configuredSound+"' is not a valid Sound. " +
+                PumpkinPVPReloaded.getLog().warn("Sound '"+configuredSound+"' is not a valid Sound. " +
                         "Please use correct enums from: https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html");
                 return null;
             }
@@ -62,7 +63,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     @Override
     public boolean shouldEnable() {
         return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.death-sound.enable", false)
-                && !deathSounds.isEmpty();
+                && !death_sounds.isEmpty();
     }
 
     @Override
@@ -79,27 +80,27 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (event.hasExploded()) {
-            this.pumpkinExplosions.put(event.getExplodeLocation(), true);
+            this.pumpkin_explosion.put(event.getExplodeLocation(), true);
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
         if (event.hasExploded()) {
-            this.pumpkinExplosions.put(event.getExplodeLocation(), true);
+            this.pumpkin_explosion.put(event.getExplodeLocation(), true);
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlayerDeath(PlayerDeathEvent event) {
         if (this.isNearPumpkinExplosion(event.getEntity().getLocation())) {
-            event.setDeathSound(this.deathSounds.get(PumpkinPVPReloaded.getRandom().nextInt(this.deathSounds.size())));
+            event.setDeathSound(this.death_sounds.get(PumpkinPVPReloaded.getRandom().nextInt(this.death_sounds.size())));
             if (volume > 0) event.setDeathSoundVolume(volume);
         }
     }
 
     private boolean isNearPumpkinExplosion(Location playerLoc) {
-        for (Map.Entry<Location, Boolean> explosion : this.pumpkinExplosions.asMap().entrySet()) {
+        for (Map.Entry<Location, Boolean> explosion : this.pumpkin_explosion.asMap().entrySet()) {
             if (explosion.getKey().getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
                 if (playerLoc.distanceSquared(explosion.getKey()) <= expl_effect_radius) {
                     return true;

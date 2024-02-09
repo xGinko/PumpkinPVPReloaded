@@ -17,21 +17,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
-    private final Cache<Location, Player> pumpkinExploders;
-    private final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> dummyDamageModifierMap;
+    private final @NotNull Cache<Location, Player> pumpkin_exploders;
+    private final @NotNull Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> dummy_damage_modifier;
     private final double expl_effect_radius;
 
     protected AdjustDamageInfo() {
-        this.pumpkinExploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
-        this.dummyDamageModifierMap = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
+        this.pumpkin_exploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
+        this.dummy_damage_modifier = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
         this.expl_effect_radius = PumpkinPVPReloaded.getConfiguration().explosion_effect_radius_squared;
     }
 
@@ -54,7 +56,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
-        this.pumpkinExploders.put(event.getExplodeLocation(), event.getExploder());
+        this.pumpkin_exploders.put(event.getExplodeLocation(), event.getExploder());
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -71,7 +73,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
                 damagedPlayer,
                 EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
                 new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
-                dummyDamageModifierMap
+                dummy_damage_modifier
         );
 
         if (!damageByPumpkinExploder.callEvent()) {
@@ -87,7 +89,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
         double smallestDistance = expl_effect_radius;
         Player closestExploder = null;
 
-        for (Map.Entry<Location, Player> explosion : this.pumpkinExploders.asMap().entrySet()) {
+        for (Map.Entry<Location, Player> explosion : this.pumpkin_exploders.asMap().entrySet()) {
             if (explosion.getKey().getWorld().getUID().equals(playerLoc.getWorld().getUID())) {
                 final double currentDistance = playerLoc.distanceSquared(explosion.getKey());
                 if (currentDistance < smallestDistance) {

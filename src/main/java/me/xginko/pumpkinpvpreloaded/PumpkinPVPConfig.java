@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class PumpkinPVPConfig {
 
     private final @NotNull ConfigFile configFile;
-    public final HashSet<Material> explosive_pumpkins;
+    public final @NotNull HashSet<Material> explosive_pumpkins;
     public final double explosion_effect_radius_squared;
     public final float explosion_power;
     public final boolean explosion_set_fire, explosion_break_blocks;
@@ -22,7 +22,7 @@ public class PumpkinPVPConfig {
         // Create plugin folder first if it does not exist yet
         File pluginFolder = PumpkinPVPReloaded.getInstance().getDataFolder();
         if (!pluginFolder.exists() && !pluginFolder.mkdir())
-            PumpkinPVPReloaded.getLog().severe("Failed to create plugin folder.");
+            PumpkinPVPReloaded.getLog().error("Failed to create plugin folder.");
         // Load config.yml with ConfigMaster
         this.configFile = ConfigFile.loadConfig(new File(pluginFolder, "config.yml"));
         this.explosive_pumpkins = this.getList("pumpkin-explosion.pumpkin-types", List.of(
@@ -31,7 +31,7 @@ public class PumpkinPVPConfig {
             try {
                 return Material.valueOf(configuredMaterial);
             } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("Material '"+configuredMaterial+"' cant be used as " +
+                PumpkinPVPReloaded.getLog().warn("Material '"+configuredMaterial+"' cant be used as " +
                         "an explosive pumpkin because its not a valid material.");
                 return null;
             }
@@ -49,7 +49,7 @@ public class PumpkinPVPConfig {
         try {
             this.configFile.save();
         } catch (Exception e) {
-            PumpkinPVPReloaded.getLog().severe("Failed to save config file! - " + e.getLocalizedMessage());
+            PumpkinPVPReloaded.getLog().error("Failed to save config file! - " + e.getLocalizedMessage());
         }
     }
 

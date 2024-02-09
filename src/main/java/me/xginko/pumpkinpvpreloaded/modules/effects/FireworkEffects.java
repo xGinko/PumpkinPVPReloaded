@@ -15,12 +15,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
-    private final List<FireworkEffect> fireWorkEffects;
+    private final @NotNull List<FireworkEffect> firework_effects;
 
     public FireworkEffects() {
         shouldEnable();
@@ -35,13 +36,13 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", defaults,
                 "You need to configure at least 1 color.");
         if (configuredColors.isEmpty()) {
-            PumpkinPVPReloaded.getLog().warning("You did not configure any colors. Falling back to defaults.");
+            PumpkinPVPReloaded.getLog().warn("You did not configure any colors. Falling back to defaults.");
             configuredColors = defaults;
         }
         List<Color> colors = configuredColors.stream().map(serialized -> {
             TextColor textColor = MiniMessage.miniMessage().deserialize(serialized).color();
             if (textColor == null) {
-                PumpkinPVPReloaded.getLog().warning("Hex color string '"+serialized+"' is not formatted correctly. " +
+                PumpkinPVPReloaded.getLog().warn("Hex color string '"+serialized+"' is not formatted correctly. " +
                         "The format is as follows: <color:#E54264>");
                 return null;
             }
@@ -81,11 +82,11 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                             .build());
                 });
             } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warning("FireworkEffect Type '"+effect+"' not recognized. " +
+                PumpkinPVPReloaded.getLog().warn("FireworkEffect Type '"+effect+"' not recognized. " +
                         "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
             }
         });
-        this.fireWorkEffects = parsedFireworkEffects.stream().distinct().toList();
+        this.firework_effects = parsedFireworkEffects.stream().distinct().toList();
     }
 
     @Override
@@ -105,7 +106,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     }
 
     private FireworkEffect getRandomEffect() {
-        return this.fireWorkEffects.get(PumpkinPVPReloaded.getRandom().nextInt(this.fireWorkEffects.size()));
+        return this.firework_effects.get(PumpkinPVPReloaded.getRandom().nextInt(this.firework_effects.size()));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

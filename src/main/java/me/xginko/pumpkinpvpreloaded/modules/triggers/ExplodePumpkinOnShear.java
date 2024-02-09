@@ -21,20 +21,22 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 
 public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
 
-    private final ServerImplementation scheduler;
-    private final HashSet<Material> pumpkins;
-    private final boolean isFolia, shears_take_durability;
+    private final @Nullable ServerImplementation scheduler;
+    private final @NotNull HashSet<Material> pumpkins;
+    private final boolean is_folia, shears_take_durability;
     private final int dura_reduction;
 
     public ExplodePumpkinOnShear() {
         FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
-        this.isFolia = foliaLib.isFolia();
-        this.scheduler = isFolia ? foliaLib.getImpl() : null;
+        this.is_folia = foliaLib.isFolia();
+        this.scheduler = is_folia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.pumpkins = config.explosive_pumpkins;
         this.shears_take_durability = config.getBoolean("mechanics.explosion-triggers.shear-pumpkin.shears-take-durability", true);
@@ -83,7 +85,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
-        if (isFolia) {
+        if (is_folia) {
             scheduler.runAtLocation(explodeLoc, kaboom -> {
                 prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
                 PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
