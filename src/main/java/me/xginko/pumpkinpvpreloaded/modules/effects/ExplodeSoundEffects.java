@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
 
@@ -26,14 +27,21 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
                 "Exploding pumpkins will make a spooky configurable sound.");
         this.volume = config.getFloat("pumpkin-explosion.sound-effect.volume", 1.0F);
         this.pitch = config.getFloat("pumpkin-explosion.sound-effect.volume", 1.0F);
-        this.explode_sounds = config.getList("pumpkin-explosion.sound-effect.sounds", List.of(
-                        "PARTICLE_SOUL_ESCAPE",
-                        "ENTITY_WITCH_CELEBRATE",
-                        "ENTITY_GOAT_SCREAMING_DEATH"
-                ), """
+        final List<String> defaults = Stream.of(
+                "PARTICLE_SOUL_ESCAPE",
+                "ENTITY_WITCH_CELEBRATE",
+                "ENTITY_GOAT_SCREAMING_DEATH"
+        ).filter(sound -> {
+            try {
+                Sound.valueOf(sound);
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        }).sorted().toList();
+        this.explode_sounds = config.getList("pumpkin-explosion.sound-effect.sounds", defaults, """
                 Use multiple entries to randomly cycle through a list of sounds or just one.\s
-                Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html
-                """
+                Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html"""
         ).stream().map(configuredSound -> {
             try {
                 return Sound.valueOf(configuredSound);

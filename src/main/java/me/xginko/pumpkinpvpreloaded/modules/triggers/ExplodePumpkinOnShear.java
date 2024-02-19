@@ -94,7 +94,13 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
                         prePumpkinExplodeEvent.getExplodePower(),
                         prePumpkinExplodeEvent.shouldSetFire(),
                         prePumpkinExplodeEvent.shouldBreakBlocks(),
-                        TriggerAction.SHEAR
+                        TriggerAction.SHEAR,
+                        explodeLoc.getWorld().createExplosion(
+                                explodeLoc,
+                                prePumpkinExplodeEvent.getExplodePower(),
+                                prePumpkinExplodeEvent.shouldSetFire(),
+                                prePumpkinExplodeEvent.shouldBreakBlocks()
+                        )
                 );
 
                 postPumpkinExplodeEvent.callEvent();
@@ -118,7 +124,13 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
                     prePumpkinExplodeEvent.getExplodePower(),
                     prePumpkinExplodeEvent.shouldSetFire(),
                     prePumpkinExplodeEvent.shouldBreakBlocks(),
-                    TriggerAction.SHEAR
+                    TriggerAction.SHEAR,
+                    explodeLoc.getWorld().createExplosion(
+                            explodeLoc,
+                            prePumpkinExplodeEvent.getExplodePower(),
+                            prePumpkinExplodeEvent.shouldSetFire(),
+                            prePumpkinExplodeEvent.shouldBreakBlocks()
+                    )
             );
 
             postPumpkinExplodeEvent.callEvent();

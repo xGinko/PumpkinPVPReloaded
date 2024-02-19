@@ -85,7 +85,13 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
                         explodeLoc,
                         preHotHeadEvent.getExplodePower(),
                         preHotHeadEvent.shouldSetFire(),
-                        preHotHeadEvent.shouldBreakBlocks()
+                        preHotHeadEvent.shouldBreakBlocks(),
+                        explodeLoc.getWorld().createExplosion(
+                                preHotHeadEvent.getPumpkinHeadEntity(),
+                                explodeLoc, preHotHeadEvent.getExplodePower(),
+                                preHotHeadEvent.shouldSetFire(),
+                                preHotHeadEvent.shouldBreakBlocks()
+                        )
                 ).callEvent();
             });
         } else {
@@ -95,7 +101,13 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
                     explodeLoc,
                     preHotHeadEvent.getExplodePower(),
                     preHotHeadEvent.shouldSetFire(),
-                    preHotHeadEvent.shouldBreakBlocks()
+                    preHotHeadEvent.shouldBreakBlocks(),
+                    explodeLoc.getWorld().createExplosion(
+                            preHotHeadEvent.getPumpkinHeadEntity(),
+                            explodeLoc, preHotHeadEvent.getExplodePower(),
+                            preHotHeadEvent.shouldSetFire(),
+                            preHotHeadEvent.shouldBreakBlocks()
+                    )
             ).callEvent();
         }
     }

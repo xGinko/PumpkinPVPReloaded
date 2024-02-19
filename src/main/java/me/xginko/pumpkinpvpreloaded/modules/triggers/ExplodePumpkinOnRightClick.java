@@ -79,7 +79,13 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
                         prePumpkinExplodeEvent.getExplodePower(),
                         prePumpkinExplodeEvent.shouldSetFire(),
                         prePumpkinExplodeEvent.shouldBreakBlocks(),
-                        TriggerAction.RIGHT_CLICK
+                        TriggerAction.RIGHT_CLICK,
+                        explodeLoc.getWorld().createExplosion(
+                                explodeLoc,
+                                prePumpkinExplodeEvent.getExplodePower(),
+                                prePumpkinExplodeEvent.shouldSetFire(),
+                                prePumpkinExplodeEvent.shouldBreakBlocks()
+                        )
                 ).callEvent();
             });
         } else {
@@ -90,7 +96,13 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
                     prePumpkinExplodeEvent.getExplodePower(),
                     prePumpkinExplodeEvent.shouldSetFire(),
                     prePumpkinExplodeEvent.shouldBreakBlocks(),
-                    TriggerAction.RIGHT_CLICK
+                    TriggerAction.RIGHT_CLICK,
+                    explodeLoc.getWorld().createExplosion(
+                            explodeLoc,
+                            prePumpkinExplodeEvent.getExplodePower(),
+                            prePumpkinExplodeEvent.shouldSetFire(),
+                            prePumpkinExplodeEvent.shouldBreakBlocks()
+                    )
             ).callEvent();
         }
     }

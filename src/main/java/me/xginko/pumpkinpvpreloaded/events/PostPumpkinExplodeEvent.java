@@ -23,9 +23,10 @@ public class PostPumpkinExplodeEvent extends Event {
             final float explosionPower,
             final boolean setFire,
             final boolean destroyedBlocks,
-            final @NotNull TriggerAction triggerAction
+            final @NotNull TriggerAction triggerAction,
+            final boolean hasExploded
     ) {
-        this.hasExploded = explosionLocation.getWorld().createExplosion(explosionLocation, explosionPower, setFire, destroyedBlocks);
+        this.hasExploded = hasExploded;
         this.exploder = exploder;
         this.explosionLocation = explosionLocation;
         this.explosionPower = explosionPower;

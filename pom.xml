@@ -6,7 +6,7 @@
 
     <groupId>me.xginko</groupId>
     <artifactId>PumpkinPVPReloaded</artifactId>
-    <version>1.6.1</version>
+    <version>1.7.0</version>
     <packaging>jar</packaging>
 
     <name>PumpkinPVPReloaded</name>
@@ -40,19 +40,22 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
                                     <pattern>com.tcoded.folialib</pattern>
-                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.folialib</shadedPattern>
+                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.libs.folialib</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.github.benmanes.caffeine</pattern>
-                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.caffeine</shadedPattern>
+                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.libs.caffeine</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.bstats</shadedPattern>
+                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.libs.bstats</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.libs.kyori</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -60,9 +63,11 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/LICENSE.txt</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
@@ -97,10 +102,22 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.15.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-logger-slf4j</artifactId>
+            <version>4.15.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.tcoded</groupId>
@@ -118,18 +135,6 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>3.1.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.15.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-logger-slf4j</artifactId>
-            <version>4.15.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

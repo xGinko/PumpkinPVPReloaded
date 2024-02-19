@@ -26,7 +26,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     public FireworkEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        List<String> defaults = List.of(
+        final List<String> defaults = List.of(
                 "<color:#FFAE03>",   // Pumpkin Light Orange
                 "<color:#FE4E00>",   // Pumpkin Dark Orange
                 "<color:#1A090D>",   // Witch Hat Dark Purple
@@ -39,7 +39,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             PumpkinPVPReloaded.getLog().warn("You did not configure any colors. Falling back to defaults.");
             configuredColors = defaults;
         }
-        List<Color> colors = configuredColors.stream().map(serialized -> {
+        final List<Color> colors = configuredColors.stream().map(serialized -> {
             TextColor textColor = MiniMessage.miniMessage().deserialize(serialized).color();
             if (textColor == null) {
                 PumpkinPVPReloaded.getLog().warn("Hex color string '"+serialized+"' is not formatted correctly. " +
@@ -54,7 +54,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
 
         List<FireworkEffect> parsedFireworkEffects = new ArrayList<>();
         config.getList("pumpkin-explosion.firework-effects.types",
-                Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).toList(), """
+                Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).sorted().toList(), """
                         FireworkEffect Types you wish to use. Has to be a valid enum from:\s
                         https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html"""
         ).forEach(effect -> {

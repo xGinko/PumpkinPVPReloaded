@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
@@ -37,18 +38,25 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
         this.volume = config.getFloat("pumpkin-deaths.death-sound.volume", -1.0F,
                 "-1 means natural default volume.");
         this.pumpkin_explosion = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
-        this.death_sounds = config.getList("pumpkin-deaths.death-sound.sounds", List.of(
-                        "ENTITY_HOGLIN_DEATH",
-                        "ENTITY_PHANTOM_DEATH",
-                        "ENTITY_RAVAGER_DEATH",
-                        "ENTITY_SKELETON_HORSE_DEATH",
-                        "ENTITY_WITCH_CELEBRATE",
-                        "ENTITY_GOAT_SCREAMING_DEATH",
-                        "ENTITY_WARDEN_DEATH"
-                ), """
+        final List<String> defaults = Stream.of(
+                "ENTITY_HOGLIN_DEATH",
+                "ENTITY_PHANTOM_DEATH",
+                "ENTITY_RAVAGER_DEATH",
+                "ENTITY_SKELETON_HORSE_DEATH",
+                "ENTITY_WITCH_CELEBRATE",
+                "ENTITY_GOAT_SCREAMING_DEATH",
+                "ENTITY_WARDEN_DEATH"
+                ).filter(sound -> {
+                    try {
+                        Sound.valueOf(sound);
+                        return true;
+                    } catch (IllegalArgumentException e) {
+                        return false;
+                    }
+                }).sorted().toList();
+        this.death_sounds = config.getList("pumpkin-deaths.death-sound.sounds", defaults, """
                 Use multiple entries to randomly cycle through a list of sounds or just one.\s
-                Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html
-                """
+                Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html"""
         ).stream().map(configuredSound -> {
             try {
                 return Sound.valueOf(configuredSound);

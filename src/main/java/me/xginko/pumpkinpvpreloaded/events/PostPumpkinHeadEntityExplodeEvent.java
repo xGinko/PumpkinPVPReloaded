@@ -24,9 +24,10 @@ public class PostPumpkinHeadEntityExplodeEvent extends Event {
             @NotNull Location explodeLocation,
             final float explosionPower,
             final boolean setFire,
-            final boolean destroyedBlocks
+            final boolean destroyedBlocks,
+            final boolean hasExploded
     ) {
-        this.hasExploded = explodeLocation.getWorld().createExplosion(pumpkinHead, explodeLocation, explosionPower, setFire, destroyedBlocks);
+        this.hasExploded = hasExploded;
         this.pumpkinHead = pumpkinHead;
         this.killer = killer;
         this.explodeLocation = explodeLocation;

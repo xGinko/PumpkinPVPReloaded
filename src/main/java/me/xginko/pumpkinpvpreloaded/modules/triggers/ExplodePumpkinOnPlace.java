@@ -77,7 +77,13 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
                         prePumpkinExplodeEvent.getExplodePower(),
                         prePumpkinExplodeEvent.shouldSetFire(),
                         prePumpkinExplodeEvent.shouldBreakBlocks(),
-                        TriggerAction.BLOCK_PLACE
+                        TriggerAction.BLOCK_PLACE,
+                        explodeLoc.getWorld().createExplosion(
+                                explodeLoc,
+                                prePumpkinExplodeEvent.getExplodePower(),
+                                prePumpkinExplodeEvent.shouldSetFire(),
+                                prePumpkinExplodeEvent.shouldBreakBlocks()
+                        )
                 ).callEvent();
             });
         } else {
@@ -88,7 +94,13 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
                     prePumpkinExplodeEvent.getExplodePower(),
                     prePumpkinExplodeEvent.shouldSetFire(),
                     prePumpkinExplodeEvent.shouldBreakBlocks(),
-                    TriggerAction.BLOCK_PLACE
+                    TriggerAction.BLOCK_PLACE,
+                    explodeLoc.getWorld().createExplosion(
+                            explodeLoc,
+                            prePumpkinExplodeEvent.getExplodePower(),
+                            prePumpkinExplodeEvent.shouldSetFire(),
+                            prePumpkinExplodeEvent.shouldBreakBlocks()
+                    )
             ).callEvent();
         }
     }
