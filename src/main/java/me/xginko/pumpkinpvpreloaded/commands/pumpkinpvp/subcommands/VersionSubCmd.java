@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands;
 
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.commands.SubCommand;
 import net.kyori.adventure.text.Component;
@@ -27,23 +28,37 @@ public class VersionSubCmd extends SubCommand {
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "UnstableApiUsage"})
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission("pumpkinpvp.cmd.version")) return;
 
-        final PluginDescriptionFile pluginMeta = PumpkinPVPReloaded.getInstance().getDescription();
+        String name, version, website, author;
 
-        sender.sendMessage(
-                Component.newline()
+        try {
+            final PluginMeta pluginMeta = PumpkinPVPReloaded.getInstance().getPluginMeta();
+            name = pluginMeta.getName();
+            version = pluginMeta.getVersion();
+            website = pluginMeta.getWebsite();
+            author = pluginMeta.getAuthors().get(0);
+        } catch (Throwable versionIncompatible) {
+            final PluginDescriptionFile pluginYML = PumpkinPVPReloaded.getInstance().getDescription();
+            name = pluginYML.getName();
+            version = pluginYML.getVersion();
+            website = pluginYML.getWebsite();
+            author = pluginYML.getAuthors().get(0);
+        }
+
+        sender.sendMessage(Component.newline()
                 .append(
-                        Component.text(pluginMeta.getName()+" "+pluginMeta.getVersion())
-                        .color(NamedTextColor.GOLD)
-                        .clickEvent(ClickEvent.openUrl(pluginMeta.getWebsite()))
+                        Component.text(name + " " + version)
+                                .color(NamedTextColor.GOLD)
+                                .clickEvent(ClickEvent.openUrl(website))
                 )
                 .append(Component.text(" by ").color(NamedTextColor.GRAY))
                 .append(
-                        Component.text(pluginMeta.getAuthors().get(0))
-                        .color(NamedTextColor.DARK_AQUA)
-                        .clickEvent(ClickEvent.openUrl("https://github.com/xGinko"))
+                        Component.text(author)
+                                .color(NamedTextColor.DARK_AQUA)
+                                .clickEvent(ClickEvent.openUrl("https://github.com/xGinko"))
                 )
                 .append(Component.newline())
         );
