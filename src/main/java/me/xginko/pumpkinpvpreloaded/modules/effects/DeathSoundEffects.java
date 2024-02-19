@@ -70,7 +70,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.death-sound.enable", false)
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.death-sound.enable", true)
                 && !death_sounds.isEmpty();
     }
 

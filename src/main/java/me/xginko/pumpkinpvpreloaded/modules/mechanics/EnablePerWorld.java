@@ -23,10 +23,10 @@ public class EnablePerWorld implements PumpkinPVPModule, Listener {
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         config.master().addComment("mechanics.enabled-worlds.enable",
                 "Add the names of the worlds you want this plugins features to be enabled in.");
-        this.active_worlds = new HashSet<>(config.getList("mechanics.enabled-worlds.worlds",
-                List.of("world", "world_nether", "world_the_end")));
         this.blacklist_mode = config.getBoolean("mechanics.enabled-worlds.use-as-blacklist", false,
                 "Make it so that the plugin's features are disabled in the listed worlds.");
+        this.active_worlds = new HashSet<>(config.getList("mechanics.enabled-worlds.worlds",
+                List.of("world", "world_nether", "world_the_end")));
     }
 
     @Override

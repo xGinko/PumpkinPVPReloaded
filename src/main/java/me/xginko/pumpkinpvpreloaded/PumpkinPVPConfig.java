@@ -25,14 +25,16 @@ public class PumpkinPVPConfig {
             PumpkinPVPReloaded.getLog().error("Failed to create plugin folder.");
         // Load config.yml with ConfigMaster
         this.configFile = ConfigFile.loadConfig(new File(pluginFolder, "config.yml"));
-        this.explosive_pumpkins = this.getList("pumpkin-explosion.pumpkin-types", List.of(
-                        Material.PUMPKIN.name(), Material.CARVED_PUMPKIN.name(), Material.JACK_O_LANTERN.name())
+        this.structure();
+        this.explosive_pumpkins = this.getList("pumpkin-explosion.pumpkin-types",
+                List.of("PUMPKIN", "CARVED_PUMPKIN", "JACK_O_LANTERN"),
+                "These materials will explode on the configured trigger."
         ).stream().map(configuredMaterial -> {
             try {
                 return Material.valueOf(configuredMaterial);
             } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warn("Material '"+configuredMaterial+"' cant be used as " +
-                        "an explosive pumpkin because its not a valid material.");
+                PumpkinPVPReloaded.getLog().warn("Material '"+configuredMaterial+
+                        "' cant be used as an explosive pumpkin because its not a valid material.");
                 return null;
             }
         }).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new));
@@ -40,9 +42,17 @@ public class PumpkinPVPConfig {
                 "TNT has a power of 4.0");
         this.explosion_effect_radius_squared = Math.pow(Math.max(explosion_power, 3), 2);
         this.explosion_set_fire = getBoolean("pumpkin-explosion.set-fire", true,
-                "Enable explosion fire like with respawn anchors.");
+                "Enable explosion fire like on respawn anchors.");
         this.explosion_break_blocks = getBoolean("pumpkin-explosion.break-blocks", true,
                 "Enable destruction of nearby blocks.");
+    }
+
+    private void structure() {
+        configFile.addDefault("pumpkin-deaths.attempt-to-correct-death-details", true);
+        configFile.addDefault("pumpkin-explosion", null);
+        configFile.addDefault("mechanics.explosion-triggers.left-click-pumpkin", true);
+        configFile.addDefault("mechanics.explosion-triggers.right-click-pumpkin", false);
+        configFile.addDefault("mechanics.explosion-triggers.place-pumpkin", false);
     }
 
     public void saveConfig() {

@@ -23,10 +23,10 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
     public ExplodeSoundEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.master().addComment("pumpkin-explosion.sound-effect.enable",
+        config.master().addComment("pumpkin-explosion.sound-effects.enable",
                 "Exploding pumpkins will make a spooky configurable sound.");
-        this.volume = config.getFloat("pumpkin-explosion.sound-effect.volume", 1.0F);
-        this.pitch = config.getFloat("pumpkin-explosion.sound-effect.volume", 1.0F);
+        this.volume = config.getFloat("pumpkin-explosion.sound-effects.volume", 1.0F);
+        this.pitch = config.getFloat("pumpkin-explosion.sound-effects.volume", 1.0F);
         final List<String> defaults = Stream.of(
                 "PARTICLE_SOUL_ESCAPE",
                 "ENTITY_WITCH_CELEBRATE",
@@ -39,7 +39,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
                 return false;
             }
         }).sorted().toList();
-        this.explode_sounds = config.getList("pumpkin-explosion.sound-effect.sounds", defaults, """
+        this.explode_sounds = config.getList("pumpkin-explosion.sound-effects.sounds", defaults, """
                 Use multiple entries to randomly cycle through a list of sounds or just one.\s
                 Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html"""
         ).stream().map(configuredSound -> {
@@ -55,7 +55,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.sound-effect.enable", false)
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.sound-effects.enable", false)
                 && !explode_sounds.isEmpty()
                 && volume > 0;
     }

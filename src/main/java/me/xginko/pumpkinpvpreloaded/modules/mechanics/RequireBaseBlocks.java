@@ -24,9 +24,9 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
     public RequireBaseBlocks() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.master().addComment("mechanics.require-specific-base-block.enable",
+        config.master().addComment("mechanics.require-base-block.enable",
                 "If enabled, pumpkins will only explode when placed on one of the configured materials (like end crystals).");
-        this.base_materials = config.getList("mechanics.base.materials", List.of("BEDROCK", "OBSIDIAN", "CRYING_OBSIDIAN"),
+        this.base_materials = config.getList("mechanics.require-base-block.materials", List.of("BEDROCK", "OBSIDIAN", "CRYING_OBSIDIAN"),
                 "Values need to be valid material enums from bukkit."
         ).stream().map(configuredBase -> {
             try {
@@ -40,7 +40,7 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.require-specific-base-block.enable", false)
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.require-base-block.enable", false)
                 && !base_materials.isEmpty();
     }
 

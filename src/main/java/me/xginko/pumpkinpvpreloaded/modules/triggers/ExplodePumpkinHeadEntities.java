@@ -35,7 +35,7 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.pumpkins = config.explosive_pumpkins;
         config.master().addComment("mechanics.explosion-triggers.pumpkin-head-entity-kill.enable",
-                "Entities wearing one of the configured pumpkin blocks on their heads will explode as a funny addition.");
+                "Entities wearing one of the configured pumpkin blocks on their heads will explode when killed.");
         this.explode_players = config.getBoolean("mechanics.explosion-triggers.pumpkin-head-entity-kill.killed-players-also-explode", false);
         this.only_killed_by_player = config.getBoolean("mechanics.explosion-triggers.pumpkin-head-entity-kill.only-when-killed-by-player", true,
                 "If disabled will explode on every kind of death.");
