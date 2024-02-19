@@ -18,18 +18,17 @@ import java.util.List;
 public class PumpkinPVPCommand implements TabCompleter, CommandExecutor {
 
     private final List<SubCommand> subCommands;
-    private final List<String> tabCompleter;
-    private final List<String> NO_COMPLETION;
+    private final List<String> tabCompletes, noCompletes;
 
     public PumpkinPVPCommand() {
         this.subCommands = List.of(new ReloadSubCmd(), new VersionSubCmd(), new DisableSubCmd());
-        this.tabCompleter = subCommands.stream().map(SubCommand::getLabel).toList();
-        this.NO_COMPLETION = Collections.emptyList();
+        this.tabCompletes = subCommands.stream().map(SubCommand::getLabel).toList();
+        this.noCompletes = Collections.emptyList();
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        return args.length == 1 ? tabCompleter : NO_COMPLETION;
+        return args.length == 1 ? tabCompletes : noCompletes;
     }
 
     @Override
