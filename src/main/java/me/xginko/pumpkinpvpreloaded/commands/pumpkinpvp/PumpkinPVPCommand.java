@@ -34,19 +34,19 @@ public class PumpkinPVPCommand implements TabCompleter, CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (args.length > 0) {
-            boolean cmdExists = false;
-            for (SubCommand subCommand : subCommands) {
-                if (args[0].equalsIgnoreCase(subCommand.getLabel())) {
-                    subCommand.perform(sender, args);
-                    cmdExists = true;
-                    break;
-                }
-            }
-            if (!cmdExists) sendCommandOverview(sender);
-        } else {
+        if (args.length == 0) {
             sendCommandOverview(sender);
+            return true;
         }
+
+        for (final SubCommand subCommand : subCommands) {
+            if (args[0].equalsIgnoreCase(subCommand.getLabel())) {
+                subCommand.perform(sender, args);
+                return true;
+            }
+        }
+
+        sendCommandOverview(sender);
         return true;
     }
 
