@@ -26,7 +26,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
         config.master().addComment("pumpkin-explosion.sound-effects.enable",
                 "Exploding pumpkins will make a spooky configurable sound.");
         this.volume = config.getFloat("pumpkin-explosion.sound-effects.volume", 1.0F);
-        this.pitch = config.getFloat("pumpkin-explosion.sound-effects.volume", 1.0F);
+        this.pitch = config.getFloat("pumpkin-explosion.sound-effects.pitch", 1.0F);
         final List<String> defaults = Stream.of(
                 "PARTICLE_SOUL_ESCAPE",
                 "ENTITY_WITCH_CELEBRATE",
