@@ -5,8 +5,6 @@ import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Firework;
@@ -17,7 +15,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class FireworkEffects implements PumpkinPVPModule, Listener {
 
@@ -27,11 +28,11 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         final List<String> defaults = List.of(
-                "<color:#FFAE03>",   // Pumpkin Light Orange
-                "<color:#FE4E00>",   // Pumpkin Dark Orange
-                "<color:#1A090D>",   // Witch Hat Dark Purple
-                "<color:#A42CD6>",   // Witch Dress Pale Purple
-                "<color:#A3EB1E>"    // Slime Green
+                "FFAE03",   // Pumpkin Light Orange
+                "FE4E00",   // Pumpkin Dark Orange
+                "1A090D",   // Witch Hat Dark Purple
+                "A42CD6",   // Witch Dress Pale Purple
+                "A3EB1E"    // Slime Green
         );
         List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", defaults,
                 "You need to configure at least 1 color.");
@@ -39,14 +40,17 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             PumpkinPVPReloaded.getLog().warn("You did not configure any colors. Falling back to defaults.");
             configuredColors = defaults;
         }
-        final List<Color> colors = configuredColors.stream().map(serialized -> {
-            TextColor textColor = MiniMessage.miniMessage().deserialize(serialized).color();
-            if (textColor == null) {
-                PumpkinPVPReloaded.getLog().warn("Hex color string '"+serialized+"' is not formatted correctly. " +
-                        "The format is as follows: <color:#E54264>");
+        final List<Color> colors = configuredColors.stream().map(hexString -> {
+            try {
+                return Color.fromRGB(
+                        Integer.parseInt(hexString.substring(0, 2), 16),
+                        Integer.parseInt(hexString.substring(2, 4), 16),
+                        Integer.parseInt(hexString.substring(4, 6), 16)
+                );
+            } catch (NumberFormatException e) {
+                PumpkinPVPReloaded.getLog().warn("Could not parse color '" + hexString + "'. Is it formatted correctly?");
                 return null;
             }
-            return Color.fromRGB(textColor.red(), textColor.green(), textColor.blue());
         }).filter(Objects::nonNull).distinct().toList();
 
         final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
@@ -117,6 +121,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             meta.clearEffects();
             meta.addEffect(this.getRandomEffect());
             firework.setFireworkMeta(meta);
+            firework.setSilent(true);
             firework.detonate();
         }
     }
@@ -129,6 +134,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             meta.clearEffects();
             meta.addEffect(this.getRandomEffect());
             firework.setFireworkMeta(meta);
+            firework.setSilent(true);
             firework.detonate();
         }
     }
