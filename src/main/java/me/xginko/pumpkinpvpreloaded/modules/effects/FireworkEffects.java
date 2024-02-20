@@ -43,10 +43,11 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         }
         final List<Color> colors = configuredColors.stream().map(hexString -> {
             try {
+                final String parseable = hexString.replaceAll("#", "");
                 return Color.fromRGB(
-                        Integer.parseInt(hexString.substring(0, 2), 16),
-                        Integer.parseInt(hexString.substring(2, 4), 16),
-                        Integer.parseInt(hexString.substring(4, 6), 16)
+                        Integer.parseInt(parseable.substring(0, 2), 16),
+                        Integer.parseInt(parseable.substring(2, 4), 16),
+                        Integer.parseInt(parseable.substring(4, 6), 16)
                 );
             } catch (NumberFormatException e) {
                 PumpkinPVPReloaded.getLog().warn("Could not parse color '" + hexString + "'. Is it formatted correctly?");
