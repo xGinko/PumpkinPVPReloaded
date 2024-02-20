@@ -40,7 +40,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             PumpkinPVPReloaded.getLog().warn("You did not configure any colors. Falling back to defaults.");
             configuredColors = defaults;
         }
-        final List<Color> colors = configuredColors.stream().map(hexString -> {
+        List<Color> colors = configuredColors.stream().map(hexString -> {
             try {
                 return Color.fromRGB(
                         Integer.parseInt(hexString.substring(0, 2), 16),
@@ -52,6 +52,16 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 return null;
             }
         }).filter(Objects::nonNull).distinct().toList();
+        if (colors.isEmpty()) {
+            PumpkinPVPReloaded.getLog().warn("Could not parse any color. Using defaults.");
+            colors = List.of(
+                    Color.fromRGB(255, 174, 3),
+                    Color.fromRGB(254, 78, 0),
+                    Color.fromRGB(26, 9, 13),
+                    Color.fromRGB(164, 44, 214),
+                    Color.fromRGB(163, 235, 30)
+            );
+        }
 
         final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
         final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);
