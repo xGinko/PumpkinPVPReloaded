@@ -55,7 +55,7 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>
-                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.libs.kyori</shadedPattern>
+                                    <shadedPattern>net.kyori</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

@@ -45,7 +45,8 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
                 "ENTITY_SKELETON_HORSE_DEATH",
                 "ENTITY_WITCH_CELEBRATE",
                 "ENTITY_GOAT_SCREAMING_DEATH",
-                "ENTITY_WARDEN_DEATH"
+                "ENTITY_WARDEN_DEATH",
+                "ENTITY_HORSE_DEATH"
                 ).filter(sound -> {
                     try {
                         Sound.valueOf(sound);
@@ -70,8 +71,7 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.death-sound.enable", true)
-                && !death_sounds.isEmpty();
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.death-sound.enable", true);
     }
 
     @Override

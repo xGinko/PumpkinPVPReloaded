@@ -83,7 +83,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
                     dummy_damage_modifier,
                     true
             );
-        } catch (Throwable throwable) {
+        } catch (Throwable t) {
             damageByPumpkinExploder = new EntityDamageByEntityEvent(
                     pumpkinExploder,
                     damagedPlayer,

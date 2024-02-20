@@ -30,7 +30,15 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
         final List<String> defaults = Stream.of(
                 "PARTICLE_SOUL_ESCAPE",
                 "ENTITY_WITCH_CELEBRATE",
-                "ENTITY_GOAT_SCREAMING_DEATH"
+                "ENTITY_GOAT_SCREAMING_DEATH",
+                "ENTITY_ALLAY_DEATH",
+                "ENTITY_CAT_DEATH",
+                "ENTITY_DOLPHIN_HURT",
+                "ENTITY_GOAT_SCREAMING_AMBIENT",
+                "ENTITY_GOAT_SCREAMING_HURT",
+                "ENTITY_HOGLIN_HURT",
+                "ENTITY_CHICKEN_HURT",
+                "ENTITY_ZOMBIFIED_PIGLIN_HURT"
         ).filter(sound -> {
             try {
                 Sound.valueOf(sound);
@@ -56,7 +64,6 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
     @Override
     public boolean shouldEnable() {
         return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.sound-effects.enable", false)
-                && !explode_sounds.isEmpty()
                 && volume > 0;
     }
 
