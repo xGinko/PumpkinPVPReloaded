@@ -55,12 +55,8 @@ public class PumpkinPVPConfig {
         configFile.addDefault("mechanics.explosion-triggers.place-pumpkin", false);
     }
 
-    public void saveConfig() {
-        try {
-            this.configFile.save();
-        } catch (Exception e) {
-            PumpkinPVPReloaded.getLog().error("Failed to save config file! - " + e.getLocalizedMessage());
-        }
+    public void saveConfig() throws Exception {
+        this.configFile.save();
     }
 
     public @NotNull ConfigFile master() {

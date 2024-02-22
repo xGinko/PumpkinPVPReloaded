@@ -62,9 +62,8 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
             random = new Random();
             PumpkinPVPModule.reloadModules();
             config.saveConfig();
-        } catch (Exception e) {
-            logger.error("Error loading config! - " + e.getLocalizedMessage());
-            e.printStackTrace();
+        } catch (Throwable t) {
+            logger.error("Error loading config!", t);
         }
     }
 
