@@ -26,6 +26,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        audiences = BukkitAudiences.create(this);
         logger = ComponentLogger.logger(getName());
         foliaLib = new FoliaLib(this);
 
@@ -59,7 +60,6 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     }
 
     public void reloadConfiguration() {
-        final long start = System.currentTimeMillis();
         try {
             config = new PumpkinPVPConfig();
             random = new Random();
@@ -68,7 +68,6 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         } catch (Throwable t) {
             logger.error("Error loading config!", t);
         }
-        logger.info("Took " + (System.currentTimeMillis() - start) + " millis");
     }
 
     public static PumpkinPVPReloaded getInstance() {
