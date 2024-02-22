@@ -31,8 +31,7 @@ public class EnablePerWorld implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.enabled-worlds.enable", false)
-                && !active_worlds.isEmpty();
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.enabled-worlds.enable", false);
     }
 
     @Override

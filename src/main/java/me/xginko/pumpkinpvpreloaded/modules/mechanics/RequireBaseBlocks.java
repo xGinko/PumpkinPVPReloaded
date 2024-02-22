@@ -40,8 +40,7 @@ public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.require-base-block.enable", false)
-                && !base_materials.isEmpty();
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.require-base-block.enable", false);
     }
 
     @Override

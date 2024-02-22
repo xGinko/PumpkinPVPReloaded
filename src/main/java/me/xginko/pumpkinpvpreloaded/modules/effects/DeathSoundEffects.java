@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DeathSoundEffects implements PumpkinPVPModule, Listener {
@@ -66,7 +67,10 @@ public class DeathSoundEffects implements PumpkinPVPModule, Listener {
                         "Please use correct enums from: https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html");
                 return null;
             }
-        }).filter(Objects::nonNull).distinct().toList();
+        }).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+        if (this.death_sounds.isEmpty()) {
+            this.death_sounds.addAll(defaults.stream().map(Sound::valueOf).toList());
+        }
     }
 
     @Override

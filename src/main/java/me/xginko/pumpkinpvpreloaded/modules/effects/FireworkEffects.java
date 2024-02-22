@@ -35,13 +35,9 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 "A42CD6",   // Witch Dress Pale Purple
                 "A3EB1E"    // Slime Green
         );
-        List<String> configuredColors = config.getList("pumpkin-explosion.firework-effects.colors", defaults,
-                "You need to configure at least 1 color.");
-        if (configuredColors.isEmpty()) {
-            PumpkinPVPReloaded.getLog().warn("You did not configure any colors. Falling back to defaults.");
-            configuredColors = defaults;
-        }
-        final List<Color> colors = configuredColors.stream().map(hexString -> {
+        final List<Color> colors = config.getList("pumpkin-explosion.firework-effects.colors", defaults,
+                "You need to configure at least 1 color."
+        ).stream().map(hexString -> {
             try {
                 final String parseable = hexString.replaceAll("#", "");
                 return Color.fromRGB(
@@ -55,7 +51,6 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             }
         }).filter(Objects::nonNull).distinct().collect(Collectors.toList());
         if (colors.isEmpty()) {
-            PumpkinPVPReloaded.getLog().warn("Could not parse any color. Using defaults.");
             colors.add(Color.fromRGB(255, 174, 3));
             colors.add(Color.fromRGB(254, 78, 0));
             colors.add(Color.fromRGB(26, 9, 13));
@@ -66,40 +61,49 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
         final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);
 
-        List<FireworkEffect> parsedFireworkEffects = new ArrayList<>();
-        config.getList("pumpkin-explosion.firework-effects.types",
+        final List<FireworkEffect.Type> effectTypes = config.getList("pumpkin-explosion.firework-effects.types",
                 Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).sorted().toList(), """
                         FireworkEffect Types you wish to use. Has to be a valid enum from:\s
                         https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html"""
-        ).forEach(effect -> {
+        ).stream().map(configuredType -> {
             try {
-                FireworkEffect.Type effectType = FireworkEffect.Type.valueOf(effect);
-                colors.forEach(primaryColor -> {
-                    if (colors.size() == 1) {
-                        parsedFireworkEffects.add(FireworkEffect.builder()
-                                .withColor(primaryColor)
-                                .with(effectType)
-                                .flicker(flicker)
-                                .trail(trail)
-                                .build());
-                        return;
-                    }
-                    Color secondaryColor;
-                    do {
-                        secondaryColor = colors.get(PumpkinPVPReloaded.getRandom().nextInt(colors.size()));
-                    } while (secondaryColor.equals(primaryColor)); // Avoid rolling the same color
+                return FireworkEffect.Type.valueOf(configuredType);
+            } catch (IllegalArgumentException e) {
+                PumpkinPVPReloaded.getLog().warn("FireworkEffect Type '"+configuredType+"' not recognized. " +
+                        "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
+                return null;
+            }
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+        if (effectTypes.isEmpty()) {
+            effectTypes.addAll(Arrays.asList(FireworkEffect.Type.values()));
+        }
+
+        final List<FireworkEffect> parsedFireworkEffects = new ArrayList<>();
+
+        for (FireworkEffect.Type effectType : effectTypes) {
+            for (Color primaryColor : colors) {
+                if (colors.size() == 1) {
                     parsedFireworkEffects.add(FireworkEffect.builder()
-                            .withColor(primaryColor, secondaryColor)
+                            .withColor(primaryColor)
                             .with(effectType)
                             .flicker(flicker)
                             .trail(trail)
                             .build());
-                });
-            } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warn("FireworkEffect Type '"+effect+"' not recognized. " +
-                        "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
+                    continue;
+                }
+                Color secondaryColor;
+                do {
+                    secondaryColor = colors.get(PumpkinPVPReloaded.getRandom().nextInt(colors.size()));
+                } while (secondaryColor.equals(primaryColor)); // Ensure we never combine the same colors
+                parsedFireworkEffects.add(FireworkEffect.builder()
+                        .withColor(primaryColor, secondaryColor)
+                        .with(effectType)
+                        .flicker(flicker)
+                        .trail(trail)
+                        .build());
             }
-        });
+        }
+
         this.firework_effects = parsedFireworkEffects.stream().distinct().toList();
     }
 

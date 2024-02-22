@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
@@ -58,7 +59,10 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
                         "Please use correct enums from: https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html");
                 return null;
             }
-        }).filter(Objects::nonNull).distinct().toList();
+        }).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+        if (this.explode_sounds.isEmpty()) {
+            this.explode_sounds.addAll(defaults.stream().map(Sound::valueOf).toList());
+        }
     }
 
     @Override
