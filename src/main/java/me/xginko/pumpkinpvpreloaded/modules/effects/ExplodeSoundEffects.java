@@ -67,7 +67,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.sound-effects.enable", false)
+        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.sound-effects.enable", true)
                 && volume > 0;
     }
 
