@@ -3,6 +3,7 @@ package me.xginko.pumpkinpvpreloaded;
 import com.tcoded.folialib.FoliaLib;
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.PumpkinPVPCommand;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
@@ -18,6 +19,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     private static PumpkinPVPReloaded instance;
     private static PumpkinPVPConfig config;
     private static FoliaLib foliaLib;
+    private static BukkitAudiences audiences;
     private static ComponentLogger logger;
     private static Random random;
 
@@ -57,6 +59,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     }
 
     public void reloadConfiguration() {
+        final long start = System.currentTimeMillis();
         try {
             config = new PumpkinPVPConfig();
             random = new Random();
@@ -65,6 +68,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         } catch (Throwable t) {
             logger.error("Error loading config!", t);
         }
+        logger.info("Took " + (System.currentTimeMillis() - start) + " millis");
     }
 
     public static PumpkinPVPReloaded getInstance() {
@@ -75,6 +79,9 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     }
     public static FoliaLib getFoliaLib() {
         return foliaLib;
+    }
+    public static BukkitAudiences getAudiences() {
+        return audiences;
     }
     public static ComponentLogger getLog() {
         return logger;

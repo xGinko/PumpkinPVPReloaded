@@ -3,6 +3,7 @@ package me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.commands.SubCommand;
+import me.xginko.pumpkinpvpreloaded.utils.KyoriUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -48,7 +49,7 @@ public class VersionSubCmd extends SubCommand {
             author = pluginYML.getAuthors().get(0);
         }
 
-        sender.sendMessage(Component.newline()
+        KyoriUtil.sendMessage(sender, Component.newline()
                 .append(
                         Component.text(name + " " + version)
                                 .color(NamedTextColor.GOLD)

@@ -2,6 +2,7 @@ package me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.commands.SubCommand;
+import me.xginko.pumpkinpvpreloaded.utils.KyoriUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,10 +29,10 @@ public class ReloadSubCmd extends SubCommand {
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission("pumpkinpvp.cmd.reload")) return;
 
-        sender.sendMessage(Component.text("Reloading PumpkinPVP...").color(NamedTextColor.WHITE));
+        KyoriUtil.sendMessage(sender, Component.text("Reloading PumpkinPVP...").color(NamedTextColor.WHITE));
         PumpkinPVPReloaded.getFoliaLib().getImpl().runNextTick(reload -> {
             PumpkinPVPReloaded.getInstance().reloadConfiguration();
-            sender.sendMessage(Component.text("Reload complete.").color(NamedTextColor.GREEN));
+            KyoriUtil.sendMessage(sender, Component.text("Reload complete.").color(NamedTextColor.GREEN));
         });
     }
 }
