@@ -22,6 +22,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     private static BukkitAudiences audiences;
     private static ComponentLogger logger;
     private static Random random;
+    private Metrics metrics;
 
     @Override
     public void onEnable() {
@@ -29,6 +30,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         audiences = BukkitAudiences.create(this);
         logger = ComponentLogger.logger(getName());
         foliaLib = new FoliaLib(this);
+        metrics = new Metrics(this, 20296);
 
         // Fancy enable
         final Style bold_green = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(163,235,30)).build();
@@ -56,7 +58,20 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
 
         reloadConfiguration();
         getCommand("pumpkinpvp").setExecutor(new PumpkinPVPCommand());
-        new Metrics(this, 20296);
+    }
+
+    @Override
+    public void onDisable() {
+        PumpkinPVPModule.modules.forEach(PumpkinPVPModule::disable);
+        PumpkinPVPModule.modules.clear();
+        if (audiences != null) {
+            audiences.close();
+            audiences = null;
+        }
+        if (metrics != null) {
+            metrics.shutdown();
+            metrics = null;
+        }
     }
 
     public void reloadConfiguration() {
