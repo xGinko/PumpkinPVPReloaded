@@ -28,7 +28,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public void onEnable() {
         instance = this;
         audiences = BukkitAudiences.create(this);
-        logger = ComponentLogger.logger(getName());
+        logger = ComponentLogger.logger(getLogger().getName());
         foliaLib = new FoliaLib(this);
         metrics = new Metrics(this, 20296);
 
