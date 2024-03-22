@@ -62,6 +62,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 "FireworkEffect Types you wish to use. Has to be a valid enum from: \n" +
                 "https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html")
                 .stream()
+                .distinct()
                 .map(configuredType -> {
                     try {
                         return FireworkEffect.Type.valueOf(configuredType);
