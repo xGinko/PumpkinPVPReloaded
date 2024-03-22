@@ -30,11 +30,11 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         final List<String> defaults = Arrays.asList(
-                "FFAE03",   // Pumpkin Light Orange
-                "FE4E00",   // Pumpkin Dark Orange
-                "1A090D",   // Witch Hat Dark Purple
-                "A42CD6",   // Witch Dress Pale Purple
-                "A3EB1E"    // Slime Green
+                "#FFAE03",   // Pumpkin Light Orange
+                "#FE4E00",   // Pumpkin Dark Orange
+                "#1A090D",   // Witch Hat Dark Purple
+                "#A42CD6",   // Witch Dress Pale Purple
+                "#A3EB1E"    // Slime Green
         );
         final List<Color> colors = config.getList(configPath() + ".colors", defaults,
                 "You need to configure at least 1 color.")
