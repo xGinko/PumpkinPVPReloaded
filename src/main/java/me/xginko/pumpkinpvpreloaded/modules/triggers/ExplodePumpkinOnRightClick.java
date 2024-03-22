@@ -35,8 +35,13 @@ public class ExplodePumpkinOnRightClick implements PumpkinPVPModule, Listener {
     }
 
     @Override
+    public String configPath() {
+        return "mechanics.explosion-triggers.right-click-pumpkin";
+    }
+
+    @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.right-click-pumpkin", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath(), false);
     }
 
     @Override

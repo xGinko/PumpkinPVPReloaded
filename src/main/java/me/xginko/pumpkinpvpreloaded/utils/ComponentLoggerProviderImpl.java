@@ -1,4 +1,4 @@
-package me.xginko.pumpkinpvpreloaded.logging;
+package me.xginko.pumpkinpvpreloaded.utils;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;

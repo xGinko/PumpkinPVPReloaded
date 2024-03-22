@@ -10,8 +10,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 public class EnablePerWorld implements PumpkinPVPModule, Listener {
 
@@ -21,17 +21,22 @@ public class EnablePerWorld implements PumpkinPVPModule, Listener {
     public EnablePerWorld() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.master().addComment("mechanics.enabled-worlds.enable",
+        config.master().addComment(configPath() + ".enable",
                 "Add the names of the worlds you want this plugins features to be enabled in.");
-        this.blacklist_mode = config.getBoolean("mechanics.enabled-worlds.use-as-blacklist", false,
+        this.blacklist_mode = config.getBoolean(configPath() + ".use-as-blacklist", false,
                 "Make it so that the plugin's features are disabled in the listed worlds.");
-        this.active_worlds = new HashSet<>(config.getList("mechanics.enabled-worlds.worlds",
-                List.of("world", "world_nether", "world_the_end")));
+        this.active_worlds = new HashSet<>(config.getList(configPath() + ".worlds",
+                Arrays.asList("world", "world_nether", "world_the_end")));
+    }
+
+    @Override
+    public String configPath() {
+        return "mechanics.enabled-worlds";
     }
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.enabled-worlds.enable", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", false);
     }
 
     @Override

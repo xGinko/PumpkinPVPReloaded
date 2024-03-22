@@ -34,16 +34,21 @@ public class ExplodePumpkinHeadEntities implements PumpkinPVPModule, Listener {
         this.scheduler = is_folia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.pumpkins = config.explosive_pumpkins;
-        config.master().addComment("mechanics.explosion-triggers.pumpkin-head-entity-kill.enable",
+        config.master().addComment(configPath() + ".enable",
                 "Entities wearing one of the configured pumpkin blocks on their heads will explode when killed.");
-        this.explode_players = config.getBoolean("mechanics.explosion-triggers.pumpkin-head-entity-kill.killed-players-also-explode", false);
-        this.only_killed_by_player = config.getBoolean("mechanics.explosion-triggers.pumpkin-head-entity-kill.only-when-killed-by-player", true,
+        this.explode_players = config.getBoolean(configPath() + ".killed-players-also-explode", false);
+        this.only_killed_by_player = config.getBoolean(configPath() + ".only-when-killed-by-player", true,
                 "If disabled will explode on every kind of death.");
     }
 
     @Override
+    public String configPath() {
+        return "mechanics.explosion-triggers.pumpkin-head-entity-kill";
+    }
+
+    @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.pumpkin-head-entity-kill.enable", true);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", true);
     }
 
     @Override

@@ -34,8 +34,13 @@ public class ExplodePumpkinOnPlace implements PumpkinPVPModule, Listener {
     }
 
     @Override
+    public String configPath() {
+        return "mechanics.explosion-triggers.place-pumpkin";
+    }
+
+    @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.place-pumpkin", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath(), false);
     }
 
     @Override

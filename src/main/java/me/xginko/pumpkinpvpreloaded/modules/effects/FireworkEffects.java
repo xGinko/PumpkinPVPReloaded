@@ -5,6 +5,7 @@ import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import me.xginko.pumpkinpvpreloaded.utils.ColorUtil;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Firework;
@@ -28,52 +29,50 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     public FireworkEffects() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        final List<String> defaults = List.of(
+        final List<String> defaults = Arrays.asList(
                 "FFAE03",   // Pumpkin Light Orange
                 "FE4E00",   // Pumpkin Dark Orange
                 "1A090D",   // Witch Hat Dark Purple
                 "A42CD6",   // Witch Dress Pale Purple
                 "A3EB1E"    // Slime Green
         );
-        final List<Color> colors = config.getList("pumpkin-explosion.firework-effects.colors", defaults,
-                "You need to configure at least 1 color."
-        ).stream().map(hexString -> {
-            try {
-                final String parseable = hexString.replaceAll("#", "");
-                return Color.fromRGB(
-                        Integer.parseInt(parseable.substring(0, 2), 16),
-                        Integer.parseInt(parseable.substring(2, 4), 16),
-                        Integer.parseInt(parseable.substring(4, 6), 16)
-                );
-            } catch (NumberFormatException e) {
-                PumpkinPVPReloaded.getLog().warn("Could not parse color '" + hexString + "'. Is it formatted correctly?");
-                return null;
-            }
-        }).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+        final List<Color> colors = config.getList(configPath() + ".colors", defaults,
+                "You need to configure at least 1 color.")
+                .stream()
+                .distinct()
+                .map(hexString -> {
+                    try {
+                        return ColorUtil.fromHexString(hexString);
+                    } catch (NumberFormatException e) {
+                        warn("Could not parse color '" + hexString + "'. Is it formatted correctly?");
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         if (colors.isEmpty()) {
-            colors.add(Color.fromRGB(255, 174, 3));
-            colors.add(Color.fromRGB(254, 78, 0));
-            colors.add(Color.fromRGB(26, 9, 13));
-            colors.add(Color.fromRGB(164, 44, 214));
-            colors.add(Color.fromRGB(163, 235, 30));
+            colors.addAll(defaults.stream().map(ColorUtil::fromHexString).collect(Collectors.toSet()));
         }
 
-        final boolean flicker = config.getBoolean("pumpkin-explosion.firework-effects.flicker", false);
-        final boolean trail = config.getBoolean("pumpkin-explosion.firework-effects.trail", false);
+        final boolean flicker = config.getBoolean(configPath() + ".flicker", false);
+        final boolean trail = config.getBoolean(configPath() + ".trail", false);
 
-        final List<FireworkEffect.Type> effectTypes = config.getList("pumpkin-explosion.firework-effects.types",
-                Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).sorted().toList(), """
-                        FireworkEffect Types you wish to use. Has to be a valid enum from:\s
-                        https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html"""
-        ).stream().map(configuredType -> {
-            try {
-                return FireworkEffect.Type.valueOf(configuredType);
-            } catch (IllegalArgumentException e) {
-                PumpkinPVPReloaded.getLog().warn("FireworkEffect Type '"+configuredType+"' not recognized. " +
-                        "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
-                return null;
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        final List<FireworkEffect.Type> effectTypes = config.getList(configPath() + ".types",
+                Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).sorted().collect(Collectors.toList()),
+                "FireworkEffect Types you wish to use. Has to be a valid enum from: \n" +
+                "https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html")
+                .stream()
+                .map(configuredType -> {
+                    try {
+                        return FireworkEffect.Type.valueOf(configuredType);
+                    } catch (IllegalArgumentException e) {
+                        warn("FireworkEffect Type '" + configuredType + "' not recognized. " +
+                             "Please use valid enums from: https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html");
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         if (effectTypes.isEmpty()) {
             effectTypes.addAll(Arrays.asList(FireworkEffect.Type.values()));
         }
@@ -104,12 +103,17 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
             }
         }
 
-        this.firework_effects = parsedFireworkEffects.stream().distinct().toList();
+        this.firework_effects = parsedFireworkEffects.stream().distinct().collect(Collectors.toList());
+    }
+
+    @Override
+    public String configPath() {
+        return "pumpkin-explosion.firework-effects";
     }
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.firework-effects.enable", true);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", true);
     }
 
     @Override

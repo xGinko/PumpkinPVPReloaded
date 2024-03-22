@@ -23,16 +23,21 @@ public class RateLimitPumpkinExplosions implements PumpkinPVPModule, Listener {
     public RateLimitPumpkinExplosions() {
         shouldEnable();
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.master().addComment("mechanics.explode-delay.enable", """
-                This is meant for servers that allow hacks/cheats to automate pumpkin pvp similar to crystal pvp.\s
-                Usually not needed because you can simply turn down explosion power but here just in case.""");
-        this.delay_millis = config.getInt("mechanics.explode-delay.delay-in-ticks", 4) * 50L;
+        config.master().addComment(configPath() + ".enable",
+                "This is meant for servers that allow hacks/cheats to automate pumpkin pvp similar to crystal pvp. \n" +
+                "Usually not needed because you can simply turn down explosion power but here just in case.");
+        this.delay_millis = config.getInt(configPath() + ".delay-in-ticks", 4) * 50L;
         this.players_on_cooldown = delay_millis > 0 ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(delay_millis)).build() : null;
     }
 
     @Override
+    public String configPath() {
+        return "mechanics.explode-delay";
+    }
+
+    @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explode-delay.enable", false)
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", false)
                 && delay_millis > 0;
     }
 

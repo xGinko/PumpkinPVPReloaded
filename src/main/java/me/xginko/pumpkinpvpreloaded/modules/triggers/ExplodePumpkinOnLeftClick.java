@@ -35,8 +35,13 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
     }
 
     @Override
+    public String configPath() {
+        return "mechanics.explosion-triggers.left-click-pumpkin";
+    }
+
+    @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.left-click-pumpkin", true);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath(), true);
     }
 
     @Override

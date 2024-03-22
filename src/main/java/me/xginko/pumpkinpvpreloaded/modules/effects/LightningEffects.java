@@ -32,20 +32,25 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
         this.scheduler = is_folia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.expl_effect_radius = config.explosion_effect_radius_squared;
-        config.master().addComment("pumpkin-explosion.lightning-effects",
+        config.master().addComment(configPath(),
                 "Will strike the closest player with lightning.");
-        this.deal_damage = config.getBoolean("pumpkin-explosion.lightning-effects.deal-damage", true);
-        this.spawn_amount = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-strikes", 2,
+        this.deal_damage = config.getBoolean(configPath() + ".deal-damage", true);
+        this.spawn_amount = Math.max(config.getInt(configPath() + ".lightning-strikes", 2,
                 "Amount of times to strike."), 1);
-        this.flash_count = Math.max(config.getInt("pumpkin-explosion.lightning-effects.lightning-flash-count", 2,
+        this.flash_count = Math.max(config.getInt(configPath() + ".lightning-flash-count", 2,
                 "Amount of times to flash after strike."), 0);
-        this.probability = config.getDouble("pumpkin-explosion.lightning-effects.lightning-chance", 0.1,
+        this.probability = config.getDouble(configPath() + ".lightning-chance", 0.1,
                 "Percentage as double: 100% = 1.0");
     }
 
     @Override
+    public String configPath() {
+        return "pumpkin-explosion.lightning-effects";
+    }
+
+    @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-explosion.lightning-effects.enable", false)
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", false)
                 && probability > 0;
     }
 

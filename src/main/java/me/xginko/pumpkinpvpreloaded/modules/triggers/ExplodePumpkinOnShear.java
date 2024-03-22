@@ -19,8 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +29,6 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
     private final @Nullable ServerImplementation scheduler;
     private final @NotNull HashSet<Material> pumpkins;
     private final boolean is_folia, shears_take_durability;
-    private final int dura_reduction;
 
     public ExplodePumpkinOnShear() {
         FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
@@ -39,13 +36,17 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
         this.scheduler = is_folia ? foliaLib.getImpl() : null;
         PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
         this.pumpkins = config.explosive_pumpkins;
-        this.shears_take_durability = config.getBoolean("mechanics.explosion-triggers.shear-pumpkin.shears-take-durability", true);
-        this.dura_reduction = config.getInt("mechanics.explosion-triggers.shear-pumpkin.dura-per-explosion", 1);
+        this.shears_take_durability = config.getBoolean(configPath() + ".shears-loose-durability", true);
+    }
+
+    @Override
+    public String configPath() {
+        return "mechanics.explosion-triggers.shear-pumpkin";
     }
 
     @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("mechanics.explosion-triggers.shear-pumpkin.enable", false);
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", false);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
         if (is_folia) {
             scheduler.runAtLocation(explodeLoc, kaboom -> {
                 prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
-                PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
+                new PostPumpkinExplodeEvent(
                         prePumpkinExplodeEvent.getExploder(),
                         explodeLoc,
                         prePumpkinExplodeEvent.getExplodePower(),
@@ -101,24 +102,11 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
                                 prePumpkinExplodeEvent.shouldSetFire(),
                                 prePumpkinExplodeEvent.shouldBreakBlocks()
                         )
-                );
-
-                postPumpkinExplodeEvent.callEvent();
-
-                if (
-                        shears_take_durability
-                        && postPumpkinExplodeEvent.hasExploded()
-                        && originalExploder.getUniqueId().equals(postPumpkinExplodeEvent.getExploder().getUniqueId())
-                ) {
-                    ItemMeta meta = interactItem.getItemMeta();
-                    Damageable damageable = (Damageable) meta;
-                    damageable.setDamage(damageable.hasDamage() ? damageable.getDamage() + dura_reduction : dura_reduction);
-                    interactItem.setItemMeta(meta);
-                }
+                ).callEvent();
             });
         } else {
             prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
-            PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
+            new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,
                     prePumpkinExplodeEvent.getExplodePower(),
@@ -131,20 +119,7 @@ public class ExplodePumpkinOnShear implements PumpkinPVPModule, Listener {
                             prePumpkinExplodeEvent.shouldSetFire(),
                             prePumpkinExplodeEvent.shouldBreakBlocks()
                     )
-            );
-
-            postPumpkinExplodeEvent.callEvent();
-
-            if (
-                    shears_take_durability
-                    && postPumpkinExplodeEvent.hasExploded()
-                    && originalExploder.getUniqueId().equals(postPumpkinExplodeEvent.getExploder().getUniqueId())
-            ) {
-                ItemMeta meta = interactItem.getItemMeta();
-                Damageable damageable = (Damageable) meta;
-                damageable.setDamage(damageable.hasDamage() ? damageable.getDamage() + dura_reduction : dura_reduction);
-                interactItem.setItemMeta(meta);
-            }
+            ).callEvent();
         }
     }
 }

@@ -1,4 +1,4 @@
-package me.xginko.pumpkinpvpreloaded.logging;
+package me.xginko.pumpkinpvpreloaded.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;

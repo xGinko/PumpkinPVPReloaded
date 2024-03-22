@@ -3,11 +3,10 @@ package me.xginko.pumpkinpvpreloaded;
 import com.tcoded.folialib.FoliaLib;
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.PumpkinPVPCommand;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import me.xginko.pumpkinpvpreloaded.utils.ColorUtil;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,25 +32,22 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         metrics = new Metrics(this, 20296);
 
         // Fancy enable
-        final Style bold_green = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(163,235,30)).build();
-        final Style bold_orange = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(254,78,0)).build();
-        final Style bold_yellow = Style.style().decorate(TextDecoration.BOLD).color(TextColor.color(242,195,89)).build();
         logger.info(Component.empty());
         logger.info(Component.empty());
-        logger.info(Component.text("             ╲╲").style(bold_green));
-        logger.info(Component.text("        .╺'```^```'╺.").style(bold_orange));
-        logger.info(Component.text("       ╱   ").style(bold_orange)
-                .append(Component.text("(\\ __ /)").style(bold_yellow))
-                .append(Component.text("  ╲").style(bold_orange)));
-        logger.info(Component.text("      │     ").style(bold_orange)
-                .append(Component.text("` ╲╱ `").style(bold_yellow))
-                .append(Component.text("    │").style(bold_orange)));
-        logger.info(Component.text("       ╲    ").style(bold_orange)
-                .append(Component.text("\\____/").style(bold_yellow))
-                .append(Component.text("   ╱").style(bold_orange)));
-        logger.info(Component.text("        `'╺.......╺'`").style(bold_orange));
+        logger.info(Component.text("             ╲╲").style(ColorUtil.BOLD_GREEN));
+        logger.info(Component.text("        .╺'```^```'╺.").style(ColorUtil.BOLD_ORANGE));
+        logger.info(Component.text("       ╱   ").style(ColorUtil.BOLD_ORANGE)
+                .append(Component.text("(\\ __ /)").style(ColorUtil.BOLD_YELLOW))
+                .append(Component.text("  ╲").style(ColorUtil.BOLD_ORANGE)));
+        logger.info(Component.text("      │     ").style(ColorUtil.BOLD_ORANGE)
+                .append(Component.text("` ╲╱ `").style(ColorUtil.BOLD_YELLOW))
+                .append(Component.text("    │").style(ColorUtil.BOLD_ORANGE)));
+        logger.info(Component.text("       ╲    ").style(ColorUtil.BOLD_ORANGE)
+                .append(Component.text("\\____/").style(ColorUtil.BOLD_YELLOW))
+                .append(Component.text("   ╱").style(ColorUtil.BOLD_ORANGE)));
+        logger.info(Component.text("        `'╺.......╺'`").style(ColorUtil.BOLD_ORANGE));
         logger.info(Component.empty());
-        logger.info(Component.text("      PumpkinPVPReloaded").style(bold_green));
+        logger.info(Component.text("      PumpkinPVPReloaded").style(ColorUtil.BOLD_GREEN));
         logger.info(Component.text("          by xGinko     ").color(TextColor.color(242,195,89)));
         logger.info(Component.empty());
         logger.info(Component.empty());
@@ -64,6 +60,10 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public void onDisable() {
         PumpkinPVPModule.modules.forEach(PumpkinPVPModule::disable);
         PumpkinPVPModule.modules.clear();
+        if (foliaLib != null) {
+            foliaLib.getImpl().cancelAllTasks();
+            foliaLib = null;
+        }
         if (audiences != null) {
             audiences.close();
             audiences = null;
@@ -72,6 +72,9 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
             metrics.shutdown();
             metrics = null;
         }
+        random = null;
+        logger = null;
+        instance = null;
     }
 
     public void reloadConfiguration() {
@@ -97,7 +100,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     public static BukkitAudiences getAudiences() {
         return audiences;
     }
-    public static ComponentLogger getLog() {
+    public static ComponentLogger getPrefixedLogger() {
         return logger;
     }
     public static Random getRandom() {

@@ -31,18 +31,23 @@ import java.util.Map;
 public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
 
     private final @NotNull Cache<Location, Player> pumpkin_exploders;
-    private final @NotNull Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> dummy_damage_modifier;
+    private final @NotNull Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> no_damage_modifiers;
     private final double expl_effect_radius;
 
     protected AdjustDamageInfo() {
         this.pumpkin_exploders = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(1)).build();
-        this.dummy_damage_modifier = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
+        this.no_damage_modifiers = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
         this.expl_effect_radius = PumpkinPVPReloaded.getConfiguration().explosion_effect_radius_squared;
     }
 
     @Override
+    public String configPath() {
+        return "pumpkin-deaths.attempt-to-correct-death-details";
+    }
+
+    @Override
     public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean("pumpkin-deaths.attempt-to-correct-death-details", true,
+        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath(), true,
                 "Tries to fill in the blanks so the game can roughly tell who killed who.");
     }
 
@@ -78,9 +83,9 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
                     pumpkinExploder,
                     damagedPlayer,
                     EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
-                    DamageSource.builder(DamageType.PLAYER_EXPLOSION).withCausingEntity(pumpkinExploder).build(),
+                    DamageSource.builder(DamageType.PLAYER_EXPLOSION).withDirectEntity(pumpkinExploder).withCausingEntity(pumpkinExploder).build(),
                     new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
-                    dummy_damage_modifier,
+                    no_damage_modifiers,
                     true
             );
         } catch (Throwable t) {
@@ -89,7 +94,7 @@ public class AdjustDamageInfo implements PumpkinPVPModule, Listener {
                     damagedPlayer,
                     EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
                     new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
-                    dummy_damage_modifier
+                    no_damage_modifiers
             );
         }
 
