@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
+import com.cryptomorin.xseries.XEntityType;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
@@ -8,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -44,8 +44,8 @@ public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
     @SuppressWarnings({"deprecation", "removal", "UnstableApiUsage"})
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     private void onDamageByBlock(EntityDamageByBlockEvent event) {
-        if (!event.getEntityType().equals(EntityType.PLAYER)) return;
-        if (!event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) return;
+        if (event.getEntityType() != XEntityType.PLAYER.get()) return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) return;
 
         final Player damagedPlayer = (Player) event.getEntity();
         final Block explodedBlock = event.getDamager();

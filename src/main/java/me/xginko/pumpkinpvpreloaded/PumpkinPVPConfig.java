@@ -20,7 +20,7 @@ public class PumpkinPVPConfig {
     public final float explosion_power;
     public final boolean explosion_set_fire, explosion_break_blocks;
 
-    protected PumpkinPVPConfig() throws Exception {
+    PumpkinPVPConfig() throws Exception {
         // Create plugin folder first if it does not exist yet
         File pluginFolder = PumpkinPVPReloaded.getInstance().getDataFolder();
         if (!pluginFolder.exists() && !pluginFolder.mkdir())

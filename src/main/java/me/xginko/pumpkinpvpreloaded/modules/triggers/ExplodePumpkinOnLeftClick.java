@@ -1,12 +1,12 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,7 +53,8 @@ public class ExplodePumpkinOnLeftClick extends PumpkinPVPModule implements Liste
 
         if (PumpkinPVPReloaded.isServerFolia()) {
             scheduling.regionSpecificScheduler(explodeLoc).run(() -> {
-                prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+                prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
+
                 new PostPumpkinExplodeEvent(
                         prePumpkinExplodeEvent.getExploder(),
                         explodeLoc,
@@ -70,7 +71,8 @@ public class ExplodePumpkinOnLeftClick extends PumpkinPVPModule implements Liste
                 ).callEvent();
             });
         } else {
-            prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
+            prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
+
             new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,

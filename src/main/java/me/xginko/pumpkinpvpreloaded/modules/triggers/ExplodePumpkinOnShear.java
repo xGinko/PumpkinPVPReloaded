@@ -64,7 +64,8 @@ public class ExplodePumpkinOnShear extends PumpkinPVPModule implements Listener 
 
         if (PumpkinPVPReloaded.isServerFolia()) {
             scheduling.regionSpecificScheduler(explodeLoc).run(() -> {
-                prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial());
+                prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
+
                 new PostPumpkinExplodeEvent(
                         prePumpkinExplodeEvent.getExploder(),
                         explodeLoc,
@@ -81,7 +82,8 @@ public class ExplodePumpkinOnShear extends PumpkinPVPModule implements Listener 
                 ).callEvent();
             });
         } else {
-            prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial());
+            prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
+
             new PostPumpkinExplodeEvent(
                     prePumpkinExplodeEvent.getExploder(),
                     explodeLoc,

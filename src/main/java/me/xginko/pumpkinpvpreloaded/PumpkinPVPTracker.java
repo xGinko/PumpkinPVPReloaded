@@ -26,7 +26,7 @@ public final class PumpkinPVPTracker implements Enableable, Disableable, Listene
     private final @NotNull Cache<Location, Player> pre_pumpkin_explosions;
     private final @NotNull Set<Location> post_pumpkin_explosions;
 
-    protected PumpkinPVPTracker() {
+    PumpkinPVPTracker() {
         Duration cacheDuration = Duration.ofMillis(1500);
         this.pre_pumpkin_explosions = Caffeine.newBuilder().expireAfterWrite(cacheDuration).build();
         this.post_pumpkin_explosions = Collections.newSetFromMap(Caffeine.newBuilder().expireAfterWrite(cacheDuration)
