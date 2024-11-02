@@ -1,8 +1,5 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
-import com.tcoded.folialib.FoliaLib;
-import com.tcoded.folialib.impl.ServerImplementation;
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
@@ -18,45 +15,26 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class LightningEffects implements PumpkinPVPModule, Listener {
+public class LightningEffects extends PumpkinPVPModule implements Listener {
 
-    private final @Nullable ServerImplementation scheduler;
-    private final boolean is_folia, deal_damage;
+    private final double probability;
     private final int spawn_amount, flash_count;
-    private final double probability, expl_effect_radius;
+    private final boolean deal_damage;
 
     public LightningEffects() {
-        shouldEnable();
-        FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
-        this.is_folia = foliaLib.isFolia();
-        this.scheduler = is_folia ? foliaLib.getImpl() : null;
-        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        this.expl_effect_radius = config.explosion_effect_radius_squared;
-        config.master().addComment(configPath(),
+        super("pumpkin-explosion.lightning-effects", true, 
                 "Will strike the closest player with lightning.");
-        this.deal_damage = config.getBoolean(configPath() + ".deal-damage", true);
-        this.spawn_amount = Math.max(config.getInt(configPath() + ".lightning-strikes", 2,
+        this.deal_damage = config.getBoolean(configPath + ".deal-damage", true);
+        this.spawn_amount = Math.max(config.getInt(configPath + ".lightning-strikes", 2,
                 "Amount of times to strike."), 1);
-        this.flash_count = Math.max(config.getInt(configPath() + ".lightning-flash-count", 2,
+        this.flash_count = Math.max(config.getInt(configPath + ".lightning-flash-count", 2,
                 "Amount of times to flash after strike."), 0);
-        this.probability = config.getDouble(configPath() + ".lightning-chance", 0.1,
+        this.probability = config.getDouble(configPath + ".lightning-chance", 0.1,
                 "Percentage as double: 100% = 1.0");
     }
 
     @Override
-    public String configPath() {
-        return "pumpkin-explosion.lightning-effects";
-    }
-
-    @Override
-    public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", false)
-                && probability > 0;
-    }
-
-    @Override
     public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -67,21 +45,21 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
-        if (event.hasExploded() && (probability >= 1 || PumpkinPVPReloaded.getRandom().nextDouble() <= probability)) {
+        if (event.hasExploded() && (probability >= 1 || PumpkinPVPReloaded.random().nextDouble() <= probability)) {
             strikeLightning(event.getExploder().getUniqueId(), event.getExplodeLocation());
         }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
-        if (event.hasExploded() && (probability >= 1 || PumpkinPVPReloaded.getRandom().nextDouble() <= probability)) {
+        if (event.hasExploded() && (probability >= 1 || PumpkinPVPReloaded.random().nextDouble() <= probability)) {
             strikeLightning(event.getKiller() != null ? event.getKiller().getUniqueId() : null, event.getExplodeLocation());
         }
     }
 
     private void strikeLightning(@Nullable final UUID exploder, final Location explosionLoc) {
         Player closestPlayer = null;
-        double smallestDistance = expl_effect_radius;
+        double smallestDistance = config.explosion_effect_radius_squared;
         for (Player player : explosionLoc.getNearbyPlayers(6, 6, 6)) {
             if (exploder != null && player.getUniqueId().equals(exploder)) continue;
             double currentDistance = explosionLoc.distanceSquared(player.getLocation());
@@ -95,8 +73,8 @@ public class LightningEffects implements PumpkinPVPModule, Listener {
         final Location playerLoc = closestPlayer.getLocation();
         final World world = playerLoc.getWorld();
 
-        if (is_folia) {
-            scheduler.runAtLocation(playerLoc, strike -> {
+        if (PumpkinPVPReloaded.isServerFolia()) {
+            scheduling.regionSpecificScheduler(playerLoc).run(() -> {
                 for (int i = 0; i < spawn_amount; i++) {
                     (deal_damage ? world.strikeLightning(playerLoc) : world.strikeLightningEffect(playerLoc)).setFlashCount(flash_count);
                 }

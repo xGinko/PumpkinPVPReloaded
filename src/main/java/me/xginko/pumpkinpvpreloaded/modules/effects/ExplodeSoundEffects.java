@@ -1,6 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
+import com.google.common.collect.ImmutableList;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
@@ -16,18 +16,16 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
+public class ExplodeSoundEffects extends PumpkinPVPModule implements Listener {
 
     private final @NotNull List<Sound> explode_sounds;
     private final float volume, pitch;
 
     public ExplodeSoundEffects() {
-        shouldEnable();
-        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.master().addComment(configPath() + ".enable",
+        super("pumpkin-explosion.sound-effects", true,
                 "Exploding pumpkins will make a spooky configurable sound.");
-        this.volume = config.getFloat(configPath() + ".volume", 1.0F);
-        this.pitch = config.getFloat(configPath() + ".pitch", 1.0F);
+        this.volume = config.getFloat(configPath + ".volume", 1.0F);
+        this.pitch = config.getFloat(configPath + ".pitch", 1.0F);
         final List<String> defaults = Stream.of(
                 "PARTICLE_SOUL_ESCAPE",
                 "ENTITY_WITCH_CELEBRATE",
@@ -50,11 +48,10 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
                     }
                 })
                 .collect(Collectors.toList());
-        this.explode_sounds = config.getList(configPath() + ".sounds", defaults,
+        this.explode_sounds = config.getList(configPath + ".sounds", defaults,
                 "Use multiple entries to randomly cycle through a list of sounds or just one. \n" +
                 "Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html")
                 .stream()
-                .distinct()
                 .map(configuredSound -> {
                     try {
                         return Sound.valueOf(configuredSound);
@@ -65,26 +62,14 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
         if (this.explode_sounds.isEmpty()) {
             this.explode_sounds.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
         }
     }
 
     @Override
-    public String configPath() {
-        return "pumpkin-explosion.sound-effects";
-    }
-
-    @Override
-    public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", true)
-                && volume > 0;
-    }
-
-    @Override
     public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -98,7 +83,7 @@ public class ExplodeSoundEffects implements PumpkinPVPModule, Listener {
         if (event.hasExploded()) {
             event.getExplodeLocation().getWorld().playSound(
                     event.getExplodeLocation(),
-                    this.explode_sounds.get(PumpkinPVPReloaded.getRandom().nextInt(this.explode_sounds.size())),
+                    this.explode_sounds.get(PumpkinPVPReloaded.random().nextInt(this.explode_sounds.size())),
                     this.volume,
                     this.pitch
             );

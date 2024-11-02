@@ -2,7 +2,7 @@ package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
+import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class PrePumpkinExplodeEvent extends Event implements Cancellable {
         this.exploder = exploder;
         this.explodeLocation = explodeLocation;
         this.triggerAction = triggerAction;
-        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        PumpkinPVPConfig config = PumpkinPVPReloaded.config();
         this.explodePower = config.explosion_power;
         this.setFire = config.explosion_set_fire;
         this.breakBlocks = config.explosion_break_blocks;

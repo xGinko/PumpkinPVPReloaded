@@ -1,4 +1,4 @@
-package me.xginko.pumpkinpvpreloaded.enums;
+package me.xginko.pumpkinpvpreloaded.utils;
 
 public enum TriggerAction {
 

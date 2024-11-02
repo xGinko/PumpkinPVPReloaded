@@ -1,7 +1,5 @@
 package me.xginko.pumpkinpvpreloaded.modules.mechanics;
 
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Material;
@@ -13,47 +11,35 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class RequireBaseBlocks implements PumpkinPVPModule, Listener {
+public class RequireBaseBlocks extends PumpkinPVPModule implements Listener {
 
-    private final @NotNull HashSet<Material> base_materials;
+    private final @NotNull Set<Material> base_materials;
 
     public RequireBaseBlocks() {
-        shouldEnable();
-        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
-        config.master().addComment(configPath() + ".enable",
+        super("mechanics.require-base-block", false,
                 "If enabled, pumpkins will only explode when placed on one of the configured materials (like end crystals).");
-        this.base_materials = config.getList(configPath() + ".materials", Arrays.asList("BEDROCK", "OBSIDIAN", "CRYING_OBSIDIAN"),
+        this.base_materials = config.getList(configPath + ".materials", Arrays.asList("BEDROCK", "OBSIDIAN", "CRYING_OBSIDIAN"),
                 "Values need to be valid material enums from bukkit.")
                 .stream()
                 .map(configuredBase -> {
                     try {
                         return Material.valueOf(configuredBase);
                     } catch (IllegalArgumentException e) {
-                        PumpkinPVPReloaded.getPrefixedLogger().warn("Base material '" + configuredBase + "' is not a valid Material enum.");
+                        warn("Base material '" + configuredBase + "' is not a valid Material enum.");
                         return null;
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(HashSet::new));
-    }
-
-    @Override
-    public String configPath() {
-        return "mechanics.require-base-block";
-    }
-
-    @Override
-    public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", false);
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
     }
 
     @Override
     public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 

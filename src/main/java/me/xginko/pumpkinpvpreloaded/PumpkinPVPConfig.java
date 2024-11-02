@@ -6,15 +6,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PumpkinPVPConfig {
 
     private final @NotNull ConfigFile configFile;
-    public final @NotNull HashSet<Material> explosive_pumpkins;
+    public final @NotNull Set<Material> explosive_pumpkins;
     public final double explosion_effect_radius_squared;
     public final float explosion_power;
     public final boolean explosion_set_fire, explosion_break_blocks;
@@ -23,7 +24,7 @@ public class PumpkinPVPConfig {
         // Create plugin folder first if it does not exist yet
         File pluginFolder = PumpkinPVPReloaded.getInstance().getDataFolder();
         if (!pluginFolder.exists() && !pluginFolder.mkdir())
-            PumpkinPVPReloaded.getPrefixedLogger().error("Failed to create plugin folder.");
+            PumpkinPVPReloaded.logger().error("Failed to create plugin folder.");
         // Load config.yml with ConfigMaster
         this.configFile = ConfigFile.loadConfig(new File(pluginFolder, "config.yml"));
 
@@ -37,13 +38,13 @@ public class PumpkinPVPConfig {
                     try {
                         return Material.valueOf(configuredMaterial);
                     } catch (IllegalArgumentException e) {
-                        PumpkinPVPReloaded.getPrefixedLogger().warn("Material '" + configuredMaterial + "' " +
+                        PumpkinPVPReloaded.logger().warn("Material '" + configuredMaterial + "' " +
                                "cant be used as an explosive pumpkin because its not a valid material.");
                         return null;
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
         this.explosion_power = getFloat("pumpkin-explosion.power", 8.0F,
                 "TNT has a power of 4.0");
         this.explosion_effect_radius_squared = Math.pow(Math.max(explosion_power, 3), 2);

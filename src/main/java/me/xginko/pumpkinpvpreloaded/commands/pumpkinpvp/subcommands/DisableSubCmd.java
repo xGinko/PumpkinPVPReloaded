@@ -2,7 +2,7 @@ package me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands;
 
 import me.xginko.pumpkinpvpreloaded.commands.SubCommand;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
-import me.xginko.pumpkinpvpreloaded.utils.KyoriUtil;
+import me.xginko.pumpkinpvpreloaded.utils.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -29,11 +29,10 @@ public class DisableSubCmd extends SubCommand {
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission("pumpkinpvp.cmd.disable")) return;
 
-        KyoriUtil.sendMessage(sender, Component.text("Disabling PumpkinPVP...").color(NamedTextColor.RED));
-        PumpkinPVPModule.modules.forEach(PumpkinPVPModule::disable);
-        PumpkinPVPModule.modules.clear();
+        Util.sendMessage(sender, Component.text("Disabling PumpkinPVP...").color(NamedTextColor.RED));
+        PumpkinPVPModule.disableAll();
 
-        KyoriUtil.sendMessage(sender, Component.text("Disabled all plugin listeners and tasks.").color(NamedTextColor.GREEN));
-        KyoriUtil.sendMessage(sender, Component.text("You can enable the plugin again using the reload command.").color(NamedTextColor.GRAY));
+        Util.sendMessage(sender, Component.text("Disabled all plugin listeners and tasks.").color(NamedTextColor.GREEN));
+        Util.sendMessage(sender, Component.text("You can enable the plugin again using the reload command.").color(NamedTextColor.GRAY));
     }
 }

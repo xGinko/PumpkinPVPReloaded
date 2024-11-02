@@ -1,12 +1,10 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
-import com.tcoded.folialib.FoliaLib;
-import com.tcoded.folialib.impl.ServerImplementation;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,37 +14,15 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-
-public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
-
-    private final @Nullable ServerImplementation scheduler;
-    private final @NotNull HashSet<Material> pumpkins;
-    private final boolean is_folia;
+public class ExplodePumpkinOnLeftClick extends PumpkinPVPModule implements Listener {
 
     public ExplodePumpkinOnLeftClick() {
-        FoliaLib foliaLib = PumpkinPVPReloaded.getFoliaLib();
-        this.is_folia = foliaLib.isFolia();
-        this.scheduler = is_folia ? foliaLib.getImpl() : null;
-        this.pumpkins = PumpkinPVPReloaded.getConfiguration().explosive_pumpkins;
-    }
-
-    @Override
-    public String configPath() {
-        return "mechanics.explosion-triggers.left-click-pumpkin";
-    }
-
-    @Override
-    public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath(), true);
+        super("mechanics.explosion-triggers.left-click-pumpkin", true);
     }
 
     @Override
     public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -59,7 +35,7 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
     private void onBlockLeftClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
         final Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null || !pumpkins.contains(clickedBlock.getType())) return;
+        if (clickedBlock == null || !config.explosive_pumpkins.contains(clickedBlock.getType())) return;
 
         PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
                 clickedBlock,
@@ -75,8 +51,8 @@ public class ExplodePumpkinOnLeftClick implements PumpkinPVPModule, Listener {
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
-        if (is_folia) {
-            scheduler.runAtLocation(explodeLoc, kaboom -> {
+        if (PumpkinPVPReloaded.isServerFolia()) {
+            scheduling.regionSpecificScheduler(explodeLoc).run(() -> {
                 prePumpkinExplodeEvent.getPumpkin().setType(Material.AIR);
                 new PostPumpkinExplodeEvent(
                         prePumpkinExplodeEvent.getExploder(),

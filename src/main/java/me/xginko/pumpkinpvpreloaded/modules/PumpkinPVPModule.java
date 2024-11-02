@@ -1,74 +1,109 @@
 package me.xginko.pumpkinpvpreloaded.modules;
 
+import com.google.common.collect.ImmutableSet;
+import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.modules.effects.DeathSoundEffects;
-import me.xginko.pumpkinpvpreloaded.modules.effects.ExplodeSoundEffects;
-import me.xginko.pumpkinpvpreloaded.modules.effects.FireworkEffects;
-import me.xginko.pumpkinpvpreloaded.modules.effects.LightningEffects;
-import me.xginko.pumpkinpvpreloaded.modules.mechanics.EnablePerWorld;
-import me.xginko.pumpkinpvpreloaded.modules.mechanics.RateLimitPumpkinExplosions;
-import me.xginko.pumpkinpvpreloaded.modules.mechanics.RequireBaseBlocks;
-import me.xginko.pumpkinpvpreloaded.modules.triggers.*;
-import me.xginko.pumpkinpvpreloaded.utils.ColorUtil;
-import net.kyori.adventure.text.Component;
+import me.xginko.pumpkinpvpreloaded.utils.Disableable;
+import me.xginko.pumpkinpvpreloaded.utils.Enableable;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import space.arim.morepaperlib.scheduling.GracefulScheduling;
 
+import java.lang.reflect.Modifier;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public interface PumpkinPVPModule {
+public abstract class PumpkinPVPModule implements Enableable, Disableable {
 
-    String configPath();
-    boolean shouldEnable();
-    void enable();
-    void disable();
+    protected static final Set<Class<PumpkinPVPModule>> AVAILABLE_MODULES;
+    protected static final Set<PumpkinPVPModule> ENABLED_MODULES;
 
-    Set<PumpkinPVPModule> modules = new HashSet<>();
+    static {
+        AVAILABLE_MODULES = new Reflections(PumpkinPVPModule.class.getPackage().getName())
+                .get(Scanners.SubTypes.of(PumpkinPVPModule.class).asClass())
+                .stream()
+                .filter(clazz -> !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
+                .map(clazz -> (Class<PumpkinPVPModule>) clazz)
+                .sorted(Comparator.comparing(Class::getSimpleName))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableSet::copyOf));
+        ENABLED_MODULES = new HashSet<>();
+    }
 
-    static void reloadModules() {
-        modules.forEach(PumpkinPVPModule::disable);
-        modules.clear();
+    protected final PumpkinPVPReloaded plugin;
+    protected final PumpkinPVPConfig config;
+    protected final GracefulScheduling scheduling;
+    protected final String configPath, logFormat;
+    protected final boolean enabled_in_config;
 
-        modules.add(new ExplodePumpkinOnShear());
-        modules.add(new ExplodePumpkinOnLeftClick());
-        modules.add(new ExplodePumpkinOnRightClick());
-        modules.add(new ExplodePumpkinOnPlace());
-        modules.add(new ExplodePumpkinHeadEntities());
+    public PumpkinPVPModule(String configPath, boolean defEnabled) {
+        this(configPath, defEnabled, null);
+    }
 
-        modules.add(new ExplodeSoundEffects());
-        modules.add(new FireworkEffects());
-        modules.add(new LightningEffects());
-        modules.add(new DeathSoundEffects());
+    public PumpkinPVPModule(String configPath, boolean defEnabled, String comment) {
+        this.configPath = configPath;
+        this.plugin = PumpkinPVPReloaded.getInstance();
+        this.config = PumpkinPVPReloaded.config();
+        this.scheduling = PumpkinPVPReloaded.scheduling();
 
-        modules.add(new RateLimitPumpkinExplosions());
-        modules.add(new RequireBaseBlocks());
-        modules.add(new EnablePerWorld());
+        if (comment == null || comment.isEmpty()) {
+            this.enabled_in_config = config.getBoolean(configPath + ".enable", defEnabled);
+        } else {
+            this.enabled_in_config = config.getBoolean(configPath + ".enable", defEnabled, comment);
+        }
 
-        modules.add(new AdjustDamageInfo());
-
-        for (PumpkinPVPModule module : modules) {
-            if (module.shouldEnable()) module.enable();
+        String[] paths = configPath.split("\\.");
+        if (paths.length <= 2) {
+            this.logFormat = "<" + configPath + "> {}";
+        } else {
+            this.logFormat = "<" + paths[paths.length - 2] + "." + paths[paths.length - 1] + "> {}";
         }
     }
 
-    default void trace(String message, Throwable throwable) {
-        PumpkinPVPReloaded.getPrefixedLogger().trace(logPrefix() + message, throwable);
+    public boolean shouldEnable() {
+        return enabled_in_config;
     }
 
-    default void error(String message) {
-        PumpkinPVPReloaded.getPrefixedLogger().error(logPrefix() + message);
+    public static void disableAll() {
+        ENABLED_MODULES.forEach(Disableable::disable);
+        ENABLED_MODULES.clear();
     }
 
-    default void warn(String message) {
-        PumpkinPVPReloaded.getPrefixedLogger().warn(Component.text(logPrefix() + message).color(ColorUtil.ORANGE));
+    public static void reloadModules() {
+        disableAll();
+
+        for (Class<PumpkinPVPModule> moduleClass : AVAILABLE_MODULES) {
+            try {
+                PumpkinPVPModule module = moduleClass.getDeclaredConstructor().newInstance();
+                if (module.shouldEnable()) {
+                    ENABLED_MODULES.add(module);
+                }
+            } catch (Throwable t) { // This is not laziness. We want to catch everything here if it fails to init
+                PumpkinPVPReloaded.logger().warn("Failed initialising module class '{}'.", moduleClass.getSimpleName(), t);
+            }
+        }
+
+        ENABLED_MODULES.forEach(Enableable::enable);
     }
 
-    default void info(String message) {
-        PumpkinPVPReloaded.getPrefixedLogger().info(Component.text(logPrefix() + message).color(ColorUtil.GREEN));
+    protected void error(String message, Throwable throwable) {
+        PumpkinPVPReloaded.logger().error(logFormat, message, throwable);
     }
 
-    default String logPrefix() {
-        String[] split = configPath().split("\\.");
-        if (split.length <= 2) return "<" + configPath() + "> ";
-        return "<" + String.join(".", split[split.length - 2], split[split.length - 1]) + "> ";
+    protected void error(String message) {
+        PumpkinPVPReloaded.logger().error(logFormat, message);
+    }
+
+    protected void warn(String message) {
+        PumpkinPVPReloaded.logger().warn(logFormat, message);
+    }
+
+    protected void info(String message) {
+        PumpkinPVPReloaded.logger().info(logFormat, message);
+    }
+
+    protected void notRecognized(Class<?> clazz, String unrecognized) {
+        warn("Unable to parse " + clazz.getSimpleName() + " at '" + unrecognized + "'. Please check your configuration.");
     }
 }

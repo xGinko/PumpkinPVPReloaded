@@ -1,11 +1,10 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
-import me.xginko.pumpkinpvpreloaded.utils.ColorUtil;
+import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Firework;
@@ -22,13 +21,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class FireworkEffects implements PumpkinPVPModule, Listener {
+public class FireworkEffects extends PumpkinPVPModule implements Listener {
 
     private final @NotNull List<FireworkEffect> firework_effects;
 
     public FireworkEffects() {
-        shouldEnable();
-        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        super("pumpkin-explosion.firework-effects", true);
         final List<String> defaults = Arrays.asList(
                 "#FFAE03",   // Pumpkin Light Orange
                 "#FE4E00",   // Pumpkin Dark Orange
@@ -36,13 +34,13 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 "#A42CD6",   // Witch Dress Pale Purple
                 "#A3EB1E"    // Slime Green
         );
-        final List<Color> colors = config.getList(configPath() + ".colors", defaults,
+        final List<Color> colors = config.getList(configPath + ".colors", defaults,
                 "You need to configure at least 1 color.")
                 .stream()
                 .distinct()
                 .map(hexString -> {
                     try {
-                        return ColorUtil.fromHexString(hexString);
+                        return Util.fromHexString(hexString);
                     } catch (NumberFormatException e) {
                         warn("Could not parse color '" + hexString + "'. Is it formatted correctly?");
                         return null;
@@ -51,13 +49,13 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         if (colors.isEmpty()) {
-            colors.addAll(defaults.stream().map(ColorUtil::fromHexString).collect(Collectors.toSet()));
+            colors.addAll(defaults.stream().map(Util::fromHexString).collect(Collectors.toSet()));
         }
 
-        final boolean flicker = config.getBoolean(configPath() + ".flicker", false);
-        final boolean trail = config.getBoolean(configPath() + ".trail", false);
+        final boolean flicker = config.getBoolean(configPath + ".flicker", false);
+        final boolean trail = config.getBoolean(configPath + ".trail", false);
 
-        final List<FireworkEffect.Type> effectTypes = config.getList(configPath() + ".types",
+        final List<FireworkEffect.Type> effectTypes = config.getList(configPath + ".types",
                 Arrays.stream(FireworkEffect.Type.values()).map(Enum::name).sorted().collect(Collectors.toList()),
                 "FireworkEffect Types you wish to use. Has to be a valid enum from: \n" +
                 "https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html")
@@ -93,7 +91,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
                 }
                 Color secondaryColor;
                 do {
-                    secondaryColor = colors.get(PumpkinPVPReloaded.getRandom().nextInt(colors.size()));
+                    secondaryColor = colors.get(PumpkinPVPReloaded.random().nextInt(colors.size()));
                 } while (secondaryColor.equals(primaryColor)); // Ensure we never combine the same colors
                 parsedFireworkEffects.add(FireworkEffect.builder()
                         .withColor(primaryColor, secondaryColor)
@@ -108,18 +106,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     }
 
     @Override
-    public String configPath() {
-        return "pumpkin-explosion.firework-effects";
-    }
-
-    @Override
-    public boolean shouldEnable() {
-        return PumpkinPVPReloaded.getConfiguration().getBoolean(configPath() + ".enable", true);
-    }
-
-    @Override
     public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -129,7 +116,7 @@ public class FireworkEffects implements PumpkinPVPModule, Listener {
     }
 
     private FireworkEffect getRandomEffect() {
-        return this.firework_effects.get(PumpkinPVPReloaded.getRandom().nextInt(this.firework_effects.size()));
+        return this.firework_effects.get(PumpkinPVPReloaded.random().nextInt(this.firework_effects.size()));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

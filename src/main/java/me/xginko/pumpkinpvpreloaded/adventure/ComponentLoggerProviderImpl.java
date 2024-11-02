@@ -1,6 +1,7 @@
-package me.xginko.pumpkinpvpreloaded.utils;
+package me.xginko.pumpkinpvpreloaded.adventure;
 
 import com.google.auto.service.AutoService;
+import me.xginko.pumpkinpvpreloaded.utils.TranslatableMapper;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.logger.slf4j.ComponentLoggerProvider;
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;

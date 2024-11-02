@@ -1,6 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.events;
 
-import me.xginko.pumpkinpvpreloaded.enums.TriggerAction;
+import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

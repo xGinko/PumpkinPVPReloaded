@@ -30,7 +30,7 @@ public class PrePumpkinHeadEntityExplodeEvent extends Event implements Cancellab
         this.pumpkinHead = pumpkinHead;
         this.killer = killer;
         this.explodeLocation = explodeLocation;
-        PumpkinPVPConfig config = PumpkinPVPReloaded.getConfiguration();
+        PumpkinPVPConfig config = PumpkinPVPReloaded.config();
         this.explodePower = config.explosion_power;
         this.setFire = config.explosion_set_fire;
         this.breakBlocks = config.explosion_break_blocks;

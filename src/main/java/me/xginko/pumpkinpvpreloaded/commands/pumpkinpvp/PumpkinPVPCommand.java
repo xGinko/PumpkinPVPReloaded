@@ -4,7 +4,7 @@ import me.xginko.pumpkinpvpreloaded.commands.SubCommand;
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands.DisableSubCmd;
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands.ReloadSubCmd;
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands.VersionSubCmd;
-import me.xginko.pumpkinpvpreloaded.utils.KyoriUtil;
+import me.xginko.pumpkinpvpreloaded.utils.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
@@ -52,11 +52,11 @@ public class PumpkinPVPCommand implements TabCompleter, CommandExecutor {
 
     private void sendCommandOverview(CommandSender sender) {
         if (!sender.hasPermission("pumpkinpvp.cmd.*")) return;
-        KyoriUtil.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
-        KyoriUtil.sendMessage(sender, Component.text("PumpkinPVP Commands").color(NamedTextColor.WHITE));
-        KyoriUtil.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
-        subCommands.forEach(subCommand -> KyoriUtil.sendMessage(sender,
+        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
+        Util.sendMessage(sender, Component.text("PumpkinPVP Commands").color(NamedTextColor.WHITE));
+        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
+        subCommands.forEach(subCommand -> Util.sendMessage(sender,
                 subCommand.getSyntax().append(Component.text(" - ").color(NamedTextColor.DARK_GRAY)).append(subCommand.getDescription())));
-        KyoriUtil.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
+        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
     }
 }
