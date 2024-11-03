@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PumpkinPVPConfig {
+public final class PumpkinPVPConfig {
 
     private final @NotNull ConfigFile configFile;
     public final @NotNull Set<Material> explosive_pumpkins;
