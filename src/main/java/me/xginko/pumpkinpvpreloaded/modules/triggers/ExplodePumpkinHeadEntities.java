@@ -55,40 +55,28 @@ public class ExplodePumpkinHeadEntities extends PumpkinPVPModule implements List
         );
 
         if (!preHotHeadEvent.callEvent()) return;
+
         final Location explodeLoc = preHotHeadEvent.getExplodeLocation();
 
-        if (PumpkinPVPReloaded.isServerFolia()) {
-            scheduling.regionSpecificScheduler(explodeLoc).run(() -> {
-                new PostPumpkinHeadEntityExplodeEvent(
+        PostPumpkinHeadEntityExplodeEvent postHotHeadEvent = new PostPumpkinHeadEntityExplodeEvent(
+                preHotHeadEvent.getPumpkinHeadEntity(),
+                preHotHeadEvent.getKiller(),
+                explodeLoc,
+                preHotHeadEvent.getExplodePower(),
+                preHotHeadEvent.shouldSetFire(),
+                preHotHeadEvent.shouldBreakBlocks(),
+                explodeLoc.getWorld().createExplosion(
                         preHotHeadEvent.getPumpkinHeadEntity(),
-                        preHotHeadEvent.getKiller(),
-                        explodeLoc,
-                        preHotHeadEvent.getExplodePower(),
+                        explodeLoc, preHotHeadEvent.getExplodePower(),
                         preHotHeadEvent.shouldSetFire(),
-                        preHotHeadEvent.shouldBreakBlocks(),
-                        explodeLoc.getWorld().createExplosion(
-                                preHotHeadEvent.getPumpkinHeadEntity(),
-                                explodeLoc, preHotHeadEvent.getExplodePower(),
-                                preHotHeadEvent.shouldSetFire(),
-                                preHotHeadEvent.shouldBreakBlocks()
-                        )
-                ).callEvent();
-            });
+                        preHotHeadEvent.shouldBreakBlocks()
+                )
+        );
+
+        if (PumpkinPVPReloaded.isServerFolia()) {
+            scheduling.regionSpecificScheduler(explodeLoc).run(postHotHeadEvent::callEvent);
         } else {
-            new PostPumpkinHeadEntityExplodeEvent(
-                    preHotHeadEvent.getPumpkinHeadEntity(),
-                    preHotHeadEvent.getKiller(),
-                    explodeLoc,
-                    preHotHeadEvent.getExplodePower(),
-                    preHotHeadEvent.shouldSetFire(),
-                    preHotHeadEvent.shouldBreakBlocks(),
-                    explodeLoc.getWorld().createExplosion(
-                            preHotHeadEvent.getPumpkinHeadEntity(),
-                            explodeLoc, preHotHeadEvent.getExplodePower(),
-                            preHotHeadEvent.shouldSetFire(),
-                            preHotHeadEvent.shouldBreakBlocks()
-                    )
-            ).callEvent();
+            postHotHeadEvent.callEvent();
         }
     }
 }

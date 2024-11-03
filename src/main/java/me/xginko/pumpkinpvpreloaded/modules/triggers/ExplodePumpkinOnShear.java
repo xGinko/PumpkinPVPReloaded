@@ -62,42 +62,29 @@ public class ExplodePumpkinOnShear extends PumpkinPVPModule implements Listener 
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
-        if (PumpkinPVPReloaded.isServerFolia()) {
-            scheduling.regionSpecificScheduler(explodeLoc).run(() -> {
-                prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
-
-                new PostPumpkinExplodeEvent(
-                        prePumpkinExplodeEvent.getExploder(),
+        PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
+                prePumpkinExplodeEvent.getExploder(),
+                explodeLoc,
+                prePumpkinExplodeEvent.getExplodePower(),
+                prePumpkinExplodeEvent.shouldSetFire(),
+                prePumpkinExplodeEvent.shouldBreakBlocks(),
+                TriggerAction.SHEAR,
+                explodeLoc.getWorld().createExplosion(
                         explodeLoc,
                         prePumpkinExplodeEvent.getExplodePower(),
                         prePumpkinExplodeEvent.shouldSetFire(),
-                        prePumpkinExplodeEvent.shouldBreakBlocks(),
-                        TriggerAction.SHEAR,
-                        explodeLoc.getWorld().createExplosion(
-                                explodeLoc,
-                                prePumpkinExplodeEvent.getExplodePower(),
-                                prePumpkinExplodeEvent.shouldSetFire(),
-                                prePumpkinExplodeEvent.shouldBreakBlocks()
-                        )
-                ).callEvent();
+                        prePumpkinExplodeEvent.shouldBreakBlocks()
+                )
+        );
+
+        if (PumpkinPVPReloaded.isServerFolia()) {
+            scheduling.regionSpecificScheduler(explodeLoc).run(() -> {
+                prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
+                postPumpkinExplodeEvent.callEvent();
             });
         } else {
             prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
-
-            new PostPumpkinExplodeEvent(
-                    prePumpkinExplodeEvent.getExploder(),
-                    explodeLoc,
-                    prePumpkinExplodeEvent.getExplodePower(),
-                    prePumpkinExplodeEvent.shouldSetFire(),
-                    prePumpkinExplodeEvent.shouldBreakBlocks(),
-                    TriggerAction.SHEAR,
-                    explodeLoc.getWorld().createExplosion(
-                            explodeLoc,
-                            prePumpkinExplodeEvent.getExplodePower(),
-                            prePumpkinExplodeEvent.shouldSetFire(),
-                            prePumpkinExplodeEvent.shouldBreakBlocks()
-                    )
-            ).callEvent();
+            postPumpkinExplodeEvent.callEvent();
         }
     }
 }
