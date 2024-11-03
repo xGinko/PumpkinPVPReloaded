@@ -38,7 +38,6 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
         final List<Color> colors = config.getList(configPath + ".colors", defaults,
                 "You need to configure at least 1 color.")
                 .stream()
-                .distinct()
                 .map(hexString -> {
                     try {
                         return Util.fromHexString(hexString);
@@ -61,7 +60,6 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
                 "FireworkEffect Types you wish to use. Has to be a valid enum from: \n" +
                 "https://jd.papermc.io/paper/1.20/org/bukkit/FireworkEffect.Type.html")
                 .stream()
-                .distinct()
                 .map(configuredType -> {
                     try {
                         return FireworkEffect.Type.valueOf(configuredType);
