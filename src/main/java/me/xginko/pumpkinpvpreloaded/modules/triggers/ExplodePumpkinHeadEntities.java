@@ -22,7 +22,7 @@ public class ExplodePumpkinHeadEntities extends PumpkinPVPModule implements List
     public ExplodePumpkinHeadEntities() {
         super("mechanics.explosion-triggers.pumpkin-head-entity-kill", false,
                 "Entities wearing one of the configured pumpkin blocks on their heads will explode when killed.");
-        this.explode_players = config.getBoolean(configPath + ".killed-players-also-explode", false);
+        this.explode_players = config.getBoolean(configPath + ".pumpkin-head-players-also-explode", false);
         this.only_killed_by_player = config.getBoolean(configPath + ".only-when-killed-by-player", true,
                 "If disabled will explode on every kind of death.");
     }
@@ -39,7 +39,7 @@ public class ExplodePumpkinHeadEntities extends PumpkinPVPModule implements List
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntityType() == XEntityType.PLAYER.get() && !explode_players) return;
+        if (!explode_players && event.getEntityType() == XEntityType.PLAYER.get()) return;
         final LivingEntity dyingEntity = event.getEntity();
         if (only_killed_by_player && dyingEntity.getKiller() == null) return;
 
