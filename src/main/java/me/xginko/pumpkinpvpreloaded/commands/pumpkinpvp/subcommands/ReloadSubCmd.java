@@ -5,7 +5,6 @@ import me.xginko.pumpkinpvpreloaded.commands.SubCommand;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 
 public class ReloadSubCmd extends SubCommand {
@@ -17,22 +16,23 @@ public class ReloadSubCmd extends SubCommand {
 
     @Override
     public TextComponent getDescription() {
-        return Component.text("Reload the plugin configuration.").color(NamedTextColor.GRAY);
+        return Component.text("Reload the plugin configuration.").color(Util.YELLOW);
     }
 
     @Override
     public TextComponent getSyntax() {
-        return Component.text("/pumpkinpvp reload").color(NamedTextColor.WHITE);
+        return Component.text("/pumpkinpvp reload").color(Util.ORANGE);
     }
 
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!sender.hasPermission("pumpkinpvp.cmd.reload")) return;
 
-        Util.sendMessage(sender, Component.text("Reloading PumpkinPVP...").color(NamedTextColor.WHITE));
+        Util.sendMessage(sender, Component.text("Reloading PumpkinPVP...").color(Util.YELLOW));
+
         PumpkinPVPReloaded.scheduling().asyncScheduler().run(reload -> {
             PumpkinPVPReloaded.getInstance().reloadConfiguration();
-            Util.sendMessage(sender, Component.text("Reload complete.").color(NamedTextColor.GREEN));
+            Util.sendMessage(sender, Component.text("Reload complete.").color(Util.GREEN));
         });
     }
 }

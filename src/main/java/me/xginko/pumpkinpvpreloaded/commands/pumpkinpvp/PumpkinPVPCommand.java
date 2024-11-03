@@ -6,7 +6,6 @@ import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands.ReloadSubCmd
 import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.subcommands.VersionSubCmd;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -53,11 +52,11 @@ public class PumpkinPVPCommand implements TabCompleter, CommandExecutor {
 
     private void sendCommandOverview(CommandSender sender) {
         if (!sender.hasPermission("pumpkinpvp.cmd.*")) return;
-        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
-        Util.sendMessage(sender, Component.text("PumpkinPVP Commands").color(NamedTextColor.WHITE));
-        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
+        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(Util.GREEN));
+        Util.sendMessage(sender, Component.text(" PumpkinPVP Commands").color(Util.ORANGE));
+        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(Util.GREEN));
         subCommands.forEach(subCommand -> Util.sendMessage(sender,
-                subCommand.getSyntax().append(Component.text(" - ").color(NamedTextColor.DARK_GRAY)).append(subCommand.getDescription())));
-        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(NamedTextColor.GRAY));
+                subCommand.getSyntax().append(Component.text(" - ").color(Util.GREEN)).append(subCommand.getDescription())));
+        Util.sendMessage(sender, Component.text("-----------------------------------------------------").color(Util.GREEN));
     }
 }
