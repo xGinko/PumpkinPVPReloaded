@@ -5,6 +5,8 @@ import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.utils.Disableable;
 import me.xginko.pumpkinpvpreloaded.utils.Enableable;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import space.arim.morepaperlib.scheduling.GracefulScheduling;
@@ -21,6 +23,8 @@ public abstract class PumpkinPVPModule implements Enableable, Disableable {
     protected static final Set<PumpkinPVPModule> ENABLED_MODULES;
 
     static {
+        // Disable reflection logging for this operation because its just confusing and provides no value.
+        Configurator.setLevel(PumpkinPVPReloaded.class.getPackage().getName() + ".libs.reflections.Reflections", Level.OFF);
         AVAILABLE_MODULES = new Reflections(PumpkinPVPModule.class.getPackage().getName())
                 .get(Scanners.SubTypes.of(PumpkinPVPModule.class).asClass())
                 .stream()

@@ -65,6 +65,10 @@
                                     <pattern>com.github.cryptomorin</pattern>
                                     <shadedPattern>me.xginko.pumpkinpvpreloaded.libs.xseries</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.reflections</pattern>
+                                    <shadedPattern>me.xginko.pumpkinpvpreloaded.libs.reflections</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -113,6 +117,12 @@
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.21.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
