@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import java.util.EnumMap;
 import java.util.Map;
 
+@SuppressWarnings({"deprecation", "removal", "UnstableApiUsage"})
 public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
 
     private static final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>>
@@ -41,8 +42,7 @@ public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
         HandlerList.unregisterAll(this);
     }
 
-    @SuppressWarnings({"deprecation", "removal", "UnstableApiUsage"})
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onDamageByBlock(EntityDamageByBlockEvent event) {
         if (event.getEntityType() != XEntityType.PLAYER.get()) return;
         if (event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) return;

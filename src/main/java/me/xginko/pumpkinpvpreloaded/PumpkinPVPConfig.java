@@ -55,11 +55,11 @@ public class PumpkinPVPConfig {
     }
 
     private void setStructure() {
-        configFile.addDefault("pumpkin-deaths.attempt-to-correct-death-details", true);
+        configFile.addDefault("pumpkin-deaths.attempt-to-correct-death-details", null);
         configFile.addDefault("pumpkin-explosion", null);
-        configFile.addDefault("mechanics.explosion-triggers.left-click-pumpkin", true);
-        configFile.addDefault("mechanics.explosion-triggers.right-click-pumpkin", false);
-        configFile.addDefault("mechanics.explosion-triggers.place-pumpkin", false);
+        configFile.addDefault("mechanics.explosion-triggers.left-click-pumpkin", null);
+        configFile.addDefault("mechanics.explosion-triggers.right-click-pumpkin", null);
+        configFile.addDefault("mechanics.explosion-triggers.place-pumpkin", null);
     }
 
     public void saveConfig() throws Exception {
