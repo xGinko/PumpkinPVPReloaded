@@ -5,6 +5,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
+import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
@@ -24,8 +25,13 @@ import java.util.Map;
 @SuppressWarnings({"deprecation", "removal", "UnstableApiUsage"})
 public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
 
-    private static final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>>
-            MODIFIER_FUNCTIONS = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
+    private static final Map<EntityDamageEvent.DamageModifier, ? extends Function<? super Double, Double>> MODIFIER_FUNCTIONS;
+    private static final boolean USE_DAMAGE_SOURCE;
+
+    static {
+        MODIFIER_FUNCTIONS = new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(-0.0)));
+        USE_DAMAGE_SOURCE = Util.hasClass("org.bukkit.damage.DamageSource");
+    }
 
     public AdjustDamageInfo() {
         super("pumpkin-deaths.attempt-to-correct-death-details", true,
@@ -43,7 +49,7 @@ public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onDamageByBlock(EntityDamageByBlockEvent event) {
+    private void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
         if (event.getEntityType() != XEntityType.PLAYER.get()) return;
         if (event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) return;
 
@@ -54,17 +60,21 @@ public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
         if (pumpkinExploder == null) return;
 
         EntityDamageByEntityEvent damageByPumpkinExploder;
-        try { // Version compatibility
+
+        if (USE_DAMAGE_SOURCE) {
+            // If available, construct event with DamageSource instead of using the deprecated constructor.
             damageByPumpkinExploder = new EntityDamageByEntityEvent(
                     pumpkinExploder,
                     damagedPlayer,
                     EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
-                    DamageSource.builder(DamageType.PLAYER_EXPLOSION).withCausingEntity(pumpkinExploder).withDamageLocation(damageLocation).build(),
+                    DamageSource.builder(DamageType.PLAYER_EXPLOSION)
+                            .withCausingEntity(pumpkinExploder)
+                            .withDamageLocation(damageLocation).build(),
                     new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
                     MODIFIER_FUNCTIONS,
                     true
             );
-        } catch (Throwable t) {
+        } else {
             damageByPumpkinExploder = new EntityDamageByEntityEvent(
                     pumpkinExploder,
                     damagedPlayer,
