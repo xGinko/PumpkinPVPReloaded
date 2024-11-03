@@ -6,7 +6,6 @@ import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.utils.Disableable;
-import me.xginko.pumpkinpvpreloaded.utils.Enableable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,21 +20,16 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public final class PumpkinPVPTracker implements Enableable, Disableable, Listener {
+public final class PumpkinPVPTracker implements Disableable, Listener {
 
     private final @NotNull Cache<Location, Player> pre_pumpkin_explosions;
     private final @NotNull Set<Location> post_pumpkin_explosions;
 
-    PumpkinPVPTracker() {
+    PumpkinPVPTracker(PumpkinPVPReloaded plugin) {
         Duration cacheDuration = Duration.ofMillis(1500);
         this.pre_pumpkin_explosions = Caffeine.newBuilder().expireAfterWrite(cacheDuration).build();
-        this.post_pumpkin_explosions = Collections.newSetFromMap(Caffeine.newBuilder().expireAfterWrite(cacheDuration)
-                .<Location, Boolean>build().asMap());
-    }
-
-    @Override
-    public void enable() {
-        PumpkinPVPReloaded plugin = PumpkinPVPReloaded.getInstance();
+        this.post_pumpkin_explosions = Collections.newSetFromMap(Caffeine.newBuilder()
+                .expireAfterWrite(cacheDuration).<Location, Boolean>build().asMap());
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 

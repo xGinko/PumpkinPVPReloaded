@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.GracefulScheduling;
 
+import java.util.Objects;
 import java.util.Random;
 
 public final class PumpkinPVPReloaded extends JavaPlugin {
@@ -29,41 +30,25 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        random = new Random();
         audiences = BukkitAudiences.create(instance);
         logger = ComponentLogger.logger(getLogger().getName());
         scheduling = new MorePaperLib(instance).scheduling();
         metrics = new Metrics(instance, 20296);
-        random = new Random();
+        isServerFolia = Util.hasClass("io.papermc.paper.threadedregions.RegionizedServer");
+        tracker = new PumpkinPVPTracker(instance);
 
-        // Fancy enable
         logger.info(Component.empty());
-        logger.info(Component.empty());
-        logger.info(Component.text("             ╲╲").style(Util.BOLD_GREEN));
-        logger.info(Component.text("        .╺'```^```'╺.").style(Util.BOLD_ORANGE));
-        logger.info(Component.text("       ╱   ").style(Util.BOLD_ORANGE)
-                .append(Component.text("(\\ __ /)").style(Util.BOLD_YELLOW))
-                .append(Component.text("  ╲").style(Util.BOLD_ORANGE)));
-        logger.info(Component.text("      │     ").style(Util.BOLD_ORANGE)
-                .append(Component.text("` ╲╱ `").style(Util.BOLD_YELLOW))
-                .append(Component.text("    │").style(Util.BOLD_ORANGE)));
-        logger.info(Component.text("       ╲    ").style(Util.BOLD_ORANGE)
-                .append(Component.text("\\____/").style(Util.BOLD_YELLOW))
-                .append(Component.text("   ╱").style(Util.BOLD_ORANGE)));
-        logger.info(Component.text("        `'╺.......╺'`").style(Util.BOLD_ORANGE));
-        logger.info(Component.empty());
+        Util.getPumpkin().forEach(logger::info);
         logger.info(Component.text("      PumpkinPVPReloaded").style(Util.BOLD_GREEN));
         logger.info(Component.text("          by xGinko     ").color(TextColor.color(242,195,89)));
         logger.info(Component.empty());
         logger.info(Component.empty());
 
-        isServerFolia = Util.hasClass("io.papermc.paper.threadedregions.RegionizedServer");
-        if (isServerFolia) logger.info("Detected Folia server.");
-
-        tracker = new PumpkinPVPTracker();
-        tracker.enable();
-
         reloadConfiguration();
-        getCommand("pumpkinpvp").setExecutor(new PumpkinPVPCommand());
+
+        Objects.requireNonNull(getCommand("pumpkinpvp"), "Command isn't defined in the plugin.yml!")
+                .setExecutor(new PumpkinPVPCommand());
     }
 
     @Override

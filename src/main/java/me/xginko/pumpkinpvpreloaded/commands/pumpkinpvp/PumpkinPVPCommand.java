@@ -13,23 +13,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PumpkinPVPCommand implements TabCompleter, CommandExecutor {
 
     private final List<SubCommand> subCommands;
-    private final List<String> tabCompletes, noCompletes;
+    private final List<String> tabCompletes;
 
     public PumpkinPVPCommand() {
-        this.subCommands = List.of(new ReloadSubCmd(), new VersionSubCmd(), new DisableSubCmd());
-        this.tabCompletes = subCommands.stream().map(SubCommand::getLabel).toList();
-        this.noCompletes = Collections.emptyList();
+        this.subCommands = Arrays.asList(new ReloadSubCmd(), new VersionSubCmd(), new DisableSubCmd());
+        this.tabCompletes = subCommands.stream().map(SubCommand::getLabel).collect(Collectors.toList());
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        return args.length == 1 ? tabCompletes : noCompletes;
+        return args.length == 1 ? tabCompletes : Collections.emptyList();
     }
 
     @Override

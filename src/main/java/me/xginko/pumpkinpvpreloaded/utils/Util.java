@@ -8,6 +8,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Util {
 
     public static final TextColor GREEN, ORANGE, YELLOW;
@@ -20,6 +23,25 @@ public class Util {
         BOLD_GREEN = Style.style().color(GREEN).decorate(TextDecoration.BOLD).build();
         BOLD_ORANGE = Style.style().color(ORANGE).decorate(TextDecoration.BOLD).build();
         BOLD_YELLOW = Style.style().color(YELLOW).decorate(TextDecoration.BOLD).build();
+    }
+
+    public static List<Component> getPumpkin() {
+        return Arrays.asList(
+                Component.empty(),
+                Component.text("             ╲╲").style(BOLD_GREEN),
+                Component.text("        .╺'```^```'╺.").style(BOLD_ORANGE),
+                Component.text("       ╱   ").style(Util.BOLD_ORANGE)
+                        .append(Component.text("(\\ __ /)").style(Util.BOLD_YELLOW))
+                        .append(Component.text("  ╲").style(Util.BOLD_ORANGE)),
+                Component.text("      │     ").style(Util.BOLD_ORANGE)
+                        .append(Component.text("` ╲╱ `").style(Util.BOLD_YELLOW))
+                        .append(Component.text("    │").style(Util.BOLD_ORANGE)),
+                Component.text("       ╲    ").style(Util.BOLD_ORANGE)
+                        .append(Component.text("\\____/").style(Util.BOLD_YELLOW))
+                        .append(Component.text("   ╱").style(Util.BOLD_ORANGE)),
+                Component.text("        `'╺.......╺'`").style(Util.BOLD_ORANGE),
+                Component.empty()
+        );
     }
 
     public static Color fromHexString(String hexString) throws NumberFormatException {
