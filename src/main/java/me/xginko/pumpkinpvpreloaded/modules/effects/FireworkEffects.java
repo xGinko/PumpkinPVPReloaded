@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
+import com.google.common.collect.ImmutableList;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
@@ -102,7 +103,7 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
             }
         }
 
-        this.firework_effects = parsedFireworkEffects.stream().distinct().collect(Collectors.toList());
+        this.firework_effects = ImmutableList.copyOf(parsedFireworkEffects);
     }
 
     @Override

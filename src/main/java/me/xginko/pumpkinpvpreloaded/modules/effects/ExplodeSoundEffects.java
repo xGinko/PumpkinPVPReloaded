@@ -62,10 +62,11 @@ public class ExplodeSoundEffects extends PumpkinPVPModule implements Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
-        if (this.explode_sounds.isEmpty()) {
-            this.explode_sounds.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
-        }
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    if (list.isEmpty())
+                        list.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
+                    return ImmutableList.copyOf(list);
+                }));
     }
 
     @Override

@@ -59,10 +59,11 @@ public class DeathSoundEffects extends PumpkinPVPModule implements Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
-        if (this.death_sounds.isEmpty()) {
-            this.death_sounds.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
-        }
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    if (list.isEmpty())
+                        list.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
+                    return ImmutableList.copyOf(list);
+                }));
     }
 
     @Override
