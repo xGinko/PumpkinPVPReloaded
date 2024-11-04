@@ -1,15 +1,14 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class ExplodePumpkinOnPlace extends ExplosionTrigger {
+public class ExplodePumpkinOnPlace extends ExplosionTriggerModule {
 
     public ExplodePumpkinOnPlace() {
-        super("mechanics.explosion-triggers.place-pumpkin", false);
+        super(TriggerAction.BLOCK_PLACE, "mechanics.explosion-triggers.place-pumpkin", false);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -20,11 +19,11 @@ public class ExplodePumpkinOnPlace extends ExplosionTrigger {
                 event.getBlock(),
                 event.getPlayer(),
                 event.getBlock().getLocation().toCenterLocation(),
-                TriggerAction.BLOCK_PLACE
+                triggerAction
         );
 
         if (prePumpkinExplodeEvent.callEvent()) {
-            doPumpkinExplosion(TriggerAction.BLOCK_PLACE, prePumpkinExplodeEvent);
+            doPumpkinExplosion(prePumpkinExplodeEvent);
         }
 
         if (prePumpkinExplodeEvent.cancelPreceding()) {

@@ -2,18 +2,17 @@ package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
 import com.cryptomorin.xseries.XMaterial;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ExplodePumpkinOnShear extends ExplosionTrigger {
+public class ExplodePumpkinOnShear extends ExplosionTriggerModule {
 
     private final boolean shears_take_durability;
 
     public ExplodePumpkinOnShear() {
-        super("mechanics.explosion-triggers.shear-pumpkin", false);
+        super(TriggerAction.SHEAR, "mechanics.explosion-triggers.shear-pumpkin", false);
         this.shears_take_durability = config.getBoolean(configPath + ".shears-loose-durability", true);
     }
 
@@ -31,11 +30,11 @@ public class ExplodePumpkinOnShear extends ExplosionTrigger {
                 event.getClickedBlock(),
                 event.getPlayer(),
                 event.getClickedBlock().getLocation().toCenterLocation(),
-                TriggerAction.SHEAR
+                triggerAction
         );
 
         if (prePumpkinExplodeEvent.callEvent()) {
-            doPumpkinExplosion(TriggerAction.SHEAR, prePumpkinExplodeEvent);
+            doPumpkinExplosion(prePumpkinExplodeEvent);
         }
 
         if (prePumpkinExplodeEvent.cancelPreceding()) {

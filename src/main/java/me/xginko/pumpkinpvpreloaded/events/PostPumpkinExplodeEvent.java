@@ -1,6 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.events;
 
-import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
+import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTriggerModule;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -15,7 +15,7 @@ public class PostPumpkinExplodeEvent extends Event {
     private final @NotNull Location explosionLocation;
     private final float explosionPower;
     private final boolean setFire, destroyedBlocks, hasExploded;
-    private final @NotNull TriggerAction triggerAction;
+    private final @NotNull ExplosionTriggerModule.TriggerAction triggerAction;
 
     public PostPumpkinExplodeEvent(
             final @NotNull Player exploder,
@@ -23,7 +23,7 @@ public class PostPumpkinExplodeEvent extends Event {
             final float explosionPower,
             final boolean setFire,
             final boolean destroyedBlocks,
-            final @NotNull TriggerAction triggerAction,
+            final @NotNull ExplosionTriggerModule.TriggerAction triggerAction,
             final boolean hasExploded
     ) {
         this.hasExploded = hasExploded;
@@ -53,7 +53,7 @@ public class PostPumpkinExplodeEvent extends Event {
     public boolean hasDestroyedBlocks() {
         return destroyedBlocks;
     }
-    public @NotNull TriggerAction getTriggerAction() {
+    public @NotNull ExplosionTriggerModule.TriggerAction getTriggerAction() {
         return triggerAction;
     }
 

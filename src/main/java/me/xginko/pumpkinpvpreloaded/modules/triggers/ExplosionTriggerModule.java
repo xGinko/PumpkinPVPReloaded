@@ -5,18 +5,20 @@ import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
-import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-public abstract class ExplosionTrigger extends PumpkinPVPModule implements Listener {
+public abstract class ExplosionTriggerModule extends PumpkinPVPModule implements Listener {
 
-    public ExplosionTrigger(String configPath, boolean defEnabled) {
-        super(configPath, defEnabled);
+    public final TriggerAction triggerAction;
+
+    public ExplosionTriggerModule(TriggerAction triggerAction, String configPath, boolean defEnabled, String comment) {
+        super(configPath, defEnabled, comment);
+        this.triggerAction = triggerAction;
     }
 
-    public ExplosionTrigger(String configPath, boolean defEnabled, String comment) {
-        super(configPath, defEnabled, comment);
+    public ExplosionTriggerModule(TriggerAction triggerAction, String configPath, boolean defEnabled) {
+        this(triggerAction, configPath, defEnabled, null);
     }
 
     @Override
@@ -29,16 +31,16 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
         HandlerList.unregisterAll(this);
     }
 
-    protected void doPumpkinExplosion(TriggerAction action, PrePumpkinExplodeEvent prePumpkinExplodeEvent) {
+    protected void doPumpkinExplosion(PrePumpkinExplodeEvent prePumpkinExplodeEvent) {
         if (PumpkinPVPReloaded.isServerFolia()) {
             scheduling.regionSpecificScheduler(prePumpkinExplodeEvent.getExplodeLocation())
-                    .run(() -> createExplosionWithEvent(action, prePumpkinExplodeEvent));
+                    .run(() -> createExplosionWithEvent(prePumpkinExplodeEvent));
         } else {
-            createExplosionWithEvent(action, prePumpkinExplodeEvent);
+            createExplosionWithEvent(prePumpkinExplodeEvent);
         }
     }
 
-    private void createExplosionWithEvent(TriggerAction action, PrePumpkinExplodeEvent prePumpkinExplodeEvent) {
+    private void createExplosionWithEvent(PrePumpkinExplodeEvent prePumpkinExplodeEvent) {
         prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
 
         plugin.getServer().getPluginManager().callEvent(new PostPumpkinExplodeEvent(
@@ -47,7 +49,7 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
                 prePumpkinExplodeEvent.getExplodePower(),
                 prePumpkinExplodeEvent.shouldSetFire(),
                 prePumpkinExplodeEvent.shouldBreakBlocks(),
-                action,
+                triggerAction,
                 prePumpkinExplodeEvent.getExplodeLocation().getWorld().createExplosion(
                         prePumpkinExplodeEvent.getExplodeLocation(),
                         prePumpkinExplodeEvent.getExplodePower(),
@@ -55,5 +57,12 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
                         prePumpkinExplodeEvent.shouldBreakBlocks()
                 )
         ));
+    }
+
+    public enum TriggerAction {
+        LEFT_CLICK,
+        RIGHT_CLICK,
+        BLOCK_PLACE,
+        SHEAR
     }
 }

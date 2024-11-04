@@ -1,16 +1,15 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ExplodePumpkinOnRightClick extends ExplosionTrigger {
+public class ExplodePumpkinOnRightClick extends ExplosionTriggerModule {
 
     public ExplodePumpkinOnRightClick() {
-        super("mechanics.explosion-triggers.right-click-pumpkin", false);
+        super(TriggerAction.RIGHT_CLICK, "mechanics.explosion-triggers.right-click-pumpkin", false);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -22,11 +21,11 @@ public class ExplodePumpkinOnRightClick extends ExplosionTrigger {
                 event.getClickedBlock(),
                 event.getPlayer(),
                 event.getClickedBlock().getLocation().toCenterLocation(),
-                TriggerAction.RIGHT_CLICK
+                triggerAction
         );
 
         if (prePumpkinExplodeEvent.callEvent()) {
-            doPumpkinExplosion(TriggerAction.RIGHT_CLICK, prePumpkinExplodeEvent);
+            doPumpkinExplosion(prePumpkinExplodeEvent);
         }
 
         if (prePumpkinExplodeEvent.cancelPreceding()) {

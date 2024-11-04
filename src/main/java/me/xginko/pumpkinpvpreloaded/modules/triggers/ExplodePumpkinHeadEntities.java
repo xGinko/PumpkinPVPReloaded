@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
-public class ExplodePumpkinHeadEntities extends ExplosionTrigger {
+public class ExplodePumpkinHeadEntities extends ExplosionTriggerModule {
 
     private final boolean explode_players, only_killed_by_player;
 

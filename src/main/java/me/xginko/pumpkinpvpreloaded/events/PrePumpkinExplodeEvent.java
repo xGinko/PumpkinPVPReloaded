@@ -2,7 +2,7 @@ package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPConfig;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
+import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTriggerModule;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -21,13 +21,13 @@ public class PrePumpkinExplodeEvent extends Event implements Cancellable {
     private @NotNull Location explodeLocation;
     private float explodePower;
     private boolean setFire, breakBlocks, cancelPrecedingEvent;
-    private final @NotNull TriggerAction triggerAction;
+    private final @NotNull ExplosionTriggerModule.TriggerAction triggerAction;
 
     public PrePumpkinExplodeEvent(
             @NotNull Block pumpkin,
             final @NotNull Player exploder,
             @NotNull Location explodeLocation,
-            final @NotNull TriggerAction triggerAction
+            final @NotNull ExplosionTriggerModule.TriggerAction triggerAction
     ) {
         this.pumpkin = pumpkin;
         this.exploder = exploder;
@@ -74,7 +74,7 @@ public class PrePumpkinExplodeEvent extends Event implements Cancellable {
     public void setBreakBlocks(boolean breakBlocks) {
         this.breakBlocks = breakBlocks;
     }
-    public @NotNull TriggerAction getTriggerAction() {
+    public @NotNull ExplosionTriggerModule.TriggerAction getTriggerAction() {
         return triggerAction;
     }
     public boolean cancelPreceding() {
