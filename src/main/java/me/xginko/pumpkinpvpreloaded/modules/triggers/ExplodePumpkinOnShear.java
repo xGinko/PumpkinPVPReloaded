@@ -1,23 +1,14 @@
 package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
 import com.cryptomorin.xseries.XMaterial;
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.TriggerAction;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
-public class ExplodePumpkinOnShear extends PumpkinPVPModule implements Listener {
+public class ExplodePumpkinOnShear extends ExplosionTrigger {
 
     private final boolean shears_take_durability;
 
@@ -26,64 +17,29 @@ public class ExplodePumpkinOnShear extends PumpkinPVPModule implements Listener 
         this.shears_take_durability = config.getBoolean(configPath + ".shears-loose-durability", true);
     }
 
-    @Override
-    public void enable() {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    @Override
-    public void disable() {
-        HandlerList.unregisterAll(this);
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerInteract(PlayerInteractEvent event) {
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (!config.explosive_pumpkins.contains(event.getClickedBlock().getType())) return;
+        if (event.getMaterial() != XMaterial.SHEARS.parseMaterial()) return;
 
-        final Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null || !config.explosive_pumpkins.contains(clickedBlock.getType())) return;
-        ItemStack interactItem = event.getItem();
-        if (interactItem == null || !interactItem.getType().equals(XMaterial.SHEARS.parseMaterial())) return;
+        if (!shears_take_durability) {
+            event.setCancelled(true); // Don't cause natural shear behavior
+        }
 
-        if (!shears_take_durability) event.setCancelled(true); // Don't cause natural shear behavior
-        final Player originalExploder = event.getPlayer();
-
-        PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
-                clickedBlock,
-                originalExploder,
-                clickedBlock.getLocation().toCenterLocation(),
+        final PrePumpkinExplodeEvent prePumpkinExplodeEvent = new PrePumpkinExplodeEvent(
+                event.getClickedBlock(),
+                event.getPlayer(),
+                event.getClickedBlock().getLocation().toCenterLocation(),
                 TriggerAction.SHEAR
         );
 
-        if (!prePumpkinExplodeEvent.callEvent()) {
-            event.setCancelled(prePumpkinExplodeEvent.cancelPreceding());
-            return;
+        if (prePumpkinExplodeEvent.callEvent()) {
+            doPumpkinExplosion(TriggerAction.SHEAR, prePumpkinExplodeEvent);
         }
 
-        final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
-
-        // Remove pumpkin before creating explosion
-        prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
-
-        PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
-                prePumpkinExplodeEvent.getExploder(),
-                explodeLoc,
-                prePumpkinExplodeEvent.getExplodePower(),
-                prePumpkinExplodeEvent.shouldSetFire(),
-                prePumpkinExplodeEvent.shouldBreakBlocks(),
-                TriggerAction.SHEAR,
-                explodeLoc.getWorld().createExplosion(
-                        explodeLoc,
-                        prePumpkinExplodeEvent.getExplodePower(),
-                        prePumpkinExplodeEvent.shouldSetFire(),
-                        prePumpkinExplodeEvent.shouldBreakBlocks()
-                )
-        );
-
-        if (PumpkinPVPReloaded.isServerFolia()) {
-            scheduling.regionSpecificScheduler(explodeLoc).run(postPumpkinExplodeEvent::callEvent);
-        } else {
-            postPumpkinExplodeEvent.callEvent();
+        if (prePumpkinExplodeEvent.cancelPreceding()) {
+            event.setCancelled(true);
         }
     }
 }
