@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
+import com.cryptomorin.xseries.XSound;
 import com.google.common.collect.ImmutableList;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
@@ -26,28 +27,25 @@ public class ExplodeSoundEffects extends PumpkinPVPModule implements Listener {
                 "Exploding pumpkins will make a spooky configurable sound.");
         this.volume = config.getFloat(configPath + ".volume", 1.0F);
         this.pitch = config.getFloat(configPath + ".pitch", 1.0F);
+
         final List<String> defaults = Stream.of(
-                "PARTICLE_SOUL_ESCAPE",
-                "ENTITY_WITCH_CELEBRATE",
-                "ENTITY_GOAT_SCREAMING_DEATH",
-                "ENTITY_ALLAY_DEATH",
-                "ENTITY_CAT_DEATH",
-                "ENTITY_DOLPHIN_HURT",
-                "ENTITY_GOAT_SCREAMING_AMBIENT",
-                "ENTITY_GOAT_SCREAMING_HURT",
-                "ENTITY_HOGLIN_HURT",
-                "ENTITY_CHICKEN_HURT",
-                "ENTITY_ZOMBIFIED_PIGLIN_HURT")
+                 XSound.PARTICLE_SOUL_ESCAPE,
+                 XSound.ENTITY_WITCH_CELEBRATE,
+                 XSound.ENTITY_GOAT_SCREAMING_DEATH,
+                 XSound.ENTITY_ALLAY_DEATH,
+                 XSound.ENTITY_CAT_DEATH,
+                 XSound.ENTITY_DOLPHIN_HURT,
+                 XSound.ENTITY_GOAT_SCREAMING_AMBIENT,
+                 XSound.ENTITY_GOAT_SCREAMING_HURT,
+                 XSound.ENTITY_HOGLIN_HURT,
+                 XSound.ENTITY_CHICKEN_HURT,
+                 XSound.ENTITY_ZOMBIFIED_PIGLIN_HURT)
+                .filter(XSound::isSupported)
+                .map(XSound::parseSound)
+                .map(Enum::name)
                 .sorted()
-                .filter(sound -> {
-                    try {
-                        Sound.valueOf(sound);
-                        return true;
-                    } catch (IllegalArgumentException e) {
-                        return false;
-                    }
-                })
                 .collect(Collectors.toList());
+
         this.explode_sounds = config.getList(configPath + ".sounds", defaults,
                 "Use multiple entries to randomly cycle through a list of sounds or just one. \n" +
                 "Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html")
@@ -62,10 +60,11 @@ public class ExplodeSoundEffects extends PumpkinPVPModule implements Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
-                    if (list.isEmpty())
-                        list.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
-                    return ImmutableList.copyOf(list);
+                .collect(Collectors.collectingAndThen(Collectors.toList(), parsedSounds -> {
+                    if (parsedSounds.isEmpty()) {
+                        parsedSounds.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
+                    }
+                    return ImmutableList.copyOf(parsedSounds);
                 }));
     }
 

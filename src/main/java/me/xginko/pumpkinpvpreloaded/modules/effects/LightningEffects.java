@@ -20,7 +20,7 @@ public class LightningEffects extends PumpkinPVPModule implements Listener {
 
     private static final boolean HAS_SETFLASHCOUNT = Util.hasMethod(LightningStrike.class, "setFlashCount", int.class);
 
-    private final double probability;
+    private final double probability, radius;
     private final int spawn_amount;
     private final boolean deal_damage;
     private int flash_count;
@@ -28,6 +28,7 @@ public class LightningEffects extends PumpkinPVPModule implements Listener {
     public LightningEffects() {
         super("pumpkin-explosion.lightning-effects", true, 
                 "Will strike the closest player with lightning.");
+        this.radius = config.getDouble(configPath + ".strike-radius", 6.0);
         this.deal_damage = config.getBoolean(configPath + ".deal-damage", true);
         this.spawn_amount = Math.max(config.getInt(configPath + ".lightning-strikes", 2,
                 "Amount of times to strike."), 1);
@@ -67,7 +68,7 @@ public class LightningEffects extends PumpkinPVPModule implements Listener {
         Player closestPlayer = null;
         double smallestDistance = config.explosion_effect_radius_squared;
 
-        for (Player player : explosionLoc.getNearbyPlayers(6, 6, 6)) {
+        for (Player player : explosionLoc.getNearbyPlayers(radius, radius, radius)) {
             if (exploder != null && player.getUniqueId().equals(exploder)) continue;
 
             double currentDistance = explosionLoc.distanceSquared(player.getLocation());

@@ -21,13 +21,18 @@ import java.util.stream.Stream;
 public class DeathSoundEffects extends PumpkinPVPModule implements Listener {
 
     private final @NotNull List<Sound> death_sounds;
-    private final float volume;
+    private final float volume, pitch;
+    private final boolean setVolume, setPitch;
 
     public DeathSoundEffects() {
         super("pumpkin-deaths.death-sound", true,
                 "Players dying to a pumpkin explosion will make a spooky configurable sound.");
-        this.volume = config.getFloat(configPath + ".volume", -1.0F,
-                "-1 means natural default volume.");
+
+        this.setVolume = config.getBoolean(configPath + ".volume.customize", false);
+        this.volume = config.getFloat(configPath + ".volume.volume", 1.0F);
+
+        this.setPitch = config.getBoolean(configPath + ".pitch.customize", false);
+        this.pitch = config.getFloat(configPath + ".pitch.pitch", 1.0F);
 
         final List<String> defaults = Stream.of(
                  XSound.ENTITY_HOGLIN_DEATH,
@@ -76,11 +81,18 @@ public class DeathSoundEffects extends PumpkinPVPModule implements Listener {
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerDeath(PlayerDeathEvent event) {
-        if (PumpkinPVPReloaded.getTracker().isNearPumpkinExplosion(event.getEntity().getLocation())) {
-            event.setDeathSound(this.death_sounds.get(Util.RANDOM.nextInt(this.death_sounds.size())));
-            if (volume > 0) event.setDeathSoundVolume(volume);
+        if (!PumpkinPVPReloaded.getTracker().isNearPumpkinExplosion(event.getEntity().getLocation())) return;
+
+        event.setDeathSound(this.death_sounds.get(Util.RANDOM.nextInt(this.death_sounds.size())));
+
+        if (setVolume) {
+            event.setDeathSoundVolume(volume);
+        }
+
+        if (setPitch) {
+            event.setDeathSoundPitch(pitch);
         }
     }
 }
