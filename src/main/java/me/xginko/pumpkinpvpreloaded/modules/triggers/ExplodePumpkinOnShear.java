@@ -62,6 +62,9 @@ public class ExplodePumpkinOnShear extends PumpkinPVPModule implements Listener 
 
         final Location explodeLoc = prePumpkinExplodeEvent.getExplodeLocation();
 
+        // Remove pumpkin before creating explosion
+        prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
+
         PostPumpkinExplodeEvent postPumpkinExplodeEvent = new PostPumpkinExplodeEvent(
                 prePumpkinExplodeEvent.getExploder(),
                 explodeLoc,
@@ -78,12 +81,8 @@ public class ExplodePumpkinOnShear extends PumpkinPVPModule implements Listener 
         );
 
         if (PumpkinPVPReloaded.isServerFolia()) {
-            scheduling.regionSpecificScheduler(explodeLoc).run(() -> {
-                prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
-                postPumpkinExplodeEvent.callEvent();
-            });
+            scheduling.regionSpecificScheduler(explodeLoc).run(postPumpkinExplodeEvent::callEvent);
         } else {
-            prePumpkinExplodeEvent.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
             postPumpkinExplodeEvent.callEvent();
         }
     }
