@@ -56,7 +56,7 @@ public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
         final Player damagedPlayer = (Player) event.getEntity();
         final Block explodedBlock = event.getDamager();
         final Location damageLocation = explodedBlock != null ? explodedBlock.getLocation() : damagedPlayer.getLocation();
-        final Player pumpkinExploder = PumpkinPVPReloaded.getTracker().getPumpkinExploder(damageLocation);
+        final Player pumpkinExploder = PumpkinPVPReloaded.tracker().getPumpkinExploder(damageLocation);
         if (pumpkinExploder == null) return;
 
         EntityDamageByEntityEvent damageByPumpkinExploder;

@@ -78,7 +78,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         return instance;
     }
 
-    public static PumpkinPVPTracker getTracker() {
+    public static PumpkinPVPTracker tracker() {
         return tracker;
     }
 

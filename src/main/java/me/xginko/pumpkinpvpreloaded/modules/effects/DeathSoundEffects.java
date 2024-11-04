@@ -83,7 +83,7 @@ public class DeathSoundEffects extends PumpkinPVPModule implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerDeath(PlayerDeathEvent event) {
-        if (!PumpkinPVPReloaded.getTracker().isNearPumpkinExplosion(event.getEntity().getLocation())) return;
+        if (!PumpkinPVPReloaded.tracker().isNearPumpkinExplosion(event.getEntity().getLocation())) return;
 
         event.setDeathSound(this.death_sounds.get(Util.RANDOM.nextInt(this.death_sounds.size())));
 
