@@ -4,6 +4,7 @@ import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -45,14 +46,14 @@ public class LightningEffects extends PumpkinPVPModule implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
-        if (event.hasExploded() && (probability >= 1 || PumpkinPVPReloaded.random().nextDouble() <= probability)) {
+        if (event.hasExploded() && (probability >= 1 || Util.RANDOM.nextDouble() <= probability)) {
             strikeLightning(event.getExploder().getUniqueId(), event.getExplodeLocation());
         }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
-        if (event.hasExploded() && (probability >= 1 || PumpkinPVPReloaded.random().nextDouble() <= probability)) {
+        if (event.hasExploded() && (probability >= 1 || Util.RANDOM.nextDouble() <= probability)) {
             strikeLightning(event.getKiller() != null ? event.getKiller().getUniqueId() : null, event.getExplodeLocation());
         }
     }

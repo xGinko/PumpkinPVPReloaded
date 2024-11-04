@@ -10,13 +10,16 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Util {
 
+    public static final Random RANDOM;
     public static final TextColor GREEN, ORANGE, YELLOW;
     public static final Style BOLD_GREEN, BOLD_ORANGE, BOLD_YELLOW;
 
     static {
+        RANDOM = new Random();
         GREEN = TextColor.color(163, 235, 30);
         ORANGE = TextColor.color(254, 78, 0);
         YELLOW = TextColor.color(242, 195, 89);
@@ -64,5 +67,9 @@ public class Util {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    public static Random random() {
+        return RANDOM;
     }
 }

@@ -13,7 +13,6 @@ import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.GracefulScheduling;
 
 import java.util.Objects;
-import java.util.Random;
 
 public final class PumpkinPVPReloaded extends JavaPlugin {
 
@@ -24,13 +23,11 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
     private static BukkitAudiences audiences;
     private static ComponentLogger logger;
     private static Metrics metrics;
-    private static Random random;
     private static boolean isServerFolia;
 
     @Override
     public void onEnable() {
         instance = this;
-        random = new Random();
         audiences = BukkitAudiences.create(instance);
         logger = ComponentLogger.logger(getLogger().getName());
         scheduling = new MorePaperLib(instance).scheduling();
@@ -70,7 +67,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
             metrics.shutdown();
             metrics = null;
         }
-        random = null;
+        Util.RANDOM = null;
         logger = null;
         instance = null;
     }
@@ -107,10 +104,6 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
 
     public static ComponentLogger logger() {
         return logger;
-    }
-
-    public static Random random() {
-        return random;
     }
 
     public static boolean isServerFolia() {

@@ -1,9 +1,9 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import com.google.common.collect.ImmutableList;
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -84,7 +84,7 @@ public class ExplodeSoundEffects extends PumpkinPVPModule implements Listener {
         if (event.hasExploded()) {
             event.getExplodeLocation().getWorld().playSound(
                     event.getExplodeLocation(),
-                    this.explode_sounds.get(PumpkinPVPReloaded.random().nextInt(this.explode_sounds.size())),
+                    this.explode_sounds.get(Util.RANDOM.nextInt(this.explode_sounds.size())),
                     this.volume,
                     this.pitch
             );

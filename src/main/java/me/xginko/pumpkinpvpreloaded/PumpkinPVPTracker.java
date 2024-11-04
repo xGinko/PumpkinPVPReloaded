@@ -38,19 +38,19 @@ public final class PumpkinPVPTracker implements Disableable, Listener {
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
         this.pre_pumpkin_explosions.put(event.getExplodeLocation(), event.getExploder());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (event.hasExploded()) {
             this.post_pumpkin_explosions.add(event.getExplodeLocation());
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
         if (event.hasExploded()) {
             this.post_pumpkin_explosions.add(event.getExplodeLocation());

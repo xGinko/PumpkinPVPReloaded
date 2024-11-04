@@ -3,6 +3,7 @@ package me.xginko.pumpkinpvpreloaded.modules.effects;
 import com.google.common.collect.ImmutableList;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
+import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -79,7 +80,7 @@ public class DeathSoundEffects extends PumpkinPVPModule implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onPlayerDeath(PlayerDeathEvent event) {
         if (PumpkinPVPReloaded.getTracker().isNearPumpkinExplosion(event.getEntity().getLocation())) {
-            event.setDeathSound(this.death_sounds.get(PumpkinPVPReloaded.random().nextInt(this.death_sounds.size())));
+            event.setDeathSound(this.death_sounds.get(Util.RANDOM.nextInt(this.death_sounds.size())));
             if (volume > 0) event.setDeathSoundVolume(volume);
         }
     }

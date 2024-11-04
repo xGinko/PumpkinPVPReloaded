@@ -1,7 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import com.google.common.collect.ImmutableList;
-import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
@@ -28,6 +27,7 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
 
     public FireworkEffects() {
         super("pumpkin-explosion.firework-effects", true);
+
         final List<String> defaults = Arrays.asList(
                 "#FFAE03",   // Pumpkin Light Orange
                 "#FE4E00",   // Pumpkin Dark Orange
@@ -47,10 +47,12 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        if (colors.isEmpty()) {
-            colors.addAll(defaults.stream().map(Util::fromHexString).collect(Collectors.toSet()));
-        }
+                .collect(Collectors.collectingAndThen(Collectors.toList(), parsedColors -> {
+                    if (parsedColors.isEmpty()) {
+                        return defaults.stream().map(Util::fromHexString).collect(Collectors.toList());
+                    }
+                    return parsedColors;
+                }));
 
         final boolean flicker = config.getBoolean(configPath + ".flicker", false);
         final boolean trail = config.getBoolean(configPath + ".trail", false);
@@ -70,10 +72,12 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        if (effectTypes.isEmpty()) {
-            effectTypes.addAll(Arrays.asList(FireworkEffect.Type.values()));
-        }
+                .collect(Collectors.collectingAndThen(Collectors.toList(), parsedTypes -> {
+                    if (parsedTypes.isEmpty()) {
+                        return Arrays.asList(FireworkEffect.Type.values());
+                    }
+                    return parsedTypes;
+                }));
 
         final List<FireworkEffect> parsedFireworkEffects = new ArrayList<>();
 
@@ -90,7 +94,7 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
                 }
                 Color secondaryColor;
                 do {
-                    secondaryColor = colors.get(PumpkinPVPReloaded.random().nextInt(colors.size()));
+                    secondaryColor = colors.get(Util.RANDOM.nextInt(colors.size()));
                 } while (secondaryColor.equals(primaryColor)); // Ensure we never combine the same colors
                 parsedFireworkEffects.add(FireworkEffect.builder()
                         .withColor(primaryColor, secondaryColor)
@@ -115,7 +119,7 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
     }
 
     private FireworkEffect getRandomEffect() {
-        return this.firework_effects.get(PumpkinPVPReloaded.random().nextInt(this.firework_effects.size()));
+        return this.firework_effects.get(Util.RANDOM.nextInt(this.firework_effects.size()));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
