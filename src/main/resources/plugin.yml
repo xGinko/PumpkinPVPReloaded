@@ -13,7 +13,6 @@ commands:
     description: admin commands
     aliases:
       - ppvp
-      - pump
 
 permissions:
   pumpkinpvp.cmd.disable:
