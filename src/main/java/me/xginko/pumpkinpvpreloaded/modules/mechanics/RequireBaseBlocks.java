@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules.mechanics;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Material;
@@ -10,11 +11,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RequireBaseBlocks extends PumpkinPVPModule implements Listener {
 
@@ -22,8 +24,19 @@ public class RequireBaseBlocks extends PumpkinPVPModule implements Listener {
 
     public RequireBaseBlocks() {
         super("mechanics.require-base-block", false,
-                "If enabled, pumpkins will only explode when placed on one of the configured materials (like end crystals).");
-        this.base_materials = config.getList(configPath + ".materials", Arrays.asList("BEDROCK", "OBSIDIAN", "CRYING_OBSIDIAN"),
+                "If enabled, pumpkins will only explode when placed on one of the configured materials.");
+
+        List<String> defaults = Stream.of(
+                XMaterial.BEDROCK,
+                XMaterial.OBSIDIAN,
+                XMaterial.CRYING_OBSIDIAN)
+                .filter(XMaterial::isSupported)
+                .map(XMaterial::parseMaterial)
+                .map(Enum::name)
+                .sorted()
+                .collect(Collectors.toList());
+
+        this.base_materials = config.getList(configPath + ".materials", defaults,
                 "Values need to be valid material enums from bukkit.")
                 .stream()
                 .map(configuredBase -> {
@@ -35,7 +48,12 @@ public class RequireBaseBlocks extends PumpkinPVPModule implements Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
+                .collect(Collectors.collectingAndThen(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)), parsedMaterials -> {
+                    if (parsedMaterials.isEmpty()) {
+                        parsedMaterials.addAll(defaults.stream().map(Material::valueOf).collect(Collectors.toList()));
+                    }
+                    return parsedMaterials;
+                }));
     }
 
     @Override

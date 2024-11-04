@@ -4,8 +4,6 @@ import me.xginko.pumpkinpvpreloaded.commands.pumpkinpvp.PumpkinPVPCommand;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,12 +33,7 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
         isServerFolia = Util.hasClass("io.papermc.paper.threadedregions.RegionizedServer");
         tracker = new PumpkinPVPTracker(instance);
 
-        logger.info(Component.empty());
-        Util.getPumpkin().forEach(logger::info);
-        logger.info(Component.text("      PumpkinPVPReloaded").style(Util.BOLD_GREEN));
-        logger.info(Component.text("          by xGinko     ").color(TextColor.color(242,195,89)));
-        logger.info(Component.empty());
-        logger.info(Component.empty());
+        Util.getBootLogo().forEach(logger::info);
 
         reloadConfiguration();
 
@@ -67,9 +60,8 @@ public final class PumpkinPVPReloaded extends JavaPlugin {
             metrics.shutdown();
             metrics = null;
         }
-        Util.RANDOM = null;
-        logger = null;
         instance = null;
+        logger = null;
     }
 
     public void reloadConfiguration() {

@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.utils;
 
+import com.google.common.collect.ImmutableList;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
@@ -8,7 +9,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -28,21 +28,26 @@ public class Util {
         BOLD_YELLOW = Style.style().color(YELLOW).decorate(TextDecoration.BOLD).build();
     }
 
-    public static List<Component> getPumpkin() {
-        return Arrays.asList(
+    public static List<Component> getBootLogo() {
+        return ImmutableList.of(
+                Component.empty(),
                 Component.empty(),
                 Component.text("             ╲╲").style(BOLD_GREEN),
                 Component.text("        .╺'```^```'╺.").style(BOLD_ORANGE),
-                Component.text("       ╱   ").style(Util.BOLD_ORANGE)
-                        .append(Component.text("(\\ __ /)").style(Util.BOLD_YELLOW))
-                        .append(Component.text("  ╲").style(Util.BOLD_ORANGE)),
-                Component.text("      │     ").style(Util.BOLD_ORANGE)
-                        .append(Component.text("` ╲╱ `").style(Util.BOLD_YELLOW))
-                        .append(Component.text("    │").style(Util.BOLD_ORANGE)),
-                Component.text("       ╲    ").style(Util.BOLD_ORANGE)
-                        .append(Component.text("\\____/").style(Util.BOLD_YELLOW))
-                        .append(Component.text("   ╱").style(Util.BOLD_ORANGE)),
-                Component.text("        `'╺.......╺'`").style(Util.BOLD_ORANGE),
+                Component.text("       ╱   ").style(BOLD_ORANGE)
+                        .append(Component.text("(\\ __ /)").style(BOLD_YELLOW))
+                        .append(Component.text("  ╲").style(BOLD_ORANGE)),
+                Component.text("      │     ").style(BOLD_ORANGE)
+                        .append(Component.text("` ╲╱ `").style(BOLD_YELLOW))
+                        .append(Component.text("    │").style(BOLD_ORANGE)),
+                Component.text("       ╲    ").style(BOLD_ORANGE)
+                        .append(Component.text("\\____/").style(BOLD_YELLOW))
+                        .append(Component.text("   ╱").style(BOLD_ORANGE)),
+                Component.text("        `'╺.......╺'`").style(BOLD_ORANGE),
+                Component.empty(),
+                Component.text("      PumpkinPVPReloaded").style(BOLD_GREEN),
+                Component.text("          by xGinko     ").color(TextColor.color(242,195,89)),
+                Component.empty(),
                 Component.empty()
         );
     }
@@ -67,9 +72,5 @@ public class Util {
         } catch (ClassNotFoundException e) {
             return false;
         }
-    }
-
-    public static Random random() {
-        return RANDOM;
     }
 }

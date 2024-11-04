@@ -1,5 +1,6 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
+import com.cryptomorin.xseries.XSound;
 import com.google.common.collect.ImmutableList;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
@@ -27,25 +28,22 @@ public class DeathSoundEffects extends PumpkinPVPModule implements Listener {
                 "Players dying to a pumpkin explosion will make a spooky configurable sound.");
         this.volume = config.getFloat(configPath + ".volume", -1.0F,
                 "-1 means natural default volume.");
+
         final List<String> defaults = Stream.of(
-                "ENTITY_HOGLIN_DEATH",
-                "ENTITY_PHANTOM_DEATH",
-                "ENTITY_RAVAGER_DEATH",
-                "ENTITY_SKELETON_HORSE_DEATH",
-                "ENTITY_WITCH_CELEBRATE",
-                "ENTITY_GOAT_SCREAMING_DEATH",
-                "ENTITY_WARDEN_DEATH",
-                "ENTITY_HORSE_DEATH")
+                 XSound.ENTITY_HOGLIN_DEATH,
+                 XSound.ENTITY_PHANTOM_DEATH,
+                 XSound.ENTITY_RAVAGER_DEATH,
+                 XSound.ENTITY_SKELETON_HORSE_DEATH,
+                 XSound.ENTITY_WITCH_CELEBRATE,
+                 XSound.ENTITY_GOAT_SCREAMING_DEATH,
+                 XSound.ENTITY_WARDEN_DEATH,
+                 XSound.ENTITY_HORSE_DEATH)
+                .filter(XSound::isSupported)
+                .map(XSound::parseSound)
+                .map(Enum::name)
                 .sorted()
-                .filter(sound -> {
-                    try {
-                        Sound.valueOf(sound);
-                        return true;
-                    } catch (IllegalArgumentException e) {
-                        return false;
-                    }
-                })
                 .collect(Collectors.toList());
+
         this.death_sounds = config.getList(configPath + ".sounds", defaults,
                 "Use multiple entries to randomly cycle through a list of sounds or just one. \n" +
                 "Requires correct enums from https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html")
@@ -60,10 +58,11 @@ public class DeathSoundEffects extends PumpkinPVPModule implements Listener {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
-                    if (list.isEmpty())
-                        list.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
-                    return ImmutableList.copyOf(list);
+                .collect(Collectors.collectingAndThen(Collectors.toList(), parsedSounds -> {
+                    if (parsedSounds.isEmpty()) {
+                        parsedSounds.addAll(defaults.stream().map(Sound::valueOf).collect(Collectors.toList()));
+                    }
+                    return ImmutableList.copyOf(parsedSounds);
                 }));
     }
 
