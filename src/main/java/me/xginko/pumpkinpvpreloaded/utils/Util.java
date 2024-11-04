@@ -73,4 +73,13 @@ public class Util {
             return false;
         }
     }
+
+    public static boolean hasMethod(Class<?> holderClass, String methodName, Class<?>... parameterClasses) {
+        try {
+            holderClass.getMethod(methodName, parameterClasses);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
 }
