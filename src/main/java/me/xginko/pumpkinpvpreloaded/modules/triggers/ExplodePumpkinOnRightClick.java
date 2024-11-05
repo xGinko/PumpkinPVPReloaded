@@ -6,7 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ExplodePumpkinOnRightClick extends ExplosionTriggerModule {
+public class ExplodePumpkinOnRightClick extends ExplosionTrigger {
 
     public ExplodePumpkinOnRightClick() {
         super(TriggerAction.RIGHT_CLICK, "mechanics.explosion-triggers.right-click-pumpkin", false);

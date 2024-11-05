@@ -8,16 +8,16 @@ import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-public abstract class ExplosionTriggerModule extends PumpkinPVPModule implements Listener {
+public abstract class ExplosionTrigger extends PumpkinPVPModule implements Listener {
 
     public final TriggerAction triggerAction;
 
-    public ExplosionTriggerModule(TriggerAction triggerAction, String configPath, boolean defEnabled, String comment) {
+    public ExplosionTrigger(TriggerAction triggerAction, String configPath, boolean defEnabled, String comment) {
         super(configPath, defEnabled, comment);
         this.triggerAction = triggerAction;
     }
 
-    public ExplosionTriggerModule(TriggerAction triggerAction, String configPath, boolean defEnabled) {
+    public ExplosionTrigger(TriggerAction triggerAction, String configPath, boolean defEnabled) {
         this(triggerAction, configPath, defEnabled, null);
     }
 
@@ -46,20 +46,21 @@ public abstract class ExplosionTriggerModule extends PumpkinPVPModule implements
         plugin.getServer().getPluginManager().callEvent(new PostPumpkinExplodeEvent(
                 prePumpkinExplodeEvent.getExploder(),
                 prePumpkinExplodeEvent.getExplodeLocation(),
-                prePumpkinExplodeEvent.getExplodePower(),
-                prePumpkinExplodeEvent.shouldSetFire(),
-                prePumpkinExplodeEvent.shouldBreakBlocks(),
+                prePumpkinExplodeEvent.getPower(),
+                prePumpkinExplodeEvent.getFire(),
+                prePumpkinExplodeEvent.getBreakBlocks(),
                 triggerAction,
                 prePumpkinExplodeEvent.getExplodeLocation().getWorld().createExplosion(
                         prePumpkinExplodeEvent.getExplodeLocation(),
-                        prePumpkinExplodeEvent.getExplodePower(),
-                        prePumpkinExplodeEvent.shouldSetFire(),
-                        prePumpkinExplodeEvent.shouldBreakBlocks()
+                        prePumpkinExplodeEvent.getPower(),
+                        prePumpkinExplodeEvent.getFire(),
+                        prePumpkinExplodeEvent.getBreakBlocks()
                 )
         ));
     }
 
     public enum TriggerAction {
+        PUMPKIN_HEAD,
         LEFT_CLICK,
         RIGHT_CLICK,
         BLOCK_PLACE,

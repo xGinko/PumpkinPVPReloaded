@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class ExplodePumpkinOnPlace extends ExplosionTriggerModule {
+public class ExplodePumpkinOnPlace extends ExplosionTrigger {
 
     public ExplodePumpkinOnPlace() {
         super(TriggerAction.BLOCK_PLACE, "mechanics.explosion-triggers.place-pumpkin", false);

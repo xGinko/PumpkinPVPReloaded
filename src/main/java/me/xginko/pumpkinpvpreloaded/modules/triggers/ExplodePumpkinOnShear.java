@@ -7,7 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ExplodePumpkinOnShear extends ExplosionTriggerModule {
+public class ExplodePumpkinOnShear extends ExplosionTrigger {
 
     private final boolean shears_take_durability;
 

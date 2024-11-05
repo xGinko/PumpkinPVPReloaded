@@ -11,12 +11,12 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
-public class ExplodePumpkinHeadEntities extends ExplosionTriggerModule {
+public class ExplodePumpkinHeadEntities extends ExplosionTrigger {
 
     private final boolean explode_players, only_killed_by_player;
 
     public ExplodePumpkinHeadEntities() {
-        super("mechanics.explosion-triggers.pumpkin-head-entity-kill", false,
+        super(TriggerAction.PUMPKIN_HEAD, "mechanics.explosion-triggers.pumpkin-head-entity-kill", false,
                 "Entities wearing one of the configured pumpkin blocks on their heads will explode when killed.");
         this.explode_players = config.getBoolean(configPath + ".pumpkin-head-players-also-explode", false);
         this.only_killed_by_player = config.getBoolean(configPath + ".only-when-killed-by-player", true,
@@ -36,12 +36,7 @@ public class ExplodePumpkinHeadEntities extends ExplosionTriggerModule {
         final ItemStack helmet = equipment.getHelmet();
         if (helmet == null || !config.explosive_pumpkins.contains(helmet.getType())) return;
 
-        final PrePumpkinHeadEntityExplodeEvent prePumpkinHeadEvent = new PrePumpkinHeadEntityExplodeEvent(
-                dyingEntity,
-                dyingEntity.getKiller(),
-                dyingEntity.getEyeLocation()
-        );
-
+        final PrePumpkinHeadEntityExplodeEvent prePumpkinHeadEvent = new PrePumpkinHeadEntityExplodeEvent(dyingEntity);
         if (!prePumpkinHeadEvent.callEvent()) return;
 
         if (PumpkinPVPReloaded.isServerFolia()) {
@@ -57,15 +52,15 @@ public class ExplodePumpkinHeadEntities extends ExplosionTriggerModule {
                 prePumpkinHeadEvent.getPumpkinHeadEntity(),
                 prePumpkinHeadEvent.getKiller(),
                 prePumpkinHeadEvent.getExplodeLocation(),
-                prePumpkinHeadEvent.getExplodePower(),
-                prePumpkinHeadEvent.shouldSetFire(),
-                prePumpkinHeadEvent.shouldBreakBlocks(),
+                prePumpkinHeadEvent.getPower(),
+                prePumpkinHeadEvent.getFire(),
+                prePumpkinHeadEvent.getBreakBlocks(),
                 prePumpkinHeadEvent.getExplodeLocation().getWorld().createExplosion(
                         prePumpkinHeadEvent.getPumpkinHeadEntity(),
                         prePumpkinHeadEvent.getExplodeLocation(),
-                        prePumpkinHeadEvent.getExplodePower(),
-                        prePumpkinHeadEvent.shouldSetFire(),
-                        prePumpkinHeadEvent.shouldBreakBlocks()
+                        prePumpkinHeadEvent.getPower(),
+                        prePumpkinHeadEvent.getFire(),
+                        prePumpkinHeadEvent.getBreakBlocks()
                 )
         ));
     }
