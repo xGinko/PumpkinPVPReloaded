@@ -2,7 +2,7 @@ package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTrigger;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -14,37 +14,25 @@ public class PrePumpkinEntityExplodeEvent extends PrePumpkinExplodeEvent impleme
     private static final @NotNull HandlerList handlers = new HandlerList();
     private boolean isCancelled;
 
-    private @NotNull LivingEntity livingEntity;
+    private @NotNull Entity entity;
 
     public PrePumpkinEntityExplodeEvent(
             @NotNull ExplosionTrigger.TriggerAction triggerAction,
-            @NotNull LivingEntity livingEntity,
+            @NotNull Entity entity,
             @Nullable Player exploder,
             @NotNull Location explodeLocation
     ) {
         super(triggerAction, exploder, explodeLocation);
-        this.livingEntity = livingEntity;
+        this.entity = entity;
         this.isCancelled = false;
     }
 
-    public PrePumpkinEntityExplodeEvent(
-            @NotNull ExplosionTrigger.TriggerAction triggerAction,
-            @NotNull LivingEntity livingEntity,
-            @Nullable Player exploder
-    ) {
-        this(triggerAction, livingEntity, exploder, livingEntity.getEyeLocation());
+    public @NotNull Entity getEntity() {
+        return entity;
     }
 
-    public @Nullable Player getExploder() {
-        return livingEntity.getKiller();
-    }
-
-    public @NotNull LivingEntity getEntity() {
-        return livingEntity;
-    }
-
-    public void setEntity(@NotNull LivingEntity livingEntity) {
-        this.livingEntity = livingEntity;
+    public void setEntity(@NotNull Entity entity) {
+        this.entity = entity;
     }
 
     @Override

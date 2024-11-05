@@ -37,7 +37,8 @@ public class ExplodePumpkinHeadEntitiesOnDeath extends ExplosionTrigger {
         final PrePumpkinEntityExplodeEvent prePumpkinHeadEntityExplosion = new PrePumpkinEntityExplodeEvent(
                 triggerAction,
                 dyingEntity,
-                dyingEntity.getKiller()
+                dyingEntity.getKiller(),
+                dyingEntity.getEyeLocation()
         );
 
         if (prePumpkinHeadEntityExplosion.callEvent()) {
