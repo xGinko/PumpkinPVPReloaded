@@ -10,6 +10,7 @@ import me.xginko.pumpkinpvpreloaded.events.PrePumpkinEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class ExplosionTrigger extends PumpkinPVPModule implements Listener {
 
@@ -34,7 +35,7 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
         HandlerList.unregisterAll(this);
     }
 
-    protected void doPumpkinExplosion(PrePumpkinExplodeEvent prePumpkinExplosion) {
+    protected void doPumpkinExplosion(@NotNull PrePumpkinExplodeEvent prePumpkinExplosion) {
         if (PumpkinPVPReloaded.isServerFolia()) {
             scheduling.regionSpecificScheduler(prePumpkinExplosion.getLocation())
                     .run(() -> createExplosionWithEvent(prePumpkinExplosion));
@@ -43,26 +44,8 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
         }
     }
 
-    private void createExplosionWithEvent(PrePumpkinExplodeEvent prePumpkinExplosion) {
-        if (prePumpkinExplosion.getTriggerAction() == TriggerAction.PUMPKIN_HEAD_ENTITY_DEATH) {
-            PrePumpkinEntityExplodeEvent prePumpkinEntityExplosion = (PrePumpkinEntityExplodeEvent) prePumpkinExplosion;
-            plugin.getServer().getPluginManager().callEvent(new PumpkinEntityExplodeEvent(
-                    triggerAction,
-                    prePumpkinEntityExplosion.getEntity(),
-                    prePumpkinEntityExplosion.getExploder(),
-                    prePumpkinEntityExplosion.getLocation(),
-                    prePumpkinEntityExplosion.getPower(),
-                    prePumpkinEntityExplosion.getFire(),
-                    prePumpkinEntityExplosion.getBreakBlocks(),
-                    prePumpkinEntityExplosion.getLocation().getWorld().createExplosion(
-                            prePumpkinEntityExplosion.getEntity(),
-                            prePumpkinEntityExplosion.getLocation(),
-                            prePumpkinEntityExplosion.getPower(),
-                            prePumpkinEntityExplosion.getFire(),
-                            prePumpkinEntityExplosion.getBreakBlocks()
-                    )
-            ));
-        } else {
+    private void createExplosionWithEvent(@NotNull PrePumpkinExplodeEvent prePumpkinExplosion) {
+        if (prePumpkinExplosion.getClass() == PrePumpkinBlockExplodeEvent.class) {
             PrePumpkinBlockExplodeEvent prePumpkinBlockExplosion = (PrePumpkinBlockExplodeEvent) prePumpkinExplosion;
             prePumpkinBlockExplosion.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
             plugin.getServer().getPluginManager().callEvent(new PumpkinBlockExplodeEvent(
@@ -78,6 +61,24 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
                             prePumpkinBlockExplosion.getPower(),
                             prePumpkinBlockExplosion.getFire(),
                             prePumpkinBlockExplosion.getBreakBlocks()
+                    )
+            ));
+        } else {
+            PrePumpkinEntityExplodeEvent prePumpkinEntityExplosion = (PrePumpkinEntityExplodeEvent) prePumpkinExplosion;
+            plugin.getServer().getPluginManager().callEvent(new PumpkinEntityExplodeEvent(
+                    triggerAction,
+                    prePumpkinEntityExplosion.getEntity(),
+                    prePumpkinEntityExplosion.getExploder(),
+                    prePumpkinEntityExplosion.getLocation(),
+                    prePumpkinEntityExplosion.getPower(),
+                    prePumpkinEntityExplosion.getFire(),
+                    prePumpkinEntityExplosion.getBreakBlocks(),
+                    prePumpkinEntityExplosion.getLocation().getWorld().createExplosion(
+                            prePumpkinEntityExplosion.getEntity(),
+                            prePumpkinEntityExplosion.getLocation(),
+                            prePumpkinEntityExplosion.getPower(),
+                            prePumpkinEntityExplosion.getFire(),
+                            prePumpkinEntityExplosion.getBreakBlocks()
                     )
             ));
         }
