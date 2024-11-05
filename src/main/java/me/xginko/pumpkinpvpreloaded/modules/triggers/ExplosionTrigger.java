@@ -14,14 +14,14 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class ExplosionTrigger extends PumpkinPVPModule implements Listener {
 
-    public final TriggerAction triggerAction;
+    public final Action triggerAction;
 
-    public ExplosionTrigger(TriggerAction triggerAction, String configPath, boolean defEnabled, String comment) {
+    public ExplosionTrigger(Action triggerAction, String configPath, boolean defEnabled, String comment) {
         super(configPath, defEnabled, comment);
         this.triggerAction = triggerAction;
     }
 
-    public ExplosionTrigger(TriggerAction triggerAction, String configPath, boolean defEnabled) {
+    public ExplosionTrigger(Action triggerAction, String configPath, boolean defEnabled) {
         this(triggerAction, configPath, defEnabled, null);
     }
 
@@ -84,7 +84,7 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
         }
     }
 
-    public enum TriggerAction {
+    public enum Action {
         PUMPKIN_HEAD_ENTITY_DEATH,
         LEFT_CLICK_PUMPKIN,
         RIGHT_CLICK_PUMPKIN,

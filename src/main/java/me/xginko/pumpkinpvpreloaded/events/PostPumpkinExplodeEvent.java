@@ -11,7 +11,7 @@ public abstract class PostPumpkinExplodeEvent extends PumpkinExplodeEvent {
     private final boolean hasExploded;
 
     public PostPumpkinExplodeEvent(
-            @NotNull ExplosionTrigger.TriggerAction triggerAction,
+            @NotNull ExplosionTrigger.Action triggerAction,
             @Nullable Player exploder,
             @NotNull Location explodeLocation,
             float explodePower, boolean setFire, boolean breakBlocks, boolean hasExploded
@@ -20,7 +20,7 @@ public abstract class PostPumpkinExplodeEvent extends PumpkinExplodeEvent {
         this.hasExploded = hasExploded;
     }
 
-    public PostPumpkinExplodeEvent(ExplosionTrigger.TriggerAction triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation, boolean hasExploded) {
+    public PostPumpkinExplodeEvent(ExplosionTrigger.Action triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation, boolean hasExploded) {
         super(triggerAction, exploder, explodeLocation);
         this.hasExploded = hasExploded;
     }

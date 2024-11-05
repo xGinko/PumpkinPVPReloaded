@@ -14,7 +14,7 @@ public class ExplodePumpkinHeadEntitiesOnDeath extends ExplosionTrigger {
     private final boolean explode_players, only_killed_by_player;
 
     public ExplodePumpkinHeadEntitiesOnDeath() {
-        super(TriggerAction.PUMPKIN_HEAD_ENTITY_DEATH, "mechanics.explosion-triggers.pumpkin-head-entity-kill", false,
+        super(Action.PUMPKIN_HEAD_ENTITY_DEATH, "mechanics.explosion-triggers.pumpkin-head-entity-kill", false,
                 "Entities wearing one of the configured pumpkin blocks on their heads will explode when killed.");
         this.explode_players = config.getBoolean(configPath + ".pumpkin-head-players-also-explode", false);
         this.only_killed_by_player = config.getBoolean(configPath + ".only-when-killed-by-player", true,

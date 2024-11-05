@@ -12,7 +12,7 @@ public abstract class PrePumpkinExplodeEvent extends PumpkinExplodeEvent impleme
     private boolean isCancelled;
 
     public PrePumpkinExplodeEvent(
-            @NotNull ExplosionTrigger.TriggerAction triggerAction,
+            @NotNull ExplosionTrigger.Action triggerAction,
             @Nullable Player exploder,
             @NotNull Location explodeLocation,
             float explodePower, boolean setFire, boolean breakBlocks
@@ -21,7 +21,7 @@ public abstract class PrePumpkinExplodeEvent extends PumpkinExplodeEvent impleme
         this.isCancelled = false;
     }
 
-    public PrePumpkinExplodeEvent(ExplosionTrigger.TriggerAction triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation) {
+    public PrePumpkinExplodeEvent(ExplosionTrigger.Action triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation) {
         super(triggerAction, exploder, explodeLocation);
         this.isCancelled = false;
     }

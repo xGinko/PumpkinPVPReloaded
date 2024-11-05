@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinBlockExplodeEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class ExplodePumpkinOnShear extends ExplosionTrigger {
@@ -12,13 +11,13 @@ public class ExplodePumpkinOnShear extends ExplosionTrigger {
     private final boolean shears_take_durability;
 
     public ExplodePumpkinOnShear() {
-        super(TriggerAction.SHEAR_PUMPKIN, "mechanics.explosion-triggers.shear-pumpkin", false);
+        super(Action.SHEAR_PUMPKIN, "mechanics.explosion-triggers.shear-pumpkin", false);
         this.shears_take_durability = config.getBoolean(configPath + ".shears-loose-durability", true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getAction() != org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) return;
         if (!config.explosive_pumpkins.contains(event.getClickedBlock().getType())) return;
         if (event.getMaterial() != XMaterial.SHEARS.parseMaterial()) return;
 

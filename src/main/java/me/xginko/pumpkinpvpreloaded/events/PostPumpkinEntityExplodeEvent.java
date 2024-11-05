@@ -15,7 +15,7 @@ public class PostPumpkinEntityExplodeEvent extends PostPumpkinExplodeEvent {
     private final @NotNull Entity entity;
 
     public PostPumpkinEntityExplodeEvent(
-            @NotNull ExplosionTrigger.TriggerAction triggerAction,
+            @NotNull ExplosionTrigger.Action triggerAction,
             @NotNull Entity entity,
             @Nullable Player exploder,
             @NotNull Location explodeLocation,
