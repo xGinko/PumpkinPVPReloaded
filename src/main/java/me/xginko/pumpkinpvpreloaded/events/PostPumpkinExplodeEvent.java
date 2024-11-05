@@ -2,33 +2,30 @@ package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTrigger;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PumpkinEntityExplodeEvent extends PumpkinExplodeEvent {
+public abstract class PostPumpkinExplodeEvent extends PumpkinExplodeEvent {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
-    private final @NotNull Entity entity;
     private final boolean hasExploded;
 
-    public PumpkinEntityExplodeEvent(
+    public PostPumpkinExplodeEvent(
             @NotNull ExplosionTrigger.TriggerAction triggerAction,
-            @NotNull Entity entity,
             @Nullable Player exploder,
             @NotNull Location explodeLocation,
-            float explosionPower, boolean setFire, boolean destroyedBlocks, boolean hasExploded
+            float explodePower, boolean setFire, boolean breakBlocks, boolean hasExploded
     ) {
-        super(triggerAction, exploder, explodeLocation, explosionPower, setFire, destroyedBlocks);
-        this.entity = entity;
+        super(triggerAction, exploder, explodeLocation, explodePower, setFire, breakBlocks);
         this.hasExploded = hasExploded;
     }
 
-    public @NotNull Entity getEntity() {
-        return entity;
+    public PostPumpkinExplodeEvent(ExplosionTrigger.TriggerAction triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation, boolean hasExploded) {
+        super(triggerAction, exploder, explodeLocation);
+        this.hasExploded = hasExploded;
     }
 
     public boolean hasExploded() {

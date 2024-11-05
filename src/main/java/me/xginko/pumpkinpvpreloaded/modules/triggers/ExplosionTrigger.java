@@ -2,8 +2,8 @@ package me.xginko.pumpkinpvpreloaded.modules.triggers;
 
 import com.cryptomorin.xseries.XMaterial;
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinBlockExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinEntityExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinBlockExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinBlockExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PrePumpkinEntityExplodeEvent;
@@ -48,7 +48,7 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
         if (prePumpkinExplosion.getClass() == PrePumpkinBlockExplodeEvent.class) {
             PrePumpkinBlockExplodeEvent prePumpkinBlockExplosion = (PrePumpkinBlockExplodeEvent) prePumpkinExplosion;
             prePumpkinBlockExplosion.getPumpkin().setType(XMaterial.AIR.parseMaterial(), false);
-            plugin.getServer().getPluginManager().callEvent(new PumpkinBlockExplodeEvent(
+            plugin.getServer().getPluginManager().callEvent(new PostPumpkinBlockExplodeEvent(
                     triggerAction,
                     prePumpkinBlockExplosion.getPumpkin(),
                     prePumpkinBlockExplosion.getExploder(),
@@ -65,7 +65,7 @@ public abstract class ExplosionTrigger extends PumpkinPVPModule implements Liste
             ));
         } else {
             PrePumpkinEntityExplodeEvent prePumpkinEntityExplosion = (PrePumpkinEntityExplodeEvent) prePumpkinExplosion;
-            plugin.getServer().getPluginManager().callEvent(new PumpkinEntityExplodeEvent(
+            plugin.getServer().getPluginManager().callEvent(new PostPumpkinEntityExplodeEvent(
                     triggerAction,
                     prePumpkinEntityExplosion.getEntity(),
                     prePumpkinEntityExplosion.getExploder(),

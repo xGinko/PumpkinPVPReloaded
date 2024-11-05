@@ -2,9 +2,8 @@ package me.xginko.pumpkinpvpreloaded;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinBlockExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinEntityExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.events.PrePumpkinBlockExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.utils.Disableable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -39,21 +38,14 @@ public final class PumpkinPVPTracker implements Disableable, Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    private void onPrePumpkinExplode(PrePumpkinBlockExplodeEvent event) {
+    private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
         if (event.getExploder() != null) {
             this.pre_pumpkin_explosions.put(event.getLocation(), event.getExploder());
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    private void onPostPumpkinExplode(PumpkinBlockExplodeEvent event) {
-        if (event.hasExploded()) {
-            this.post_pumpkin_explosions.add(event.getLocation());
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    private void onPostPumpkinHeadExplode(PumpkinEntityExplodeEvent event) {
+    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (event.hasExploded()) {
             this.post_pumpkin_explosions.add(event.getLocation());
         }

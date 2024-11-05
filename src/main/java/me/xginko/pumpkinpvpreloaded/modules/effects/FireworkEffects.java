@@ -1,8 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import com.google.common.collect.ImmutableList;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinBlockExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinEntityExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Color;
@@ -123,20 +122,7 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    private void onPostPumpkinExplode(PumpkinBlockExplodeEvent event) {
-        if (event.hasExploded()) {
-            Firework firework = event.getLocation().getWorld().spawn(event.getLocation(), Firework.class);
-            FireworkMeta meta = firework.getFireworkMeta();
-            meta.clearEffects();
-            meta.addEffect(this.getRandomEffect());
-            firework.setFireworkMeta(meta);
-            firework.setSilent(true);
-            firework.detonate();
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    private void onPostPumpkinHeadExplode(PumpkinEntityExplodeEvent event) {
+    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (event.hasExploded()) {
             Firework firework = event.getLocation().getWorld().spawn(event.getLocation(), Firework.class);
             FireworkMeta meta = firework.getFireworkMeta();

@@ -3,10 +3,13 @@ package me.xginko.pumpkinpvpreloaded.events;
 import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTrigger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class PrePumpkinExplodeEvent extends PumpkinExplodeEvent {
+
+    private static final @NotNull HandlerList handlers = new HandlerList();
 
     public PrePumpkinExplodeEvent(
             @NotNull ExplosionTrigger.TriggerAction triggerAction,
@@ -35,5 +38,14 @@ public abstract class PrePumpkinExplodeEvent extends PumpkinExplodeEvent {
 
     public void setBreakBlocks(boolean breakBlocks) {
         this.breakBlocks = breakBlocks;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static @NotNull HandlerList getHandlerList() {
+        return handlers;
     }
 }

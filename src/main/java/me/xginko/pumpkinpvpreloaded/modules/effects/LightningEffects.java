@@ -1,8 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinBlockExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.events.PumpkinEntityExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Location;
@@ -12,9 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public class LightningEffects extends PumpkinPVPModule implements Listener {
 
@@ -51,41 +47,32 @@ public class LightningEffects extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    private void onPostPumpkinExplode(PumpkinBlockExplodeEvent event) {
-        if (event.hasExploded() && (probability >= 1 || Util.RANDOM.nextDouble() <= probability)) {
-            strikeLightning(event.getExploder().getUniqueId(), event.getLocation());
-        }
-    }
+    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
+        if (!event.hasExploded()) return;
 
-    @EventHandler(priority = EventPriority.LOW)
-    private void onPostPumpkinHeadExplode(PumpkinEntityExplodeEvent event) {
-        if (event.hasExploded() && (probability >= 1 || Util.RANDOM.nextDouble() <= probability)) {
-            strikeLightning(event.getKiller() != null ? event.getKiller().getUniqueId() : null, event.getLocation());
-        }
-    }
+        if (probability >= 1 || Util.RANDOM.nextDouble() <= probability) {
+            Player closestPlayer = null;
+            double smallestDistance = config.explosion_effect_radius_squared;
 
-    private void strikeLightning(@Nullable final UUID exploder, final Location explosionLoc) {
-        Player closestPlayer = null;
-        double smallestDistance = config.explosion_effect_radius_squared;
+            for (Player player : event.getLocation().getNearbyPlayers(radius, radius, radius)) {
+                if (event.getExploder() != null && player.getUniqueId().equals(event.getExploder().getUniqueId())) continue;
 
-        for (Player player : explosionLoc.getNearbyPlayers(radius, radius, radius)) {
-            if (exploder != null && player.getUniqueId().equals(exploder)) continue;
-
-            double currentDistance = explosionLoc.distanceSquared(player.getLocation());
-            if (currentDistance < smallestDistance) {
-                closestPlayer = player;
-                smallestDistance = currentDistance;
+                double currentDistance = event.getLocation().distanceSquared(player.getLocation());
+                if (currentDistance < smallestDistance) {
+                    closestPlayer = player;
+                    smallestDistance = currentDistance;
+                }
             }
-        }
 
-        if (closestPlayer == null) return;
+            if (closestPlayer == null) return;
 
-        final Location playerLoc = closestPlayer.getLocation();
+            final Location playerLoc = closestPlayer.getLocation();
 
-        if (PumpkinPVPReloaded.isServerFolia()) {
-            scheduling.regionSpecificScheduler(playerLoc).run(() -> spawnLightning(playerLoc));
-        } else {
-            spawnLightning(playerLoc);
+            if (PumpkinPVPReloaded.isServerFolia()) {
+                scheduling.regionSpecificScheduler(playerLoc).run(() -> spawnLightning(playerLoc));
+            } else {
+                spawnLightning(playerLoc);
+            }
         }
     }
 

@@ -8,35 +8,25 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PumpkinBlockExplodeEvent extends PumpkinExplodeEvent {
+public class PostPumpkinBlockExplodeEvent extends PostPumpkinExplodeEvent {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
-    private @NotNull Block pumpkin;
-    private final boolean hasExploded;
+    private final @NotNull Block pumpkin;
 
-    public PumpkinBlockExplodeEvent(
+    public PostPumpkinBlockExplodeEvent(
             @NotNull ExplosionTrigger.TriggerAction triggerAction,
             @NotNull Block pumpkin,
             @Nullable Player exploder,
             @NotNull Location explosionLocation,
             float explosionPower, boolean setFire, boolean breakBlocks, boolean hasExploded
     ) {
-        super(triggerAction, exploder, explosionLocation, explosionPower, setFire, breakBlocks);
+        super(triggerAction, exploder, explosionLocation, explosionPower, setFire, breakBlocks, hasExploded);
         this.pumpkin = pumpkin;
-        this.hasExploded = hasExploded;
     }
 
     public @NotNull Block getPumpkin() {
         return pumpkin;
-    }
-
-    public void setPumpkin(@NotNull Block pumpkin) {
-        this.pumpkin = pumpkin;
-    }
-
-    public boolean hasExploded() {
-        return hasExploded;
     }
 
     @Override
