@@ -13,7 +13,6 @@ public class PrePumpkinBlockExplodeEvent extends PrePumpkinExplodeEvent {
     private static final @NotNull HandlerList handlers = new HandlerList();
 
     private @NotNull Block pumpkin;
-    private boolean cancelPrecedingEvent;
 
     public PrePumpkinBlockExplodeEvent(
             @NotNull ExplosionTrigger.TriggerAction triggerAction,
@@ -23,7 +22,6 @@ public class PrePumpkinBlockExplodeEvent extends PrePumpkinExplodeEvent {
     ) {
         super(triggerAction, exploder, explodeLocation);
         this.pumpkin = pumpkin;
-        this.cancelPrecedingEvent = false;
     }
 
     public @NotNull Block getPumpkin() {
@@ -32,14 +30,6 @@ public class PrePumpkinBlockExplodeEvent extends PrePumpkinExplodeEvent {
 
     public void setPumpkin(@NotNull Block pumpkin) {
         this.pumpkin = pumpkin;
-    }
-
-    public boolean cancelPreceding() {
-        return cancelPrecedingEvent;
-    }
-
-    public void setPrecedingCancelled(boolean cancel) {
-        this.cancelPrecedingEvent = cancel;
     }
 
     @Override

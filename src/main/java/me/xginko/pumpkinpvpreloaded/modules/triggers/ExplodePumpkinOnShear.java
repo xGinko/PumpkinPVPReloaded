@@ -35,9 +35,7 @@ public class ExplodePumpkinOnShear extends ExplosionTrigger {
 
         if (prePumpkinBlockExplodeEvent.callEvent()) {
             doPumpkinExplosion(prePumpkinBlockExplodeEvent);
-        }
-
-        if (prePumpkinBlockExplodeEvent.cancelPreceding()) {
+        } else {
             event.setCancelled(true);
         }
     }

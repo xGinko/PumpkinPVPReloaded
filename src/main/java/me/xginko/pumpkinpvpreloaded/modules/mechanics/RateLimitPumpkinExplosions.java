@@ -48,7 +48,6 @@ public class RateLimitPumpkinExplosions extends PumpkinPVPModule implements List
         if (!this.players_on_cooldown.contains(event.getExploder().getUniqueId())) {
             this.players_on_cooldown.add(event.getExploder().getUniqueId());
         } else {
-            event.setPrecedingCancelled(true);
             event.setCancelled(true);
         }
     }
