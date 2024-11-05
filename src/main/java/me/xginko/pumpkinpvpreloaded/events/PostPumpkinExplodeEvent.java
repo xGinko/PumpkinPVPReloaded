@@ -3,13 +3,10 @@ package me.xginko.pumpkinpvpreloaded.events;
 import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTrigger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class PostPumpkinExplodeEvent extends PumpkinExplodeEvent {
-
-    private static final @NotNull HandlerList handlers = new HandlerList();
 
     private final boolean hasExploded;
 
@@ -30,14 +27,5 @@ public abstract class PostPumpkinExplodeEvent extends PumpkinExplodeEvent {
 
     public boolean hasExploded() {
         return hasExploded;
-    }
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static @NotNull HandlerList getHandlerList() {
-        return handlers;
     }
 }

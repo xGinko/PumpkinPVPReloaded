@@ -2,8 +2,10 @@ package me.xginko.pumpkinpvpreloaded;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinBlockExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinEntityExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PrePumpkinBlockExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PrePumpkinEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.utils.Disableable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,14 +40,28 @@ public final class PumpkinPVPTracker implements Disableable, Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
+    private void onPrePumpkinExplode(PrePumpkinBlockExplodeEvent event) {
         if (event.getExploder() != null) {
             this.pre_pumpkin_explosions.put(event.getLocation(), event.getExploder());
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
+    private void onPrePumpkinExplode(PrePumpkinEntityExplodeEvent event) {
+        if (event.getExploder() != null) {
+            this.pre_pumpkin_explosions.put(event.getLocation(), event.getExploder());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    private void onPostPumpkinExplode(PostPumpkinBlockExplodeEvent event) {
+        if (event.hasExploded()) {
+            this.post_pumpkin_explosions.add(event.getLocation());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    private void onPostPumpkinExplode(PostPumpkinEntityExplodeEvent event) {
         if (event.hasExploded()) {
             this.post_pumpkin_explosions.add(event.getLocation());
         }

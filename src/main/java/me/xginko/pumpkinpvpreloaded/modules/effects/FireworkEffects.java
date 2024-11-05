@@ -1,6 +1,8 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import com.google.common.collect.ImmutableList;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinBlockExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
@@ -122,6 +124,15 @@ public class FireworkEffects extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
+    private void onPostPumpkinBlockExplode(PostPumpkinBlockExplodeEvent event) {
+        onPostPumpkinExplode(event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onPostPumpkinEntityExplode(PostPumpkinEntityExplodeEvent event) {
+        onPostPumpkinExplode(event);
+    }
+
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (event.hasExploded()) {
             Firework firework = event.getLocation().getWorld().spawn(event.getLocation(), Firework.class);

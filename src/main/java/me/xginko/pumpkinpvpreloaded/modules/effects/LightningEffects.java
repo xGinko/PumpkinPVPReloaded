@@ -1,6 +1,8 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinBlockExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PostPumpkinEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
@@ -46,7 +48,16 @@ public class LightningEffects extends PumpkinPVPModule implements Listener {
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onPostPumpkinBlockExplode(PostPumpkinBlockExplodeEvent event) {
+        onPostPumpkinExplode(event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onPostPumpkinEntityExplode(PostPumpkinEntityExplodeEvent event) {
+        onPostPumpkinExplode(event);
+    }
+
     private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
         if (!event.hasExploded()) return;
 
