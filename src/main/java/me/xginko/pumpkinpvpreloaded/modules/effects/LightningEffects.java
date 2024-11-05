@@ -1,8 +1,8 @@
 package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
-import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
-import me.xginko.pumpkinpvpreloaded.events.PostPumpkinHeadEntityExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PumpkinBlockExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PumpkinEntityExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Location;
@@ -51,16 +51,16 @@ public class LightningEffects extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
+    private void onPostPumpkinExplode(PumpkinBlockExplodeEvent event) {
         if (event.hasExploded() && (probability >= 1 || Util.RANDOM.nextDouble() <= probability)) {
-            strikeLightning(event.getExploder().getUniqueId(), event.getExplodeLocation());
+            strikeLightning(event.getExploder().getUniqueId(), event.getLocation());
         }
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    private void onPostPumpkinHeadExplode(PostPumpkinHeadEntityExplodeEvent event) {
+    private void onPostPumpkinHeadExplode(PumpkinEntityExplodeEvent event) {
         if (event.hasExploded() && (probability >= 1 || Util.RANDOM.nextDouble() <= probability)) {
-            strikeLightning(event.getKiller() != null ? event.getKiller().getUniqueId() : null, event.getExplodeLocation());
+            strikeLightning(event.getKiller() != null ? event.getKiller().getUniqueId() : null, event.getLocation());
         }
     }
 

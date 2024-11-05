@@ -1,7 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.mechanics;
 
 import com.google.common.collect.ImmutableSet;
-import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PrePumpkinBlockExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,7 +37,7 @@ public class EnablePerWorld extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
+    private void onPrePumpkinExplode(PrePumpkinBlockExplodeEvent event) {
         event.setCancelled(blacklist_mode == active_worlds.contains(event.getPumpkin().getWorld().getName()));
     }
 }

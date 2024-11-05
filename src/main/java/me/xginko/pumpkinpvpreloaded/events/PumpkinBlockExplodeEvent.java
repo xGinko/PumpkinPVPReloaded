@@ -2,39 +2,37 @@ package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTrigger;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PostPumpkinExplodeEvent extends PumpkinExplodeEvent {
+public class PumpkinBlockExplodeEvent extends PumpkinExplodeEvent {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
-    private final @NotNull Player exploder;
-    private final @NotNull ExplosionTrigger.TriggerAction triggerAction;
+    private @NotNull Block pumpkin;
     private final boolean hasExploded;
 
-    public PostPumpkinExplodeEvent(
-            @NotNull Player exploder,
-            @NotNull Location explosionLocation,
-            float explosionPower,
-            boolean setFire,
-            boolean breakBlocks,
+    public PumpkinBlockExplodeEvent(
             @NotNull ExplosionTrigger.TriggerAction triggerAction,
-            boolean hasExploded
+            @NotNull Block pumpkin,
+            @Nullable Player exploder,
+            @NotNull Location explosionLocation,
+            float explosionPower, boolean setFire, boolean breakBlocks, boolean hasExploded
     ) {
-        super(explosionLocation, explosionPower, setFire, breakBlocks);
+        super(triggerAction, exploder, explosionLocation, explosionPower, setFire, breakBlocks);
+        this.pumpkin = pumpkin;
         this.hasExploded = hasExploded;
-        this.exploder = exploder;
-        this.triggerAction = triggerAction;
     }
 
-    public @NotNull Player getExploder() {
-        return exploder;
+    public @NotNull Block getPumpkin() {
+        return pumpkin;
     }
 
-    public @NotNull ExplosionTrigger.TriggerAction getTriggerAction() {
-        return triggerAction;
+    public void setPumpkin(@NotNull Block pumpkin) {
+        this.pumpkin = pumpkin;
     }
 
     public boolean hasExploded() {

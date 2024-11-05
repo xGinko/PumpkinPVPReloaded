@@ -2,7 +2,7 @@ package me.xginko.pumpkinpvpreloaded.modules.effects;
 
 import com.cryptomorin.xseries.XSound;
 import com.google.common.collect.ImmutableList;
-import me.xginko.pumpkinpvpreloaded.events.PostPumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PumpkinBlockExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Sound;
@@ -79,10 +79,10 @@ public class ExplodeSoundEffects extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    private void onPostPumpkinExplode(PostPumpkinExplodeEvent event) {
+    private void onPostPumpkinExplode(PumpkinBlockExplodeEvent event) {
         if (event.hasExploded()) {
-            event.getExplodeLocation().getWorld().playSound(
-                    event.getExplodeLocation(),
+            event.getLocation().getWorld().playSound(
+                    event.getLocation(),
                     this.explode_sounds.get(Util.RANDOM.nextInt(this.explode_sounds.size())),
                     this.volume,
                     this.pitch

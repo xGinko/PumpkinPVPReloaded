@@ -2,76 +2,38 @@ package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTrigger;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PrePumpkinExplodeEvent extends PumpkinExplodeEvent implements Cancellable {
-
-    private static final @NotNull HandlerList handlers = new HandlerList();
-    private boolean isCancelled;
-
-    private @NotNull Block pumpkin;
-    private final @NotNull Player exploder;
-    private final @NotNull ExplosionTrigger.TriggerAction triggerAction;
-    private boolean cancelPrecedingEvent;
+public abstract class PrePumpkinExplodeEvent extends PumpkinExplodeEvent {
 
     public PrePumpkinExplodeEvent(
-            @NotNull Block pumpkin,
-            @NotNull Player exploder,
+            @NotNull ExplosionTrigger.TriggerAction triggerAction,
+            @Nullable Player exploder,
             @NotNull Location explodeLocation,
-            @NotNull ExplosionTrigger.TriggerAction triggerAction
+            float explodePower, boolean setFire, boolean breakBlocks
     ) {
-        super(explodeLocation);
-        this.pumpkin = pumpkin;
-        this.exploder = exploder;
-        this.triggerAction = triggerAction;
-        this.isCancelled = false;
-        this.cancelPrecedingEvent = false;
+        super(triggerAction, exploder, explodeLocation, explodePower, setFire, breakBlocks);
     }
 
-    public @NotNull Block getPumpkin() {
-        return pumpkin;
+    public PrePumpkinExplodeEvent(ExplosionTrigger.TriggerAction triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation) {
+        super(triggerAction, exploder, explodeLocation);
     }
 
-    public void setPumpkin(@NotNull Block pumpkin) {
-        this.pumpkin = pumpkin;
+    public void setLocation(@NotNull Location explodeLocation) {
+        this.explodeLocation = explodeLocation;
     }
 
-    public @NotNull Player getExploder() {
-        return exploder;
+    public void setPower(float explodePower) {
+        this.explodePower = explodePower;
     }
 
-    public @NotNull ExplosionTrigger.TriggerAction getTriggerAction() {
-        return triggerAction;
+    public void setFire(boolean setFire) {
+        this.setFire = setFire;
     }
 
-    public boolean cancelPreceding() {
-        return cancelPrecedingEvent;
-    }
-
-    public void setPrecedingCancelled(boolean cancel) {
-        this.cancelPrecedingEvent = cancel;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        isCancelled = cancel;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static @NotNull HandlerList getHandlerList() {
-        return handlers;
+    public void setBreakBlocks(boolean breakBlocks) {
+        this.breakBlocks = breakBlocks;
     }
 }

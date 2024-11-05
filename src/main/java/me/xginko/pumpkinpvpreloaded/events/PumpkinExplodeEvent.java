@@ -1,25 +1,39 @@
 package me.xginko.pumpkinpvpreloaded.events;
 
 import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
+import me.xginko.pumpkinpvpreloaded.modules.triggers.ExplosionTrigger;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class PumpkinExplodeEvent extends Event {
 
-    private @NotNull Location explodeLocation;
-    private float explodePower;
-    private boolean setFire, breakBlocks;
+    protected @Nullable Player exploder;
+    protected @NotNull Location explodeLocation;
+    protected final @NotNull ExplosionTrigger.TriggerAction triggerAction;
+    protected float explodePower;
+    protected boolean setFire, breakBlocks;
 
-    public PumpkinExplodeEvent(@NotNull Location explodeLocation, float explodePower, boolean setFire, boolean breakBlocks) {
+    public PumpkinExplodeEvent(
+            @NotNull ExplosionTrigger.TriggerAction triggerAction,
+            @Nullable Player exploder,
+            @NotNull Location explodeLocation,
+            float explodePower, boolean setFire, boolean breakBlocks
+    ) {
+        this.exploder = exploder;
         this.explodeLocation = explodeLocation;
+        this.triggerAction = triggerAction;
         this.explodePower = explodePower;
         this.setFire = setFire;
         this.breakBlocks = breakBlocks;
     }
 
-    public PumpkinExplodeEvent(@NotNull Location explodeLocation) {
+    public PumpkinExplodeEvent(ExplosionTrigger.TriggerAction triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation) {
         this(
+                triggerAction,
+                exploder,
                 explodeLocation,
                 PumpkinPVPReloaded.config().explosion_power,
                 PumpkinPVPReloaded.config().explosion_set_fire,
@@ -27,35 +41,27 @@ public abstract class PumpkinExplodeEvent extends Event {
         );
     }
 
-    public @NotNull Location getExplodeLocation() {
-        return explodeLocation;
+    public @NotNull ExplosionTrigger.TriggerAction getTriggerAction() {
+        return triggerAction;
     }
 
-    public void setExplodeLocation(@NotNull Location explodeLocation) {
-        this.explodeLocation = explodeLocation;
+    public @Nullable Player getExploder() {
+        return exploder;
+    }
+
+    public @NotNull Location getLocation() {
+        return explodeLocation;
     }
 
     public float getPower() {
         return explodePower;
     }
 
-    public void setPower(float explodePower) {
-        this.explodePower = explodePower;
-    }
-
     public boolean getFire() {
         return setFire;
     }
 
-    public void setFire(boolean setFire) {
-        this.setFire = setFire;
-    }
-
     public boolean getBreakBlocks() {
         return breakBlocks;
-    }
-
-    public void setBreakBlocks(boolean breakBlocks) {
-        this.breakBlocks = breakBlocks;
     }
 }

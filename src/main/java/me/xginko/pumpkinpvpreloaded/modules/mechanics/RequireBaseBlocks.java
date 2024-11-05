@@ -1,7 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.mechanics;
 
 import com.cryptomorin.xseries.XMaterial;
-import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PrePumpkinBlockExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -67,7 +67,7 @@ public class RequireBaseBlocks extends PumpkinPVPModule implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
+    private void onPrePumpkinExplode(PrePumpkinBlockExplodeEvent event) {
         if (!this.base_materials.contains(event.getPumpkin().getRelative(BlockFace.DOWN).getType())) {
             event.setCancelled(true);
         }

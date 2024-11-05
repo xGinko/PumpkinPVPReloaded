@@ -1,7 +1,7 @@
 package me.xginko.pumpkinpvpreloaded.modules.mechanics;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import me.xginko.pumpkinpvpreloaded.events.PrePumpkinExplodeEvent;
+import me.xginko.pumpkinpvpreloaded.events.PrePumpkinBlockExplodeEvent;
 import me.xginko.pumpkinpvpreloaded.modules.PumpkinPVPModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -42,7 +42,7 @@ public class RateLimitPumpkinExplosions extends PumpkinPVPModule implements List
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onPrePumpkinExplode(PrePumpkinExplodeEvent event) {
+    private void onPrePumpkinExplode(PrePumpkinBlockExplodeEvent event) {
         if (!this.players_on_cooldown.contains(event.getExploder().getUniqueId())) {
             this.players_on_cooldown.add(event.getExploder().getUniqueId());
         } else {
