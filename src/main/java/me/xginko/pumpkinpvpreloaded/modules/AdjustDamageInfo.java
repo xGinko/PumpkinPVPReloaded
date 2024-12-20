@@ -8,8 +8,6 @@ import me.xginko.pumpkinpvpreloaded.PumpkinPVPReloaded;
 import me.xginko.pumpkinpvpreloaded.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -67,7 +65,7 @@ public class AdjustDamageInfo extends PumpkinPVPModule implements Listener {
                     pumpkinExploder,
                     damagedPlayer,
                     EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
-                    DamageSource.builder(DamageType.PLAYER_EXPLOSION)
+                    org.bukkit.damage.DamageSource.builder(org.bukkit.damage.DamageType.PLAYER_EXPLOSION)
                             .withCausingEntity(pumpkinExploder)
                             .withDamageLocation(damageLocation).build(),
                     new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, event.getFinalDamage())),
