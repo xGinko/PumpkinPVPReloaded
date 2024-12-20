@@ -12,12 +12,12 @@ public abstract class PumpkinExplodeEvent extends Event {
 
     protected @Nullable Player exploder;
     protected @NotNull Location explodeLocation;
-    protected final @NotNull ExplosionTrigger.Action triggerAction;
+    protected final @NotNull ExplosionTrigger.TriggerAction triggerAction;
     protected float explodePower;
     protected boolean setFire, breakBlocks;
 
     public PumpkinExplodeEvent(
-            @NotNull ExplosionTrigger.Action triggerAction,
+            @NotNull ExplosionTrigger.TriggerAction triggerAction,
             @Nullable Player exploder,
             @NotNull Location explodeLocation,
             float explodePower, boolean setFire, boolean breakBlocks
@@ -30,7 +30,7 @@ public abstract class PumpkinExplodeEvent extends Event {
         this.breakBlocks = breakBlocks;
     }
 
-    public PumpkinExplodeEvent(ExplosionTrigger.Action triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation) {
+    public PumpkinExplodeEvent(ExplosionTrigger.TriggerAction triggerAction, @Nullable Player exploder, @NotNull Location explodeLocation) {
         this(
                 triggerAction,
                 exploder,
@@ -41,7 +41,7 @@ public abstract class PumpkinExplodeEvent extends Event {
         );
     }
 
-    public @NotNull ExplosionTrigger.Action getTriggerAction() {
+    public @NotNull ExplosionTrigger.TriggerAction getTriggerAction() {
         return triggerAction;
     }
 

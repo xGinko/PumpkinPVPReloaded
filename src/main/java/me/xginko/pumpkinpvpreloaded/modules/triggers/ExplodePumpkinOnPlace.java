@@ -8,7 +8,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 public class ExplodePumpkinOnPlace extends ExplosionTrigger {
 
     public ExplodePumpkinOnPlace() {
-        super(Action.PLACE_PUMPKIN, "mechanics.explosion-triggers.place-pumpkin", false);
+        super(TriggerAction.PLACE_PUMPKIN, "mechanics.explosion-triggers.place-pumpkin", false);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

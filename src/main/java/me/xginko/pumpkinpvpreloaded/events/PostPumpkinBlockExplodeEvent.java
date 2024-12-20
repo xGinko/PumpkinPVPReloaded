@@ -15,7 +15,7 @@ public class PostPumpkinBlockExplodeEvent extends PostPumpkinExplodeEvent {
     private final @NotNull Block pumpkin;
 
     public PostPumpkinBlockExplodeEvent(
-            @NotNull ExplosionTrigger.Action triggerAction,
+            @NotNull ExplosionTrigger.TriggerAction triggerAction,
             @NotNull Block pumpkin,
             @Nullable Player exploder,
             @NotNull Location explosionLocation,
